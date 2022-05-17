@@ -24,11 +24,35 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>React App</title>
+    <title>Live-Anzeige Schuhsohle</title>
   </head>
   <body>
+    <h1>Schuhsohle</h1>
+    <button id="groesser">+</button>
+    <button id="kleiner">-</button>
+    <br>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div class="Block">
     <div id="root"></div>
+    <div>
+      <p>Für die Bluetoothübertragung wird Chrome benötigt. <br>
+        Um bereits aufgenommene Daten abspielen zu lassen, <br>
+        die Datei bei CSV Files einfügen.
+      </p>
+      <br>
+      <label for="testInput">Für Tests</label>  
+      <input type="file" id="fileInput" name="testInput">
+      <br>
+      <label for="FertigeFiles">Für CSV Files</label>
+      <input type="file" id="csvFiles" name="FertigeFiles">
+      <br>
+      <button id="stopButton">Stop</button>
+      <br>
+
+    </div>
+  </div>
+    <br>
+
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.

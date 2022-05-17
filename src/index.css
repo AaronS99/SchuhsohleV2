@@ -11,3 +11,54 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.gridrow {
+  display: inline;
+}
+
+.square {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  flex-basis: 16.66666666%;
+  width: 40px;
+  height: 40px;
+}
+.gridall {
+  float: left;
+  display: flex;
+  flex-direction: row;
+  width: 240px;
+  height: 720px;
+  height:auto;
+  flex-wrap: wrap;
+  border: 1px solid;
+}
+input {
+  display: inline;
+  margin: 3px;
+}
+
+.wrapper {
+  float: left;
+}
+div {
+  float: left;
+}
+
+h1 {
+  text-align: center;
+  font-size: 32px;
+}
+label {
+  margin: 3px;
+}
+.Block {
+  display: block;
+  border: 1px solid;
+}
+Button {
+  margin: 3px;
+}
+p {
+  margin: 3px;
+}
