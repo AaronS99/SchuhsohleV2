@@ -25,9 +25,19 @@ var widthArray = ["120px", "180px", "240px", "300px", "360px", "420px", "480px"]
 var heightArray = ["360px", "540px", "720px", "900px", "1080px", "1260px", "1440px"];
 var squareSizeArray = ["20px", "30px", "40px", "50px", "60px", "70px", "80px"]
 var sizePos = 2;
+var login = false;
 
 
 //        HIER ERSTELLUNG DES FARBARRAYS - 1024 Stufen Weiß->Blau->Pink->Grün->Rot
+while (login == false) {
+  var passwort = prompt("Passwort")
+  if (passwort == "dfki") {
+    login = true;
+  }
+}
+
+
+
 for(var i=255; i>0; i--) {
     Farbarray.push("rgb("+r+","+g+","+b+")");
     r--;
@@ -96,7 +106,7 @@ document.getElementById('kleiner').addEventListener('click', function smaller() 
   }
 });
 
-//LIVE AUSWERTUNG
+//LIVE AUSWERTUNG  VERALTET EIGENTLICH
 function newRow(inString) {     //Funktion die je 1 Reihe Daten auwertet
   completeInput = completeInput.concat(inString);
   if(stopBool==true) {    //Wenn Stop aktiviert, dann return from function
@@ -127,15 +137,6 @@ function newRow(inString) {     //Funktion die je 1 Reihe Daten auwertet
     root.render(<Grid />); //wird gerendert durch Klasse Grid
   }
 }
-
-/*function valueToColor(Farbwerte) { //Alte Umwandlung value->Color, jetzt in Grid Klasse
-  for (var i=0; i<Farbwerte.length; i++) { 
-    stateArray[i]=Farbarray[Number(Farbwerte[i])];  //Jedem Wert wird zugehörige Farbe zugeordnet
-  } 
-  //<Grid updateState />
-  root.render(<Grid />);
-}*/
-
  
 class Grid extends React.Component { //Hauptklasse
   constructor(props) {
@@ -301,7 +302,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<Grid />);    //1. rendern damit Grid Platz angezeigt wird auf Site
 
 
-//CHARTS
+//CHARTS vielleicht später nochmal
 class Graph extends React.Component {
   constructor(props) {
     super(props);
@@ -373,6 +374,15 @@ function updateData(values) {
 //AUSWERTUNG VON FERTIGEN DATEIEN
 
 var completeFile = [];
+var slider = document.getElementById("slider");
+var output = document.getElementById("slideOutput");
+var malTime = 1.0;
+output.innerHTML = slider.value + "%";
+slider.oninput = function() {
+  malTime = this.value/100;
+  output.innerHTML = this.value + "%";
+}
+
 document.getElementById('csvFiles').addEventListener('change', function csvInput() { //Wenn File eingefügt läuft das hier
   oldData = true; //oldData bool für stop button
   completeFile = [];  
@@ -417,7 +427,7 @@ var timeout = 1000;
 
 function displayAfter() { //Aufgerufen in displayIt & wenn Stop aufgehoben
 if (stopBool == false) {    //Wenn nicht Stop, nach berechneter Zeit nochmal displayIt()
-  setTimeout(displayIt, timeout);
+  setTimeout(displayIt, timeout/malTime);
 }
 
 }
@@ -453,12 +463,22 @@ var byteArray = [];
 var changed = false;
 var highBit = true;
 var byteToMod = 6;
+var record = false;
+var saveThis = [];
+
+document.getElementById("aufnahme").addEventListener('click', function() {
+  record?record=false:record=true;
+  record?document.getElementById("aufnahme").innerHTML="Aufnahme Ende":document.getElementById("aufnahme").innerHTML="Aufnahmebeginn";
+})
 //BLE DATA
 // ASCII M=77 S=83 :=58 Space=32 H=72 $=36 < Meistens eingeschlossen von $
 function newBLEData(event) {   //aufgerufen wenn neue BLE Daten
   changed = false;
   prevArray = useArray;
   useArray = Array.from(new Uint8Array(event.target.value.buffer)); //20 Bytes als je 8 Bit Ints -> 20 Einträge 0-255 
+  if (record) {
+    saveThis = saveThis.concat(useArray);
+  }
 
   if (pushValues) {   //Falls H:X$ dann jetzt Daten, suche nach $X
     for (var p = 0; p<20; p++) {  //Über 20 Einträge je
