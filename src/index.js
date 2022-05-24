@@ -84,6 +84,7 @@ document.getElementById('groesser').addEventListener('click', function enlarge()
 });
 
 document.getElementById('kleiner').addEventListener('click', function smaller() {
+  eightToTen(testArray);
   if(sizePos > 0) {
     sizePos--;
     document.getElementsByClassName("gridall")[0].style.width = widthArray[sizePos];
@@ -442,7 +443,207 @@ function displayIt() {
   displayAfter();   //für nächsten Datensatz & timeout
 }
 
-// AB HIER NUR FÜR TESTS
+
+
+
+var useArray = [];
+var Dollar = false;
+var pushValues = false;
+var prevArray = [];
+var byteArray = [];
+var changed = false;
+var highBit = true;
+var byteToMod = 6;
+//BLE DATA
+// ASCII M=77 S=83 :=58 Space=32 H=72 $=36 < Meistens eingeschlossen von $
+function newBLEData(event) {   //aufgerufen wenn neue BLE Daten
+  changed = false;
+  prevArray = useArray;
+  useArray = Array.from(new Uint8Array(event.target.value.buffer)); //20 Bytes als je 8 Bit Ints -> 20 Einträge 0-255 
+
+  if (pushValues) {   //Falls H:X$ dann jetzt Daten, suche nach $X
+    for (var p = 0; p<20; p++) {  //Über 20 Einträge je
+      if (useArray[p] == 36) {  //falls $ Zeichen gefunden
+        if (p<19) {             //falls nach $ noch was im array
+          if (useArray[p+1] >= 48 && useArray[p+1] <= 57) {
+            pushValues = false;   //ist nach $  ASCII 0-9?
+            bisHier(useArray, p); //Wenn ja dann nur bis hier hin Values beachten
+            changed = true;   //Datensatz ist nicht rein Werte
+            break;
+          }
+        }
+      }
+    }
+  }
+
+
+  if (pushValues == false) {    //Suche nach H:X$
+    for (var o = 0; o<20; o++) {
+      if (useArray[o] == 36) {  //Wenn $ gefunden 
+        if (o > 0) {  
+          if (useArray[o-1] >= 48 && useArray[o-1] <= 57) { //War vorher ASCII 0-9?
+            stateArray = [];  //dann start neuer Datensatz
+            abHier(useArray, o);  //Ab $
+            pushValues = true;  
+            changed = true;
+            break;
+          }
+        }
+        else if (prevArray[20] >= 48 && prevArray[20] <= 57) {  //Gleiches nur wird vorheriges Element durch prev gecheckt
+          stateArray = [];
+          abHier(useArray, o);
+          pushValues = true;
+          changed = true;
+          break;
+        }
+      }
+    }
+  }   
+  if (changed == false) { //Falls Einträge rein Data waren
+    for (var q = 0; q<20; q++) {
+      byteArray.push(useArray[q]);  //byteArray wird aufgefüllt
+  }
+}
+}
+
+function abHier(datArray, von) {  //byteArray wird aufgefüllt ab $+1
+  for (var l = von+1; l<20; l++) {
+    byteArray.push(datArray[l]);
+  }
+}
+function bisHier(datArray, bis) { //byte Array wird gefüllt bis $, danach Funktionsaufruf um 8Bit Werte zu 10Bit zu wandeln
+  for (var l = 0; l<bis; l++) {
+    byteArray.push(datArray[l]);
+  }
+  eightToTen(byteArray);
+}
+var workArray = [];
+function eightToTen(workArrayy) {  //Hier von 8 zu 10Bit
+  workArray = Array.from(workArrayy);
+  byteArray = [];
+  if(workArray.length % 8 == 0) {  //Nur falls Werte Anzahl / 8 teilbar
+    for (var r = 6; r<workArray.length; r += 8) {  //Einmal pro 8 Einträge, beginn 6. eintrag
+      if (workArray[r] != 0) {  //Falls 6. eintrag nicht null
+        byteToMod = 6;    //um welchen Eintrag es im Moment geht ByteToModify
+        highBit = true;   //Geht um das MSB
+        var binary = workArray[r].toString(2);  //7. Element in binary Form
+        while (binary.length < 4) {
+          //console.log("binary");
+          binary = "0" + binary;        //Damit 4Bit ist, nicht weniger
+        }
+        for (var s=0; s<4 ; s++) {  
+          if(binary.slice(s,s+1) == "1") { //Hier s. element ausgewertet
+            if(highBit) {
+              workArray[r-byteToMod] += 512;  //Wenn MSB 512
+            }
+            else {
+              workArray[r-byteToMod] += 256;  //Sonst 256
+            }
+          }
+          highBit ? highBit=false : highBit=true; //Wenn grade highbit dann jetzt nicht mehr und andersrum
+          if(s==1){
+            stateArray.push(workArray[r-byteToMod]);  //nach 2 operationen muss Wert gepusht werden und nächstes Byte jetzt Mod
+            byteToMod--;
+          }
+        }
+        stateArray.push(workArray[r-byteToMod]);  //am ende nochmal pushen
+      }
+      else {  //Falls 7. eintrag 0, dann bleiben Werte wie waren
+        for (var s=6; s>4; s--) {
+          stateArray.push(workArray[r-s]);
+        }
+      }
+      
+      if (workArray[r+1] != 0) {
+        highBit=true;
+        byteToMod = 4;
+        var binary = workArray[r+1].toString(2);  //Wie oben
+        while (binary.length < 8) {
+          binary = "0" + binary;
+        }
+        for (var s=0; s<8 ; s++) {
+          if(binary.slice(s,s+1) == "1") {
+            if(highBit) {
+              workArray[r-byteToMod] += 512;
+            }
+            else {
+              workArray[r-byteToMod] += 256;
+            }
+          }
+          highBit ? highBit=false : highBit=true;
+          if(s%2==1){           //alles gleich wie oben, nur hier muss jedes 2. mal statt nur 1 mal
+            stateArray.push(workArray[r-byteToMod]);
+            byteToMod--;
+          }
+        }
+        //stateArray.push(workArray[r-byteToMod]);
+      }
+      else {  //Falls 7. eintrag 0, dann bleiben Werte wie waren
+        for (var s=4; s>0; s--) {
+          stateArray.push(workArray[r-s]);
+        }
+      }
+    }
+  }
+    root.render(<Grid />);
+
+}
+
+var testArray = [1, 2, 3, 4, 5, 6, 0, 255, 9, 10, 11, 12, 13, 14, 0, 255];
+
+
+
+//BLE VERBINDUNG /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+
+var bluetoothDevice;
+var gattconnect;
+document.getElementById("CONNECT").addEventListener('click', function letsGo() {
+    navigator.bluetooth.requestDevice({
+        filters: [{
+            //services: [0xffe1, 0xffe0]
+            name: 'BT05'
+            //services: ['12b4735e-0385-3c45-06f8-cc58aa4b9185']
+            //name: 'SModul'
+        }],
+        optionalServices: [0xffe0, 0xffe1,'37066c16-1598-4995-75b5-6606645d8e88' ]
+    })
+    .then(device => {
+        console.log(device.name);
+        //console.log(characteristic.readValue());
+        bluetoothDevice = device;
+        return device.gatt.connect();
+    })
+    .then(server => {
+        gattconnect = server;
+        return server.getPrimaryService(0xffe0);
+    })
+    .then(service => {
+        return service.getCharacteristic('0000ffe1-0000-1000-8000-00805f9b34fb');//0xffe1 geht auch
+    })
+    .then (characteristic => characteristic.startNotifications())
+    .then(characteristic => {
+        characteristic.addEventListener('characteristicvaluechanged', newBLEData);
+    })
+    .catch(error => {console.error(error); })
+});
+var intArray;
+var fullArray = [];
+function handleChange(event) {
+    intArray = new Uint8Array (event.target.value.buffer);
+    fullArray = fullArray.concat(Array.from(intArray));
+}
+
+
+document.getElementById("disc").addEventListener('click', function disconnectIt() {
+    bluetoothDevice.gatt.disconnect();
+});
+
+
+
+
+
+
+// AB HIER NUR FÜR TEST
 
 var tmr = [];
 var x=0;
