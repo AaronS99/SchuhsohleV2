@@ -84,7 +84,6 @@ document.getElementById('groesser').addEventListener('click', function enlarge()
 });
 
 document.getElementById('kleiner').addEventListener('click', function smaller() {
-  eightToTen(testArray);
   if(sizePos > 0) {
     sizePos--;
     document.getElementsByClassName("gridall")[0].style.width = widthArray[sizePos];
@@ -597,42 +596,36 @@ var testArray = [1, 2, 3, 4, 5, 6, 0, 255, 9, 10, 11, 12, 13, 14, 0, 255];
 
 var bluetoothDevice;
 var gattconnect;
-document.getElementById("CONNECT").addEventListener('click', function letsGo() {
+document.getElementById("CONNECT").addEventListener('click', function letsGo() {  //benötigt aktiv click, geht nicht automatisch
     navigator.bluetooth.requestDevice({
         filters: [{
             //services: [0xffe1, 0xffe0]
-            name: 'BT05'
+            name: 'BT05'  //Nur devices mit Namem BT05 werden angezeigt, anderes theoretisch auch möglich
             //services: ['12b4735e-0385-3c45-06f8-cc58aa4b9185']
-            //name: 'SModul'
         }],
-        optionalServices: [0xffe0, 0xffe1,'37066c16-1598-4995-75b5-6606645d8e88' ]
+        optionalServices: [0xffe0, 0xffe1,'37066c16-1598-4995-75b5-6606645d8e88' ]  //char.uuid und service uuid
     })
-    .then(device => {
+    .then(device => {     //über Promises ab hier    mit device Verbinden
         console.log(device.name);
         //console.log(characteristic.readValue());
         bluetoothDevice = device;
         return device.gatt.connect();
     })
-    .then(server => {
+    .then(server => {   //Service auswählen
         gattconnect = server;
         return server.getPrimaryService(0xffe0);
     })
-    .then(service => {
+    .then(service => {  //Characteristic ausgewählt
         return service.getCharacteristic('0000ffe1-0000-1000-8000-00805f9b34fb');//0xffe1 geht auch
     })
-    .then (characteristic => characteristic.startNotifications())
+    .then (characteristic => characteristic.startNotifications()) //wo values gesendet werden
     .then(characteristic => {
-        characteristic.addEventListener('characteristicvaluechanged', newBLEData);
+        characteristic.addEventListener('characteristicvaluechanged', newBLEData);  //immer wenn neue Daten wird funktion ausgeführt
     })
     .catch(error => {console.error(error); })
 });
 var intArray;
 var fullArray = [];
-function handleChange(event) {
-    intArray = new Uint8Array (event.target.value.buffer);
-    fullArray = fullArray.concat(Array.from(intArray));
-}
-
 
 document.getElementById("disc").addEventListener('click', function disconnectIt() {
     bluetoothDevice.gatt.disconnect();
