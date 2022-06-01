@@ -398,9 +398,26 @@ function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in
   //console.log(csvAlsArray);
   var tempArray = [];
   var tempZwei = [];
+  var rn = false;
   
+  if(csvAlsArray[1].indexOf("\r\n") != -1) {  //Manche CSV Files haben am Zeilenende \r\n und manche nur \n       ?
+    rn = true;
+  }
+  else {      //damit falls rn dann split über rn und sonst split über n
+    rn = false;
+  }
+
+
   for(var i=0; i<csvAlsArray.length; i++) { //Für jeden Eintrag 1 Mal:
-    tempArray = csvAlsArray[i].split("\r\n");  //MS Block in neues Arrays getrennt durch Zeilenumbrüche
+    if (rn) {
+
+      tempArray = csvAlsArray[i].split("\r\n");  //MS Block in neues Arrays getrennt durch Zeilenumbrüche
+    }
+    else {
+
+      tempArray = csvAlsArray[i].split("\n");
+    }
+
     if (tempArray.length == 20) { //Wenn genau 20 Zeilen -> Kein Fehler:
       tempArray.pop();  //letzter Eintrag wird entfernt (ist Counter vor nächstem "MS:")
       tempZwei = [];
@@ -414,8 +431,10 @@ function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in
       }                                              //"Fehlerlos" Hinsichtlich Einträgen, Fehlerhafte Werte sind noch möglich
     }
     //console.log(i + "/" + csvAlsArray.length);
+
   }
   //console.log("DONE");
+  //console.log(completeFile);
   displayIt();  //Alles verarbeitet und in 1 riesen Array, jetzt Anzeigen lassen
   
 }
@@ -467,8 +486,23 @@ var record = false;
 var saveThis = [];
 
 document.getElementById("aufnahme").addEventListener('click', function() {
-  record?record=false:record=true;
-  record?document.getElementById("aufnahme").innerHTML="Aufnahme Ende":document.getElementById("aufnahme").innerHTML="Aufnahmebeginn";
+  if (record) {
+    record = false;
+    document.getElementById("aufnahme").innerHTML="Aufnahmebeginn"
+    let csvInhalt = "data:text/csv;charset=utf-8," + saveThis.join(",");
+    var encodedUri = encodeURI(csvInhalt);
+    var link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "recordedData.csv");
+    document.body.appendChild(link);
+    link.click();
+    //window.open(encodedUri);
+
+  }
+  else {
+    record = true;
+    document.getElementById("aufnahme").innerHTML="Aufnahme Ende"
+  }
 })
 //BLE DATA
 // ASCII M=77 S=83 :=58 Space=32 H=72 $=36 < Meistens eingeschlossen von $
@@ -617,6 +651,7 @@ var testArray = [1, 2, 3, 4, 5, 6, 0, 255, 9, 10, 11, 12, 13, 14, 0, 255];
 var bluetoothDevice;
 var gattconnect;
 document.getElementById("CONNECT").addEventListener('click', function letsGo() {  //benötigt aktiv click, geht nicht automatisch
+  stateArray = [];
     navigator.bluetooth.requestDevice({
         filters: [{
             //services: [0xffe1, 0xffe0]
@@ -629,6 +664,7 @@ document.getElementById("CONNECT").addEventListener('click', function letsGo() {
         console.log(device.name);
         //console.log(characteristic.readValue());
         bluetoothDevice = device;
+        bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
         return device.gatt.connect();
     })
     .then(server => {   //Service auswählen
@@ -640,6 +676,16 @@ document.getElementById("CONNECT").addEventListener('click', function letsGo() {
     })
     .then (characteristic => characteristic.startNotifications()) //wo values gesendet werden
     .then(characteristic => {
+      useArray = [];
+      Dollar = false;
+      pushValues = false;
+      prevArray = [];
+      byteArray = [];
+      changed = false;
+      highBit = true;
+      byteToMod = 6;
+      record = false;
+      saveThis = [];
         characteristic.addEventListener('characteristicvaluechanged', newBLEData);  //immer wenn neue Daten wird funktion ausgeführt
     })
     .catch(error => {console.error(error); })
@@ -651,9 +697,157 @@ document.getElementById("disc").addEventListener('click', function disconnectIt(
     bluetoothDevice.gatt.disconnect();
 });
 
+function onDisconnected(event) {
+  alert("Disconnected");
+}
 
+// PROCESS RECORDED DATA
+var rawcsv = null;
+var isText = false;
+var stringInMiddle = '';
+var cleanedCSV = [];
+var toSix = 0;
+var inRows = [];
+var asString = '';
 
+document.getElementById('rawData').addEventListener('change', function () {
+  asString = "data:text/csv;charset=utf-8,";
+  let read = new FileReader();
+  read.readAsText(document.getElementById('rawData').files[0]);
+  read.onload = function (event) {
+    rawcsv = event.target.result.split(',');
+    for (var y = 0; y<rawcsv.length; y++) {
+      if (rawcsv[y] == 36 && (rawcsv[y+1] >= 48 && rawcsv[y+1] <= 57)) {
+        isText = true;
+        stringInMiddle = '';
+      }
+      if (isText) {
+        if (rawcsv[y] != 36) {
+          stringInMiddle = stringInMiddle + (String.fromCharCode(rawcsv[y]));
+        }
 
+      }
+      else {
+        cleanedCSV.push(rawcsv[y]);
+        toSix++;
+        if (toSix == 8) {
+          rowCorrect();
+          cleanedCSV.push('\n');
+          toSix = 0;
+        }
+        else {
+          cleanedCSV.push(",");
+        }
+        
+
+      }
+      if (rawcsv[y] == 36 && (rawcsv[y-1] >= 48 && rawcsv[y-1] <= 57)) {
+        isText = false;
+        if (cleanedCSV[cleanedCSV.length -1] != "\n") {
+          cleanedCSV.push("\n");
+        }
+        cleanedCSV.push(stringInMiddle);
+        cleanedCSV.push("\n");
+        toSix = 0;
+      }
+    }
+    //inRows = cleanedCSV.split("\n");
+    for (var i=0; i<cleanedCSV.length; i++) {
+      asString = asString + cleanedCSV[i];
+    }
+    console.log(asString);
+    let csvInhaltclean = "data:text/csv;charset=utf-8," + cleanedCSV.join(',');
+    var encodedUriclean = encodeURI(asString);
+    var linkclean = document.createElement("a");
+    linkclean.setAttribute("href", encodedUriclean);
+    linkclean.setAttribute("download", "CleanData.csv");
+    document.body.appendChild(linkclean);
+    linkclean.click();
+  }
+});
+
+function rowCorrect() {
+  var eight = cleanedCSV.pop();
+  cleanedCSV.pop();
+  var seven = cleanedCSV.pop();
+  cleanedCSV.pop();
+  /* six = cleanedCSV[cleanedCSV.length-1];
+   five = cleanedCSV[cleanedCSV.length-3];
+   four = cleanedCSV[cleanedCSV.length-5];
+   three = cleanedCSV[cleanedCSV.length-7];
+   two = cleanedCSV[cleanedCSV.length-9];
+   one = cleanedCSV[cleanedCSV.length-11];*/
+   if (seven != 0) {
+     var toModify = 11;
+     var highBitAgain = true;
+     var inBin = seven.toString(2);
+     while (inBin.length < 4) {
+       inBin = "0" + inBin;
+     }
+     for (var t=0; t<4; t++) {
+       if(inBin.slice(t,t+1) == "1") {
+        if(highBitAgain) {
+          cleanedCSV[cleanedCSV.length-toModify] = Number(cleanedCSV[cleanedCSV.length-toModify]) + 512;
+        }
+        else {
+          cleanedCSV[cleanedCSV.length - toModify] = Number(cleanedCSV[cleanedCSV.length-toModify]) + 256;
+        }
+       }
+     }
+     highBitAgain ? highBitAgain = false : highBitAgain = true;
+     if (t==1) {
+       toModify -= 2;
+     }
+   }
+
+   if (eight != 0) {
+    var toModify = 7;
+    var highBitAgain = true;
+    var inBin = eight.toString(2);
+    while (inBin.length < 8) {
+      inBin = "0" + inBin;
+    }
+    for (var t=0; t<8; t++) {
+      if(inBin.slice(t,t+1) == "1") {
+       if(highBitAgain) {
+         cleanedCSV[cleanedCSV.length-toModify] = Number(cleanedCSV[cleanedCSV.length-toModify]) + 512;
+       }
+       else {
+         cleanedCSV[cleanedCSV.length - toModify] = Number(cleanedCSV[cleanedCSV.length-toModify]) + 256;
+       }
+      }
+    }
+    highBitAgain ? highBitAgain = false : highBitAgain = true;
+    if (t%2==1) {
+      toModify -= 2;
+    }
+  }
+  
+
+}
+var first = true;
+document.getElementById("help").addEventListener('click', function helper() {
+  if(first) {
+    document.getElementById("ausklapp").style.display = "none";
+    first = false;
+  }
+  if (document.getElementById("ausklapp").style.display === "none") {
+    document.getElementById("ausklapp").style.display = "block";
+  } else {
+    document.getElementById("ausklapp").style.display = "none";
+  }
+
+/*
+  if (helpOn) {
+    helpOn = false;
+    document.getElementById("ausklapp").innerHTML = "";
+  }
+  else {
+    helpOn = true;
+    document.getElementById("ausklapp").innerHTML = "Für die BLE Verbindung ist Google Chrome erforderlich. <br>Außerdem muss evtl. unter <b>about://flags</b> <i>Experimental Web Platform features</i> auf <b>Enabled</b> gesetzt werden";
+  }
+*/
+});
 
 
 // AB HIER NUR FÜR TEST

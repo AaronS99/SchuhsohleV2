@@ -28,37 +28,61 @@
   </head>
   <body>
     <h1>Schuhsohle</h1>
+    <p>
+      <button id="help">Help</button>
+      <p id="ausklapp">Für die BLE Verbindung ist Google Chrome erforderlich. <br>
+        Außerdem muss evtl. unter <b>about://flags</b> <i>Experimental Web Platform features</i> auf <b>Enabled</b> gesetzt werden. <br>
+        <br>
+        Um die Live Übertragung zu starten, auf <i>CONNECT</i> klicken und dann <b>BT05</b> auswählen. <br><br>
+        Während der Live Übertragung können die Daten auch aufgezeichnet werden. Um die Aufzeichnung <br>
+        zu starten, auf <i>Aufnahmebeginn</i> klicken, um sie zu stoppen nochmals drauf klicken. Anschließend <br>
+        wird eine Datei mit den rohen Daten heruntergelanden. Mit einem Hochladen dieser bei <i>Process recorded Data</i> <br>
+        werden die Daten in eine Übersichtlichere CSV Datei gewandelt. <br><br>
+        Um die Verbindung zu stoppen auf <i>Disconnect</i> klicken. <br>
+        <br>
+        Um alte Aufzeichnungen nochmals abspielen zu lassen, die CSV Datei bei <i>Für CSV Files</i> hochladen. <br>
+        Diese wird dort in der originalen Geschwindigkeit abgespielt. <br>
+        Über <i>Stop</i> kann man die Wiedergabe anhalten und anschließend auch fortsetzen. <br>
+        Über den Slider drüber kann man die Wiedergabegeschwindigkeit einstellen.
+
+
+      </p>
+    </p>
     <button id="groesser">+</button>
     <button id="kleiner">-</button>
     <br>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div class="Block">
     <div id="root"></div>
-    <div>
-      <p>Für die Bluetoothübertragung wird Chrome benötigt. <br>
-        Um bereits aufgenommene Daten abspielen zu lassen, <br>
-        die Datei bei CSV Files einfügen.
-      </p>
-      <br>
-      <label for="testInput">Für Tests</label>  
-      <input type="file" id="fileInput" name="testInput">
-      <br>
-      <label for="FertigeFiles">Für CSV Files</label>
-      <input type="file" id="csvFiles" name="FertigeFiles">
-      <br>
- 
-      <input type="range" min="20" max="200" value="100" id="slider"> <br>
-      <div id="slideOutput"></div>
-      <br>
-      <button id="stopButton">Stop</button>
-      <br>
-      <button id="CONNECT">CONNECT</button>
-      <button id="disc">Disconnect</button>
-      <br>
-      <button id="aufnahme">Aufnahmebeginn</button>
+      <div>
+        <!--<p>Für die Bluetoothübertragung wird Chrome benötigt. <br>
+          Um bereits aufgenommene Daten abspielen zu lassen, <br>
+          die Datei bei CSV Files einfügen. 
+        </p>
+        <br>-->
+        <label for="testInput">Für Tests</label>  
+        <input type="file" id="fileInput" name="testInput">
+        <br>
+        <label for="FertigeFiles">Für CSV Files</label>
+        <input type="file" id="csvFiles" name="FertigeFiles">
+        <br>
+  
+        <input type="range" min="20" max="200" value="100" id="slider"> <br>
+        <div id="slideOutput"></div>
+        <br>
+        <button id="stopButton">Stop</button>
+        <br>
+        <button id="CONNECT">CONNECT</button>
+        <button id="disc">Disconnect</button>
+        <br>
+        <button id="aufnahme">Aufnahmebeginn</button>
+        <br>
+        <label for="rD">Process recorded Data</label>
+        <input type="file" id="rawData" name="rD">
 
+      </div>
     </div>
-  </div>
+
     <br>
 
     <!--
