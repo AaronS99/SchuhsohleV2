@@ -28,6 +28,8 @@ var b = 255;
 var startNewSet = false;
 var stopBool = false;
 var data = Array(100).fill(0);
+var dataZwei = Array(100).fill(0);
+var dataDrei = Array(100).fill(0);
 var newData = false;
 var oldData = false;
 var widthArray = ["120px", "180px", "240px", "300px", "360px", "420px", "480px"];
@@ -38,6 +40,10 @@ var login = false;
 var zwischensumme = 0;
 var summenarray = [];
 var zeitarray = [];
+var summenarrayZwei = [];
+var zeitarrayZwei = [];
+var summenarrayDrei = [];
+var zeitarrayDrei = [];
 var graphIsOn = false;
 
 
@@ -308,6 +314,8 @@ class Grid extends React.Component { //Hauptklasse
         </div>
         <div id="chartOn">
         <App />
+        <AppZwei />
+        <AppDrei />
         </div>    
         </div>
         
@@ -346,13 +354,6 @@ export var options = {
       min:0
     },
   },
-
-
-  /*plugins: {
-    title: {
-      display: true,
-    },
-  },*/
 };
 const labels = data;
 
@@ -365,10 +366,38 @@ export var datak = {
   ],
 };
 
+export var datakZwei = {
+  labels,
+  datasets: [
+    {
+      data: dataZwei,
+    },
+  ],
+};
+
+export var datakDrei = {
+  labels,
+  datasets: [
+    {
+      data: dataDrei,
+    },
+  ],
+};
+
 export function App() {
   return <Line options={options} data={datak} />;
 }
 
+
+
+
+export function AppZwei() {
+  return <Line options={options} data={datakZwei} />;
+}
+
+export function AppDrei() {
+  return <Line options={options} data={datakDrei} />;
+}
 
 
 
@@ -492,9 +521,20 @@ function graphIt(allData) {
   for(var u=0; u<allData.length; u = u+109) {
     zwischensumme = 0;
     
-    for (var v=1; v<109; v++) {
+    for (var v=1; v<37; v++) {
       zwischensumme += Number(allData[u+v]);
     }
+    summenarray.push(Math.round(zwischensumme/36));
+    zwischensumme = 0;
+    for (var v=37; v<73; v++) {
+      zwischensumme += Number(allData[u+v]);
+    }
+    summenarrayZwei.push(Math.round(zwischensumme/36));
+    zwischensumme = 0;
+    for (var v=73; v<109; v++) {
+      zwischensumme += Number(allData[u+v]);
+    }
+    summenarrayDrei.push(Math.round(zwischensumme/36));
     /*if (summenarray.length != 0) {
       if (zwischensumme < 1.5 * summenarray[summenarray.length - 1]) {
         summenarray.push(zwischensumme);
@@ -506,15 +546,22 @@ function graphIt(allData) {
       summenarray.push(zwischensumme);
       zeitarray.push(allData[u]);
     }*/
-    summenarray.push(Math.round(zwischensumme/108));
     if(summenarray[summenarray.length-1]>max) {
       max = summenarray[summenarray.length-1];
+    }
+    if(summenarrayZwei[summenarray.length-1]>max) {
+      max = summenarrayZwei[summenarray.length-1];
+    }
+    if(summenarrayDrei[summenarray.length-1]>max) {
+      max = summenarrayDrei[summenarray.length-1];
     }
     zeitarray.push(allData[u]);
     
   }
   console.log(max);
   console.log(summenarray);
+  console.log(summenarrayZwei);
+  console.log(summenarrayDrei);
   options = {
     legend:  {
       display: false
@@ -535,7 +582,6 @@ function graphIt(allData) {
       },
     },*/
   };
-  console.log(summenarray);
   /*setInterval(function() {
     data.splice(0,10);
     data = data.concat(summenarray.splice(0,10));
@@ -583,17 +629,37 @@ function displayIt() {
   }
   if (graphIsOn) {
     data.splice(0, 1);
-      data = data.concat(summenarray.splice(0,1));
-      counToTen = 0;
+    data = data.concat(summenarray.splice(0,1));
+    dataZwei.splice(0,1);
+    dataZwei = dataZwei.concat(summenarrayZwei.splice(0,1));
+    dataDrei.splice(0,1);
+    dataDrei = dataDrei.concat(summenarrayDrei.splice(0,1));
+      //counToTen = 0;
       datak = {
         labels,
         datasets: [
           {
             data: data,
-          },
+          }
         ],
       };
-    //counToTen++;
+      datakZwei = {
+        labels,
+        datasets: [
+          {
+            data: dataZwei,
+          }
+        ],
+      };
+      datakDrei = {
+        labels,
+        datasets: [
+          {
+            data: dataDrei,
+          }
+        ],
+      };
+          //counToTen++;
     /*if (counToTen > 9) {
       data.splice(0, 10);
       data = data.concat(summenarray.splice(0,10));
@@ -1017,7 +1083,7 @@ function stopTmr() {  //Wenn StopButton
 
 
 var csv = null;
-document.getElementById('fileInput').addEventListener('change', function FileChanged() { //ähnlich wie oben
+/*document.getElementById('fileInput').addEventListener('change', function FileChanged() { //ähnlich wie oben
   newData = true;
   let reader = new FileReader();  
   reader.readAsText(document.getElementById('fileInput').files[0]);
@@ -1025,7 +1091,7 @@ document.getElementById('fileInput').addEventListener('change', function FileCha
     csv = event.target.result; //csv ist Datei als String
     timerStart();
   };
-});
+});*/
 
 function timerStart() { // hier werden Reihen aufgeteilt und gesendet
   var reihenArrays = csv.split("\r\n"); //in reihen getrennt durch Zeilenumbruch

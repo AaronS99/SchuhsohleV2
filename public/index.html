@@ -27,23 +27,30 @@
     <title>Live-Anzeige Schuhsohle</title>
   </head>
   <body>
-    <h1 id="title">Schuhsohle</h1>
+    <h1 id="title">Schuhsohle  --Bitte Google Chrome verwenden--</h1>
     <br>
     <section>
       <p id="ausklapp">Für die BLE Verbindung ist Google Chrome erforderlich. <br>
         Außerdem muss evtl. unter <b>about://flags</b> <i>Experimental Web Platform features</i> auf <b>Enabled</b> gesetzt werden. <br>
         <br>
-        Um die Live Übertragung zu starten, auf <i>CONNECT</i> klicken und dann <b>BT05</b> auswählen. <br><br>
+        Bei Fehlern hilfts evtl. die Seite neu zu laden.<br>
+        <br>
+        Um die Live Übertragung zu starten, auf <i>CONNECT</i> klicken und dann <b>BT05</b> auswählen. <br>
+        <br>
         Während der Live Übertragung können die Daten auch aufgezeichnet werden. Um die Aufzeichnung <br>
         zu starten, auf <i>Aufnahmebeginn</i> klicken, um sie zu stoppen nochmals drauf klicken. Anschließend <br>
-        wird eine Datei mit den rohen Daten heruntergelanden. Mit einem Hochladen dieser bei <i>Process recorded Data</i> <br>
-        werden die Daten in eine Übersichtlichere CSV Datei gewandelt. <br><br>
+        wird eine Datei mit den rohen Daten heruntergelanden. Mit einem Hochladen dieser bei <i>rohe Daten Verarbeiten</i> <br>
+        werden die Daten in eine Übersichtlichere CSV Datei gewandelt. <br>
+        <br>
         Um die Verbindung zu stoppen auf <i>Disconnect</i> klicken. <br>
         <br>
-        Um alte Aufzeichnungen nochmals abspielen zu lassen, die CSV Datei bei <i>Für CSV Files</i> hochladen. <br>
+        Um alte Aufzeichnungen nochmals abspielen zu lassen, die CSV Datei bei <i>Zum Abspielen</i> hochladen. <br>
         Diese wird dort in der originalen Geschwindigkeit abgespielt. <br>
+        <br>
         Über <i>Stop</i> kann man die Wiedergabe anhalten und anschließend auch fortsetzen. <br>
-        Über den Slider drüber kann man die Wiedergabegeschwindigkeit einstellen.
+        
+        Über den Slider drüber kann man die Wiedergabegeschwindigkeit einstellen.<br>
+        Beim Anzeigen des Graphens kann es, falls man nicht Chrome verwendet, zu Performance Problemen kommen 
 
 
       </p>
@@ -61,14 +68,14 @@
           die Datei bei CSV Files einfügen. 
         </p>
         <br>-->
-        <label for="testInput">Für Tests</label>  
+        <!--<label for="testInput">Für Tests</label>  
         <input type="file" id="fileInput" name="testInput">
-        <br>
-        <label for="FertigeFiles">Für CSV Files</label>
-        <input type="file" id="csvFiles" name="FertigeFiles">
+        <br>-->
+        <label for="csvFiles" class="button">Zum Abspielen</label>
+        <input type="file" id="csvFiles" class="inputfile" name="FertigeFiles">
         <br>
         <input type = "checkbox" name = "Checker" id="graphi">
-        <label for = "Checker">Mit Graph</label>
+        <label for = "graphi" id = "grap">Graph</label>
         <br>
         <input type="range" min="20" max="200" value="100" id="slider"> <br>
         <div id="slideOutput"></div>
@@ -80,8 +87,8 @@
         <br>
         <button id="aufnahme">Aufnahmebeginn</button>
         <br>
-        <label for="rD">Process recorded Data</label>
-        <input type="file" id="rawData" name="rD">
+        <label for="rawData" class="button">rohe Daten Verarbeiten</label>
+        <input type="file" id="rawData" class="inputfile" name="rD">
 
       </div>
     </div>
