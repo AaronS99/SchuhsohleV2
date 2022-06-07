@@ -1,9 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import ApexCharts from 'apexcharts';
-import Chart from "react-apexcharts";
 import reportWebVitals from './reportWebVitals';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+//  Tooltip,
+//  Legend,
+} from 'chart.js';
+import { Chart, Line } from 'react-chartjs-2';
 
 var Farbarray = []; //Erstellung Farbarray, geht weiß->blau->pink->orange->rot
 var stateArray = [];  //Wird ValueArray pro Datensatz
@@ -26,6 +35,10 @@ var heightArray = ["360px", "540px", "720px", "900px", "1080px", "1260px", "1440
 var squareSizeArray = ["20px", "30px", "40px", "50px", "60px", "70px", "80px"]
 var sizePos = 2;
 var login = false;
+var zwischensumme = 0;
+var summenarray = [];
+var zeitarray = [];
+var graphIsOn = false;
 
 
 //        HIER ERSTELLUNG DES FARBARRAYS - 1024 Stufen Weiß->Blau->Pink->Grün->Rot
@@ -292,8 +305,12 @@ class Grid extends React.Component { //Hauptklasse
           {this.renderSquare(106)}
           {this.renderSquare(107)}
           
+        </div>
+        <div id="chartOn">
+        <App />
         </div>    
         </div>
+        
     );
   }
 }
@@ -302,55 +319,67 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<Grid />);    //1. rendern damit Grid Platz angezeigt wird auf Site
 
 
-//CHARTS vielleicht später nochmal
-class Graph extends React.Component {
-  constructor(props) {
-    super(props);
 
-    this.state = {
-      options: {
-        chart: {
-          id: "realtime",
-          height: 350,
-          type: 'line',
-          animations: {
-            enabled: false
-          }
-        },
-        stroke: {
-        },
-        xaxis: {
-          //categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998]
-        },
-        yaxis: {
-          max: 50000
-        },
-      }, 
-      series: [
-        {
-          //data: [30, 40, 45, 50, 49, 60, 70, 91]
-          data: data
-        }
-      ]
-    };
-  }
 
-  render() {
-    return (
-      <div className="app">
-        <div className="row">
-          <div className="mixed-chart">
-            <Chart
-              options={this.state.options}
-              series={this.state.series}
-              width="500"
-            />
-          </div>
-        </div>
-      </div>
-    );
-  }
+
+
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+//  Tooltip,
+//  Legend
+);
+
+export var options = {
+  legend:  {
+    display: false
+  },
+  animation: false,
+  responsive: false,
+  scales: {
+    yAxis: {
+      max:1000,
+      min:0
+    },
+  },
+
+
+  /*plugins: {
+    title: {
+      display: true,
+    },
+  },*/
+};
+const labels = data;
+
+export var datak = {
+  labels,
+  datasets: [
+    {
+      data: data,
+    },
+  ],
+};
+
+export function App() {
+  return <Line options={options} data={datak} />;
 }
+
+
+
+
+
+
+
+
+
+
+
+//CHARTS vielleicht später nochmal
 //root.render(<Graph />); 
 function updateData(values) {
   var datapoint = 0;
@@ -361,9 +390,9 @@ function updateData(values) {
     data.splice(0,1);
   }
   data.push(datapoint);
-  ApexCharts.exec("realtime", 'updateSeries', [{
+  /*ApexCharts.exec("realtime", 'updateSeries', [{
     data: data
-  }], true);
+  }], true);*/
   //console.log(data[0]);
 }
 
@@ -384,6 +413,7 @@ slider.oninput = function() {
 }
 
 document.getElementById('csvFiles').addEventListener('change', function csvInput() { //Wenn File eingefügt läuft das hier
+  document.getElementById('title').innerHTML = "Lädt";
   oldData = true; //oldData bool für stop button
   completeFile = [];  
   let reader = new FileReader(); //FileReader von JS
@@ -392,7 +422,8 @@ document.getElementById('csvFiles').addEventListener('change', function csvInput
     csvVerarbeitung(event.target.result);
   };
 });
-
+var wertVorher = 0;
+var wertNachher = 0;
 function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in Blöcke getrennt durch MS: Zeilen
   let csvAlsArray = inputFile.slice(inputFile.indexOf("MS:")).split("MS:");
   //console.log(csvAlsArray);
@@ -427,7 +458,15 @@ function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in
       }
       if (tempZwei.length == 109) { //Falls 109 Einträge (1 MS Wert & 108 DruckWerte):
         //tempZwei[0] = tempZwei[0].slice(0,tempZwei[0].indexOf("M:")-1);
-        completeFile = completeFile.concat(tempZwei); //completeFile wird zu completeFile + Fehlerloser Datensatz
+        wertVorher = wertNachher;
+        wertNachher = 0;
+        for (var w=1; w<109; w++) {
+          wertNachher += Number(tempZwei[w]);
+        }
+        if (wertNachher < wertVorher * 1.5) {
+          completeFile = completeFile.concat(tempZwei); //completeFile wird zu completeFile + Fehlerloser Datensatz
+        }
+        
       }                                              //"Fehlerlos" Hinsichtlich Einträgen, Fehlerhafte Werte sind noch möglich
     }
     //console.log(i + "/" + csvAlsArray.length);
@@ -435,13 +474,89 @@ function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in
   }
   //console.log("DONE");
   //console.log(completeFile);
+  if (document.getElementById("graphi").checked) {
+    graphIsOn = true;
+    document.getElementById("chartOn").style.display = "inline";
+    graphIt(completeFile);
+  }
+  else {
+    document.getElementById("chartOn").style.display = "none";
+  }
+  document.getElementById('title').innerHTML = "Schuhsohle";
   displayIt();  //Alles verarbeitet und in 1 riesen Array, jetzt Anzeigen lassen
   
+}
+var max = 0;
+function graphIt(allData) {
+  console.log(allData);
+  for(var u=0; u<allData.length; u = u+109) {
+    zwischensumme = 0;
+    
+    for (var v=1; v<109; v++) {
+      zwischensumme += Number(allData[u+v]);
+    }
+    /*if (summenarray.length != 0) {
+      if (zwischensumme < 1.5 * summenarray[summenarray.length - 1]) {
+        summenarray.push(zwischensumme);
+        zeitarray.push(allData[u]);
+      }
+      
+    }
+    else {
+      summenarray.push(zwischensumme);
+      zeitarray.push(allData[u]);
+    }*/
+    summenarray.push(Math.round(zwischensumme/108));
+    if(summenarray[summenarray.length-1]>max) {
+      max = summenarray[summenarray.length-1];
+    }
+    zeitarray.push(allData[u]);
+    
+  }
+  console.log(max);
+  console.log(summenarray);
+  options = {
+    legend:  {
+      display: false
+    },
+    animation: false,
+    responsive: false,
+    scales: {
+      yAxis: {
+        max: max,
+        min:0
+      },
+    },
+  
+  
+    /*plugins: {
+      title: {
+        display: true,
+      },
+    },*/
+  };
+  console.log(summenarray);
+  /*setInterval(function() {
+    data.splice(0,10);
+    data = data.concat(summenarray.splice(0,10));
+    ApexCharts.exec("realtime", 'updateSeries', [{
+      data: data
+    }], true);
+    root.render(<Grid />);
+  }, 300);*/
+  /*data = summenarray;
+  //console.log(data);        ZU LANG KÜRZEN UND FALSCHER AUSSORTIEREN
+  data.pop();
+  ApexCharts.exec("realtime", 'updateSeries', [{
+    data: data
+  }], true);
+  root.render(<Grid />);*/
 }
 
 var prevTime = 0; //Vars für Zeitberechnung
 var timenow = 0;
 var timeout = 1000;
+var counToTen = 0;
 
 
 function displayAfter() { //Aufgerufen in displayIt & wenn Stop aufgehoben
@@ -461,11 +576,45 @@ function displayIt() {
   timenow = Number(completeFile[0]);  //Zeit von nächstem Datensatz
   //Berechnung für nächstes Timeout
   if(timenow>prevTime) {   //Wenn nicht neue Minute angebrochen wurde
-    timeout = timenow - prevTime -2;  //timeout ist differenz v Zeiten -2 für Delay durch Programm
+    timeout = timenow - prevTime;  //timeout ist differenz v Zeiten -2 für Delay durch Programm
   }
   else {    //sonst -> wenn neue Min angebrochen
-    timeout = timenow + (60000-prevTime) -2;  //tiomeout ist nächste Zeit + was zur Min vorher gefehlt hat
-  } 
+    timeout = timenow + (60000-prevTime);  //tiomeout ist nächste Zeit + was zur Min vorher gefehlt hat
+  }
+  if (graphIsOn) {
+    data.splice(0, 1);
+      data = data.concat(summenarray.splice(0,1));
+      counToTen = 0;
+      datak = {
+        labels,
+        datasets: [
+          {
+            data: data,
+          },
+        ],
+      };
+    //counToTen++;
+    /*if (counToTen > 9) {
+      data.splice(0, 10);
+      data = data.concat(summenarray.splice(0,10));
+      counToTen = 0;
+      datak = {
+        labels,
+        datasets: [
+          {
+            data: data,
+          },
+        ],
+      };*/
+      /*App.datak.datasets.forEach((dataset) => {
+        dataset.data.push(data);
+      })
+      App.update('none');*/
+      /*ApexCharts.exec("realtime", 'updateSeries', [{
+        data: data
+      }], true);*/
+    //} 
+  }
   //root.render(<Secondgrid />);
   root.render(<Grid />);  //Anzeigen
   displayAfter();   //für nächsten Datensatz & timeout
@@ -887,6 +1036,17 @@ function timerStart() { // hier werden Reihen aufgeteilt und gesendet
       }, 10);
  }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

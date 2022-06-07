@@ -27,9 +27,9 @@
     <title>Live-Anzeige Schuhsohle</title>
   </head>
   <body>
-    <h1>Schuhsohle</h1>
-    <p>
-      <button id="help">Help</button>
+    <h1 id="title">Schuhsohle</h1>
+    <br>
+    <section>
       <p id="ausklapp">Für die BLE Verbindung ist Google Chrome erforderlich. <br>
         Außerdem muss evtl. unter <b>about://flags</b> <i>Experimental Web Platform features</i> auf <b>Enabled</b> gesetzt werden. <br>
         <br>
@@ -47,7 +47,7 @@
 
 
       </p>
-    </p>
+    </section>
     <button id="groesser">+</button>
     <button id="kleiner">-</button>
     <br>
@@ -55,6 +55,7 @@
     <div class="Block">
     <div id="root"></div>
       <div>
+        <button id="help">Help</button> <br>
         <!--<p>Für die Bluetoothübertragung wird Chrome benötigt. <br>
           Um bereits aufgenommene Daten abspielen zu lassen, <br>
           die Datei bei CSV Files einfügen. 
@@ -66,7 +67,9 @@
         <label for="FertigeFiles">Für CSV Files</label>
         <input type="file" id="csvFiles" name="FertigeFiles">
         <br>
-  
+        <input type = "checkbox" name = "Checker" id="graphi">
+        <label for = "Checker">Mit Graph</label>
+        <br>
         <input type="range" min="20" max="200" value="100" id="slider"> <br>
         <div id="slideOutput"></div>
         <br>
