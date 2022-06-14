@@ -46,15 +46,15 @@ var graphIsOn = true;
 var progressbar = document.getElementById("progress");
 
 
-//        HIER ERSTELLUNG DES FARBARRAYS - 1024 Stufen Weiß->Blau->Pink->Grün->Rot
-while (login == false) {
+
+while (login == false) {    //einfache Passwortabfrage
   var passwort = prompt("Passwort")
   if (passwort == "dfki") {
     login = true;
   }
 }
 
-
+//        HIER ERSTELLUNG DES FARBARRAYS - 1024 Stufen Weiß->Blau->Pink->Grün->Rot
 
 for(var i=255; i>0; i--) {
     Farbarray.push("rgb("+r+","+g+","+b+")");
@@ -98,8 +98,8 @@ document.getElementById('stopButton').addEventListener('click', function stopCli
   
 });
 
-document.getElementById('groesser').addEventListener('click', function enlarge() {
-  if(sizePos < widthArray.length-1) {
+document.getElementById('groesser').addEventListener('click', function enlarge() { 
+  if(sizePos < widthArray.length-1) { //Wenn nicht schon größte Stufe erreicht
     sizePos++;
     document.getElementsByClassName("gridall")[0].style.width = widthArray[sizePos];
     document.getElementsByClassName("gridall")[0].style.height = heightArray[sizePos];
@@ -124,7 +124,7 @@ document.getElementById('kleiner').addEventListener('click', function smaller() 
   }
 });
 
-//LIVE AUSWERTUNG  VERALTET EIGENTLICH
+//LIVE AUSWERTUNG  VERALTET EIGENTLICH evtl nochmal nützlich bei anderen BLE Modulen?
 function newRow(inString) {     //Funktion die je 1 Reihe Daten auwertet
   completeInput = completeInput.concat(inString);
   if(stopBool==true) {    //Wenn Stop aktiviert, dann return from function
@@ -349,7 +349,7 @@ export var options = {
   responsive: false,
   scales: {
     yAxis: {
-      max:500,
+      max:500,  //500 für Live BLE
       min:0
     },
     xAxis: {
@@ -403,44 +403,16 @@ export function AppDrei() {
 
 
 
-
-
-
-
-
-
-
-//CHARTS vielleicht später nochmal
-//root.render(<Graph />); 
-function updateData(values) {
-  var datapoint = 0;
-  for (var k=0; k<values.length; k++) {
-    datapoint += Number(values[k]);
-  }
-  if (data.length >=100) {
-    data.splice(0,1);
-  }
-  data.push(datapoint);
-  /*ApexCharts.exec("realtime", 'updateSeries', [{
-    data: data
-  }], true);*/
-  //console.log(data[0]);
-}
-
-
-
-
-
 //AUSWERTUNG VON FERTIGEN DATEIEN
 
 var completeFile = [];
-var slider = document.getElementById("slider");
-var output = document.getElementById("slideOutput");
-var malTime = 1.0;
-output.innerHTML = slider.value + "%";
+var slider = document.getElementById("slider");     //Geschwindigkeitsrange
+var output = document.getElementById("slideOutput");  //Anzeige v %
+var malTime = 1.0;  //default x1
+output.innerHTML = slider.value + "%";  //GEschwindigkeitsmultiplier anzeige
 slider.oninput = function() {
-  malTime = this.value/100;
-  output.innerHTML = this.value + "%";
+  malTime = this.value/100;       //Wenn slider verändert wird, wird faktor geändert
+  output.innerHTML = this.value + "%"; //Anzeige von Wert
 }
 
 document.getElementById('csvFiles').addEventListener('change', function csvInput() { //Wenn File eingefügt läuft das hier
@@ -507,24 +479,24 @@ function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in
   }
   //console.log("DONE");
   //console.log(completeFile);
-  if (/*document.getElementById("graphi").checked*/graphIsOn) {
+  if (/*document.getElementById("graphi").checked*/graphIsOn) { //Wenn Graph Box häkchen
     //graphIsOn = true;
-    document.getElementById("chartOn").style.display = "inline";
-    graphIt(completeFile);
+    document.getElementById("chartOn").style.display = "inline";  //Graphen visible
+    graphIt(completeFile);                                        //Berechnung für Graphen durchführen
   }
   else {
-    document.getElementById("chartOn").style.display = "none";
+    document.getElementById("chartOn").style.display = "none";  //sonst Graphen nicht anzeigen
   }
-  document.getElementById('title').innerHTML = "Schuhsohle";
-  savedCom = Array.from(completeFile);
-  laenge = savedCom.length;
-  progressbar.style.display = "inline";
+  document.getElementById('title').innerHTML = "Schuhsohle";    //Fertig geladen
+  savedCom = Array.from(completeFile);                        //Backup des Array für die Rücksprünge
+  laenge = savedCom.length;                                 //Länge des Arrays
+  progressbar.style.display = "inline";   //Anzeigen der Progressbar
   displayIt();  //Alles verarbeitet und in 1 riesen Array, jetzt Anzeigen lassen
   
 }
 
-document.getElementById("graphi").addEventListener("change", function (){
-  graphIsOn?graphIsOn=false:graphIsOn=true;
+document.getElementById("graphi").addEventListener("change", function (){       //Wenn Graph checkbox geclickt
+  graphIsOn?graphIsOn=false:graphIsOn=true;   
   options = {
     legend:  {
       display: false
@@ -545,7 +517,7 @@ document.getElementById("graphi").addEventListener("change", function (){
 
 
 
-var einsKopie = [];
+var einsKopie = []; //Backups für Rücksprünge
 var zweiKopie = [];
 var dreiKopie = [];
 var max = 0;
@@ -559,19 +531,19 @@ function graphIt(allData) {
     zwischensumme = 0;
     
     for (var v=1; v<37; v++) {
-      zwischensumme += Number(allData[u+v]);
+      zwischensumme += Number(allData[u+v]);          //die ersten 36 Werte zusammengerechnet
     }
-    summenarray.push(Math.round(zwischensumme/36));
+    summenarray.push(Math.round(zwischensumme/36));   //Summe in komplettes Array pushen
     zwischensumme = 0;
     for (var v=37; v<73; v++) {
-      zwischensumme += Number(allData[u+v]);
+      zwischensumme += Number(allData[u+v]);        //die zweiten 36 Werte
     }
-    summenarrayZwei.push(Math.round(zwischensumme/36));
+    summenarrayZwei.push(Math.round(zwischensumme/36)); //Summe in anderes Array pushen
     zwischensumme = 0;
     for (var v=73; v<109; v++) {
-      zwischensumme += Number(allData[u+v]);
+      zwischensumme += Number(allData[u+v]);        //gleiches für letzten 36 Werte
     }
-    summenarrayDrei.push(Math.round(zwischensumme/36));
+    summenarrayDrei.push(Math.round(zwischensumme/36));       //Man hat grob ungefähr Ferse, Mittelfuß und Ballen
     /*if (summenarray.length != 0) {
       if (zwischensumme < 1.5 * summenarray[summenarray.length - 1]) {
         summenarray.push(zwischensumme);
@@ -583,7 +555,7 @@ function graphIt(allData) {
       summenarray.push(zwischensumme);
       zeitarray.push(allData[u]);
     }*/
-    if(summenarray[summenarray.length-1]>max) {
+    if(summenarray[summenarray.length-1]>max) {     //Maximaler Wert von allen drei Arrays ermittelt
       max = summenarray[summenarray.length-1];
     }
     if(summenarrayZwei[summenarray.length-1]>max) {
@@ -592,7 +564,7 @@ function graphIt(allData) {
     if(summenarrayDrei[summenarray.length-1]>max) {
       max = summenarrayDrei[summenarray.length-1];
     }
-    zeitarray.push(allData[u]);
+    zeitarray.push(allData[u]);                   //zeitarray mit allen ZeitDaten, bis jetzt noch keine Verwendung
     
   }
   //console.log(max);
@@ -607,7 +579,7 @@ function graphIt(allData) {
     responsive: false,
     scales: {
       yAxis: {
-        max: max,
+        max: max,   //Y-Achse Max Wert wird zu max. Wert aus den Summenarrays
         min:0
       },
       xAxis: {
@@ -625,7 +597,7 @@ function graphIt(allData) {
       },
     },*/
   };
-  einsKopie = Array.from(summenarray);
+  einsKopie = Array.from(summenarray);        //Für Rücksprünge
   zweiKopie = Array.from(summenarrayZwei);
   dreiKopie = Array.from(summenarrayDrei);
 }
@@ -659,15 +631,15 @@ function displayIt() {
   else {    //sonst -> wenn neue Min angebrochen
     timeout = timenow + (60000-prevTime);  //tiomeout ist nächste Zeit + was zur Min vorher gefehlt hat
   }
-  if (graphIsOn) {
-    data.splice(0, 1);
-    data = data.concat(summenarray.splice(0,1));
-    dataZwei.splice(0,1);
+  if (graphIsOn) {      //Wenn auch Graphen
+    data.splice(0, 1);      //Anfangs 100 0 Einträge, 0. Eintrag wird gelöscht
+    data = data.concat(summenarray.splice(0,1));      //Hinten einer drangehangen-- concat statt push damit man noch ändern kann, wie viele immer auf einmal
+    dataZwei.splice(0,1);   //gleiches für andere 2 Graphen
     dataZwei = dataZwei.concat(summenarrayZwei.splice(0,1));
     dataDrei.splice(0,1);
     dataDrei = dataDrei.concat(summenarrayDrei.splice(0,1));
       //counToTen = 0;
-      datak = {
+      datak = {     //Data wird geupdated
         labels,
         datasets: [
           {
@@ -704,19 +676,11 @@ function displayIt() {
           },
         ],
       };*/
-      /*App.datak.datasets.forEach((dataset) => {
-        dataset.data.push(data);
-      })
-      App.update('none');*/
-      /*ApexCharts.exec("realtime", 'updateSeries', [{
-        data: data
-      }], true);*/
-    //} 
   }
   //root.render(<Secondgrid />);
   counToTen++;
-  if (counToTen >=10) {
-    progressbar.value=Math.round((1-completeFile.length/laenge)*100);
+  if (counToTen >=10) { //Alle 10 Anzeigen wird die progressbar geupdated -> ca 3 mal pro Sekunde
+    progressbar.value=Math.round((1-completeFile.length/laenge)*100); //Verhältnis von wie viel übrig ist/ wie viel am Anfang
     counToTen = 0;
   }
 
@@ -724,17 +688,17 @@ function displayIt() {
   displayAfter();   //für nächsten Datensatz & timeout
 }
 
-progressbar.onchange = function() {
-  clearTimeout(timerouts);
-  completeFile = Array.from(savedCom);
+progressbar.onchange = function() {   //Wenn User Progressbar irgendwo hinsetzt
+  clearTimeout(timerouts);            //Stoppen der Anzeige
+  completeFile = Array.from(savedCom);  //Backups werden geladen
   summenarray = Array.from(einsKopie);
   summenarrayZwei = Array.from(zweiKopie);
   summenarrayDrei = Array.from(dreiKopie);
-  summenarray.splice(0, Math.round(summenarray.length*(progressbar.value/100)));
+  summenarray.splice(0, Math.round(summenarray.length*(progressbar.value/100)));  //Backups gekürzt, bis da wo User will
   summenarrayZwei.splice(0, Math.round(summenarray.length*(progressbar.value/100)));
   summenarrayDrei.splice(0, Math.round(summenarray.length*(progressbar.value/100)));
   var spliceBy = Math.round(completeFile.length*(progressbar.value/100));
-  while(spliceBy%109 != 0) {
+  while(spliceBy%109 != 0) {  //Hier muss durch 109 teilbar sein, da complete File immer DatenSätze von 109 sind
     spliceBy++;
   }
 
@@ -742,7 +706,7 @@ progressbar.onchange = function() {
   prevTime = 0;
   timenow = 0;
   timeout = 100;
-  displayAfter();
+  displayAfter(); //zurückkehren zur Anzeige ab neuem Startpunkt
 }
 
 
@@ -757,23 +721,23 @@ var byteToMod = 6;
 var record = false;
 var saveThis = [];
 
-document.getElementById("aufnahme").addEventListener('click', function() {
+document.getElementById("aufnahme").addEventListener('click', function() {  //Wenn aufnahmebeginn gedrückt
   if (record) {
-    record = false;
-    document.getElementById("aufnahme").innerHTML="Aufnahmebeginn"
-    let csvInhalt = "data:text/csv;charset=utf-8," + saveThis.join(",");
-    var encodedUri = encodeURI(csvInhalt);
-    var link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "recordedData.csv");
-    document.body.appendChild(link);
-    link.click();
+    record = false; //wenn vorher true jetzt false
+    document.getElementById("aufnahme").innerHTML="Aufnahmebeginn"  //Buttonanzeige verändern
+    let csvInhalt = "data:text/csv;charset=utf-8," + saveThis.join(",");  //gespeichertes Array als String, zwischen Einträgen Kommas
+    var encodedUri = encodeURI(csvInhalt);  //String -> Uniform Resource Identifier URI
+    var link = document.createElement("a"); //unsichtbarer link erstellt
+    link.setAttribute("href", encodedUri);  //bekommt Datei zugewiesen
+    link.setAttribute("download", "recordedData.csv");  //Name wenn gedownloaded
+    document.body.appendChild(link);  //an doc angehangen
+    link.click();     //Link clicken lassen -> wird gedownloaded
     //window.open(encodedUri);
 
   }
   else {
-    record = true;
-    document.getElementById("aufnahme").innerHTML="Aufnahme Ende"
+    record = true;  //Wenn vorher false, jetzt recorded
+    document.getElementById("aufnahme").innerHTML="Aufnahme Ende" //Text im Button ändern
   }
 })
 //BLE DATA
@@ -983,11 +947,11 @@ var intArray;
 var fullArray = [];
 
 document.getElementById("disc").addEventListener('click', function disconnectIt() {
-    bluetoothDevice.gatt.disconnect();
+    bluetoothDevice.gatt.disconnect();  //Disconnect BLE Device
 });
 
 function onDisconnected(event) {
-  alert("Disconnected");
+  alert("Disconnected");  //Anzeige falls disconnected, gewollt oder accidental
 }
 
 // PROCESS RECORDED DATA
@@ -1003,10 +967,10 @@ document.getElementById('rawData').addEventListener('change', function lala() {
   asString = "data:text/csv;charset=utf-8,";
   let read = new FileReader();
   read.readAsText(document.getElementById('rawData').files[0]);
-  read.onload = function (event) {
-    rawcsv = event.target.result.split(',');
+  read.onload = function (event) {          //Datei wurde als String gespeichert
+    rawcsv = event.target.result.split(',');  //getrennt durch Komma, zwischen Komma je Eintrag in Array
     for (var y = 0; y<rawcsv.length; y++) {
-      if (rawcsv[y] == 36 && (rawcsv[y+1] >= 48 && rawcsv[y+1] <= 57)) {
+      if (rawcsv[y] == 36 && (rawcsv[y+1] >= 48 && rawcsv[y+1] <= 57)) {  //Wie bei BLE Live Daten die Abspeicherung
         isText = true;
         stringInMiddle = '';
       }
