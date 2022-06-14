@@ -41,10 +41,9 @@ var zwischensumme = 0;
 var summenarray = [];
 var zeitarray = [];
 var summenarrayZwei = [];
-var zeitarrayZwei = [];
 var summenarrayDrei = [];
-var zeitarrayDrei = [];
-var graphIsOn = false;
+var graphIsOn = true;
+var progressbar = document.getElementById("progress");
 
 
 //        HIER ERSTELLUNG DES FARBARRAYS - 1024 Stufen Weiß->Blau->Pink->Grün->Rot
@@ -345,14 +344,17 @@ ChartJS.register(
 export var options = {
   legend:  {
     display: false
-  },
+    },
   animation: false,
   responsive: false,
   scales: {
     yAxis: {
-      max:1000,
+      max:500,
       min:0
     },
+    xAxis: {
+      display: false
+    }
   },
 };
 const labels = data;
@@ -453,6 +455,8 @@ document.getElementById('csvFiles').addEventListener('change', function csvInput
 });
 var wertVorher = 0;
 var wertNachher = 0;
+var savedCom = [];
+var laenge = 0;
 function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in Blöcke getrennt durch MS: Zeilen
   let csvAlsArray = inputFile.slice(inputFile.indexOf("MS:")).split("MS:");
   //console.log(csvAlsArray);
@@ -503,8 +507,8 @@ function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in
   }
   //console.log("DONE");
   //console.log(completeFile);
-  if (document.getElementById("graphi").checked) {
-    graphIsOn = true;
+  if (/*document.getElementById("graphi").checked*/graphIsOn) {
+    //graphIsOn = true;
     document.getElementById("chartOn").style.display = "inline";
     graphIt(completeFile);
   }
@@ -512,12 +516,45 @@ function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in
     document.getElementById("chartOn").style.display = "none";
   }
   document.getElementById('title').innerHTML = "Schuhsohle";
+  savedCom = Array.from(completeFile);
+  laenge = savedCom.length;
+  progressbar.style.display = "inline";
   displayIt();  //Alles verarbeitet und in 1 riesen Array, jetzt Anzeigen lassen
   
 }
+
+document.getElementById("graphi").addEventListener("change", function (){
+  graphIsOn?graphIsOn=false:graphIsOn=true;
+  options = {
+    legend:  {
+      display: false
+      },
+    animation: false,
+    responsive: false,
+    scales: {
+      yAxis: {
+        max:500,
+        min:0
+      },
+      xAxis: {
+        display: false
+      }
+    },
+  };
+});
+
+
+
+var einsKopie = [];
+var zweiKopie = [];
+var dreiKopie = [];
 var max = 0;
 function graphIt(allData) {
-  console.log(allData);
+  summenarray = [];
+  summenarrayZwei = [];
+  summenarrayDrei = [];
+  zeitarray = [];
+  //console.log(allData);
   for(var u=0; u<allData.length; u = u+109) {
     zwischensumme = 0;
     
@@ -558,10 +595,10 @@ function graphIt(allData) {
     zeitarray.push(allData[u]);
     
   }
-  console.log(max);
-  console.log(summenarray);
-  console.log(summenarrayZwei);
-  console.log(summenarrayDrei);
+  //console.log(max);
+  //console.log(summenarray);
+  //console.log(summenarrayZwei);
+  //console.log(summenarrayDrei);
   options = {
     legend:  {
       display: false
@@ -573,6 +610,12 @@ function graphIt(allData) {
         max: max,
         min:0
       },
+      xAxis: {
+        display: false,
+        //ticks: {
+          //display: false
+        //}
+      }
     },
   
   
@@ -582,32 +625,21 @@ function graphIt(allData) {
       },
     },*/
   };
-  /*setInterval(function() {
-    data.splice(0,10);
-    data = data.concat(summenarray.splice(0,10));
-    ApexCharts.exec("realtime", 'updateSeries', [{
-      data: data
-    }], true);
-    root.render(<Grid />);
-  }, 300);*/
-  /*data = summenarray;
-  //console.log(data);        ZU LANG KÜRZEN UND FALSCHER AUSSORTIEREN
-  data.pop();
-  ApexCharts.exec("realtime", 'updateSeries', [{
-    data: data
-  }], true);
-  root.render(<Grid />);*/
+  einsKopie = Array.from(summenarray);
+  zweiKopie = Array.from(summenarrayZwei);
+  dreiKopie = Array.from(summenarrayDrei);
 }
 
 var prevTime = 0; //Vars für Zeitberechnung
 var timenow = 0;
 var timeout = 1000;
 var counToTen = 0;
+var timerouts;
 
 
 function displayAfter() { //Aufgerufen in displayIt & wenn Stop aufgehoben
 if (stopBool == false) {    //Wenn nicht Stop, nach berechneter Zeit nochmal displayIt()
-  setTimeout(displayIt, timeout/malTime);
+  timerouts = setTimeout(displayIt, timeout/malTime);
 }
 
 }
@@ -682,11 +714,36 @@ function displayIt() {
     //} 
   }
   //root.render(<Secondgrid />);
+  counToTen++;
+  if (counToTen >=10) {
+    progressbar.value=Math.round((1-completeFile.length/laenge)*100);
+    counToTen = 0;
+  }
+
   root.render(<Grid />);  //Anzeigen
   displayAfter();   //für nächsten Datensatz & timeout
 }
 
+progressbar.onchange = function() {
+  clearTimeout(timerouts);
+  completeFile = Array.from(savedCom);
+  summenarray = Array.from(einsKopie);
+  summenarrayZwei = Array.from(zweiKopie);
+  summenarrayDrei = Array.from(dreiKopie);
+  summenarray.splice(0, Math.round(summenarray.length*(progressbar.value/100)));
+  summenarrayZwei.splice(0, Math.round(summenarray.length*(progressbar.value/100)));
+  summenarrayDrei.splice(0, Math.round(summenarray.length*(progressbar.value/100)));
+  var spliceBy = Math.round(completeFile.length*(progressbar.value/100));
+  while(spliceBy%109 != 0) {
+    spliceBy++;
+  }
 
+  completeFile.splice(0, spliceBy);
+  prevTime = 0;
+  timenow = 0;
+  timeout = 100;
+  displayAfter();
+}
 
 
 var useArray = [];
@@ -730,9 +787,9 @@ function newBLEData(event) {   //aufgerufen wenn neue BLE Daten
   }
 
   if (pushValues) {   //Falls H:X$ dann jetzt Daten, suche nach $X
-    for (var p = 0; p<20; p++) {  //Über 20 Einträge je
+    for (var p = 0; p<useArray.length; p++) {  //Über 20 Einträge je
       if (useArray[p] == 36) {  //falls $ Zeichen gefunden
-        if (p<19) {             //falls nach $ noch was im array
+        if (p<useArray.length-1) {             //falls nach $ noch was im array
           if (useArray[p+1] >= 48 && useArray[p+1] <= 57) {
             pushValues = false;   //ist nach $  ASCII 0-9?
             bisHier(useArray, p); //Wenn ja dann nur bis hier hin Values beachten
@@ -746,7 +803,7 @@ function newBLEData(event) {   //aufgerufen wenn neue BLE Daten
 
 
   if (pushValues == false) {    //Suche nach H:X$
-    for (var o = 0; o<20; o++) {
+    for (var o = 0; o<useArray.length; o++) {
       if (useArray[o] == 36) {  //Wenn $ gefunden 
         if (o > 0) {  
           if (useArray[o-1] >= 48 && useArray[o-1] <= 57) { //War vorher ASCII 0-9?
@@ -757,7 +814,7 @@ function newBLEData(event) {   //aufgerufen wenn neue BLE Daten
             break;
           }
         }
-        else if (prevArray[20] >= 48 && prevArray[20] <= 57) {  //Gleiches nur wird vorheriges Element durch prev gecheckt
+        else if (prevArray[prevArray.length-1] >= 48 && prevArray[prevArray.length-1] <= 57) {  //Gleiches nur wird vorheriges Element durch prev gecheckt
           stateArray = [];
           abHier(useArray, o);
           pushValues = true;
@@ -768,14 +825,14 @@ function newBLEData(event) {   //aufgerufen wenn neue BLE Daten
     }
   }   
   if (changed == false) { //Falls Einträge rein Data waren
-    for (var q = 0; q<20; q++) {
+    for (var q = 0; q<useArray.length; q++) {
       byteArray.push(useArray[q]);  //byteArray wird aufgefüllt
   }
 }
 }
 
 function abHier(datArray, von) {  //byteArray wird aufgefüllt ab $+1
-  for (var l = von+1; l<20; l++) {
+  for (var l = von+1; l<datArray.length; l++) {
     byteArray.push(datArray[l]);
   }
 }
@@ -786,6 +843,7 @@ function bisHier(datArray, bis) { //byte Array wird gefüllt bis $, danach Funkt
   eightToTen(byteArray);
 }
 var workArray = [];
+var sumOf = 0;
 function eightToTen(workArrayy) {  //Hier von 8 zu 10Bit
   workArray = Array.from(workArrayy);
   byteArray = [];
@@ -852,6 +910,22 @@ function eightToTen(workArrayy) {  //Hier von 8 zu 10Bit
         }
       }
     }
+  }
+  if (graphIsOn) {
+    sumOf = 0;
+    for(var d=72; d<108; d++) {
+      sumOf += stateArray[d];
+    }
+    data.splice(0,1);
+    data.push(Math.round(sumOf/36));
+    datak = {
+      labels,
+      datasets: [
+        {
+          data: data,
+        }
+      ],
+    };
   }
     root.render(<Grid />);
 
@@ -925,7 +999,7 @@ var toSix = 0;
 var inRows = [];
 var asString = '';
 
-document.getElementById('rawData').addEventListener('change', function () {
+document.getElementById('rawData').addEventListener('change', function lala() {
   asString = "data:text/csv;charset=utf-8,";
   let read = new FileReader();
   read.readAsText(document.getElementById('rawData').files[0]);
@@ -970,7 +1044,7 @@ document.getElementById('rawData').addEventListener('change', function () {
     for (var i=0; i<cleanedCSV.length; i++) {
       asString = asString + cleanedCSV[i];
     }
-    console.log(asString);
+    //console.log(asString);
     let csvInhaltclean = "data:text/csv;charset=utf-8," + cleanedCSV.join(',');
     var encodedUriclean = encodeURI(asString);
     var linkclean = document.createElement("a");
@@ -980,6 +1054,7 @@ document.getElementById('rawData').addEventListener('change', function () {
     linkclean.click();
   }
 });
+
 
 function rowCorrect() {
   var eight = cleanedCSV.pop();

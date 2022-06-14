@@ -67,7 +67,7 @@ p {
   border: 1px dotted green;
 }
 #chartOn {
-  display: none;
+  display: inline;
 }
 #help {
   background-color: lightcoral;
@@ -123,4 +123,8 @@ input[type="checkbox"] {
 #grap {
   border: 0px;
   background-color: white;
+}
+#progress {
+  width: 400px;
+  display: none;
 }
