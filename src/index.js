@@ -342,18 +342,36 @@ ChartJS.register(
 );
 
 export var options = {
+  borderColor: 'rgba(0,0,0)',
+  backgroundColor: 'rgba(255,255,255)',
+  elements: {
+    point:{
+        radius: 0
+    }
+  },
   legend:  {
     display: false
     },
   animation: false,
-  responsive: false,
+  responsive: true,
   scales: {
+    borderColor: 'rgba(0,0,0)',
     yAxis: {
       max:500,  //500 für Live BLE
-      min:0
+      min:0,
+      grid: {
+        borderColor: 'rgba(0,0,0)'
+      }
     },
     xAxis: {
-      display: false
+      ticks: {
+        display: false
+      },
+      //display: false,
+      grid: {
+        display:false,
+        borderColor: 'rgba(0,0,0)'
+      }
     }
   },
 };
@@ -498,18 +516,36 @@ function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in
 document.getElementById("graphi").addEventListener("change", function (){       //Wenn Graph checkbox geclickt
   graphIsOn?graphIsOn=false:graphIsOn=true;   
   options = {
+    borderColor: 'rgba(0,0,0)',
+    backgroundColor: 'rgba(255,255,255)',
+    elements: {
+      point:{
+          radius: 0
+      }
+    },
     legend:  {
       display: false
       },
     animation: false,
-    responsive: false,
+    responsive: true,
     scales: {
+      borderColor: 'rgba(0,0,0)',
       yAxis: {
         max:500,
-        min:0
+        min:0,
+        grid: {
+          borderColor: 'rgba(0,0,0)'
+        }
       },
       xAxis: {
-        display: false
+        ticks: {
+          display: false
+        },
+        //display: false,
+        grid: {
+          display:false,
+          borderColor: 'rgba(0,0,0)'
+        }
       }
     },
   };
@@ -572,18 +608,35 @@ function graphIt(allData) {
   //console.log(summenarrayZwei);
   //console.log(summenarrayDrei);
   options = {
+    borderColor: 'rgba(0,0,0)',
+    elements: {
+      point:{
+          radius: 0
+      }
+    },
     legend:  {
       display: false
     },
     animation: false,
-    responsive: false,
+    responsive: true,
     scales: {
+      
       yAxis: {
         max: max,   //Y-Achse Max Wert wird zu max. Wert aus den Summenarrays
-        min:0
+        min:0,
+        grid: {
+          borderColor: 'rgba(0,0,0)'
+        }
       },
       xAxis: {
-        display: false,
+        ticks: {
+          display: false
+        },
+        //display: false,
+        grid: {
+          display:false,
+          borderColor: 'rgba(0,0,0)'
+        }
         //ticks: {
           //display: false
         //}
@@ -600,6 +653,7 @@ function graphIt(allData) {
   einsKopie = Array.from(summenarray);        //Für Rücksprünge
   zweiKopie = Array.from(summenarrayZwei);
   dreiKopie = Array.from(summenarrayDrei);
+  console.log(zeitarray);
 }
 
 var prevTime = 0; //Vars für Zeitberechnung
@@ -877,7 +931,7 @@ function eightToTen(workArrayy) {  //Hier von 8 zu 10Bit
   }
   if (graphIsOn) {
     sumOf = 0;
-    for(var d=72; d<108; d++) {
+    for(/*var d=72; d<108; d++*/var d=0; d<36; d++) { //Ferse oder Vorderfuß?
       sumOf += stateArray[d];
     }
     data.splice(0,1);
@@ -894,10 +948,6 @@ function eightToTen(workArrayy) {  //Hier von 8 zu 10Bit
     root.render(<Grid />);
 
 }
-
-var testArray = [1, 2, 3, 4, 5, 6, 0, 255, 9, 10, 11, 12, 13, 14, 0, 255];
-
-
 
 //BLE VERBINDUNG /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 

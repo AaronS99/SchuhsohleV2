@@ -17,12 +17,13 @@ code {
 }
 
 .square {
-  font-size: 24px;
-  font-weight: bold;
-  text-align: center;
+  /*font-size: 24px;*/
+  /*font-weight: bold;*/
+  /*text-align: center;*/
   flex-basis: 16.66666666%;
   width: 40px;
   height: 40px;
+
 }
 .gridall {
   float: left;
@@ -30,7 +31,7 @@ code {
   flex-direction: row;
   width: 240px;
   height: 720px;
-  height:auto;
+  /*height:auto;*/
   flex-wrap: wrap;
   border: 1px solid red;
 }
@@ -47,20 +48,22 @@ div {
 
 h1 {
   text-align: center;
-  font-size: 32px;
+  font-size: 300%;
 }
 .Block {
   display: block;
   border: 0px solid;
 }
 p {
-  margin: 3px;
+  margin: 2px;
 }
 #ausklapp {
   display: none;
 }
 #chartOn {
   display: inline;
+  width:50%;
+  border: 1px solid;
 }
 #help {
   background-color: lightcoral;
@@ -73,7 +76,7 @@ label {
   border: 1px solid;
 }
 Button {
-  font-size: larger;
+  font-size: 100%;
   border: 2px solid;
   font-weight: bold;
   cursor: pointer;
@@ -92,23 +95,22 @@ input[type="file"] {
   opacity: 0;
   top: 10px;
   left: 8px;
-  font-size: 17px;
+  /*font-size: 17px;*/
   color: #b8b8b8;
 }
 .button {
-  width: 99%;
+  width: 98%;
   height: 50px;
   margin-left:0;
   display: inline-block;
   cursor: copy;
   border: 3px solid;
   background-color: lightblue;
-  font-size: larger;
+  font-size:100%;
   font-weight: bold;
   color: black;
   text-align: center;
   line-height: 50px;
-  
 }
 .button:hover {
   background-color: aliceblue;
@@ -123,53 +125,50 @@ input[type="range"] {
   cursor: zoom-in;
   border-radius: 0px;
   width:4%;
-  height:3%;
+  height:4%;
   aspect-ratio: 1;
-  margin-right: -2px;
-  font-size: larger;
+  font-size: 100%;
 }
 #kleiner {
   cursor: zoom-out;
   border-radius: 0px;
   width: 4%;
-  margin-left: -2px;
-  height: 3%;
+  height: 4%;
   aspect-ratio: 1;
-  font-size: larger;
+  font-size: 100%;
 }
 input[type="checkbox"] {
-  height: 30px;
-  width: 30px;
+  height: 50%;
+  width: 50%;
 }
 #grap {
   background-color: lightgray;
   text-align: center;
-  font-size: larger;
+  font-size: 125%;
   border: 0px;
 }
 #graphi {
   border: 0px;
 }
 #progress {
-  width: 400px;
+  width: 40%;
   display: none;
 }
 #anzeige {
-  width: 45%;
-  background-color: white;
+  width: 54%;
+  background-color:rgb(224, 221, 221);
   border:1px solid;
 }
 #controls {
-  height: 500px;
-  width: 24.77%;
+  /*height: 500px;*/
+  width: 15%;
   background-color: lightgrey;
   border: 1px solid;
   border-right: 0px;
-  border-bottom: 0px;
 }
 #ki {
   width: 30%;
-  height: 300px;
+  /*height: 300px;*/
   border: 1px solid;
   border-left: 0px;
 }
@@ -182,7 +181,7 @@ input[type="checkbox"] {
   justify-content: center;
   border:1px solid;
   width: 100%;
-  height: 70px;
+  height: 65px;
 }
 #slideOutput {
   margin:auto;
@@ -195,7 +194,7 @@ input[type="checkbox"] {
 }
 .mittig {
   text-align: center;
-  font-size: larger;
+  font-size: 100%;
 }
 .boxenZ {
   border:1px solid;
