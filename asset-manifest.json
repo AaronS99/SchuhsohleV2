@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/SchuhsohleV2/static/css/main.569cfdff.css",
-    "main.js": "/SchuhsohleV2/static/js/main.265c472d.js",
+    "main.js": "/SchuhsohleV2/static/js/main.1dc15070.js",
     "static/js/787.b701888c.chunk.js": "/SchuhsohleV2/static/js/787.b701888c.chunk.js",
     "index.html": "/SchuhsohleV2/index.html",
     "main.569cfdff.css.map": "/SchuhsohleV2/static/css/main.569cfdff.css.map",
-    "main.265c472d.js.map": "/SchuhsohleV2/static/js/main.265c472d.js.map",
+    "main.1dc15070.js.map": "/SchuhsohleV2/static/js/main.1dc15070.js.map",
     "787.b701888c.chunk.js.map": "/SchuhsohleV2/static/js/787.b701888c.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.569cfdff.css",
-    "static/js/main.265c472d.js"
+    "static/js/main.1dc15070.js"
   ]
 }
