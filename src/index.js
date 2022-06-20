@@ -35,7 +35,7 @@ var oldData = false;
 var widthArray = ["120px", "180px", "240px", "300px", "360px", "420px", "480px"];
 var heightArray = ["360px", "540px", "720px", "900px", "1080px", "1260px", "1440px"];
 var squareSizeArray = ["20px", "30px", "40px", "50px", "60px", "70px", "80px"]
-var sizePos = 2;
+var sizePos = 1;
 var login = false;
 var zwischensumme = 0;
 var summenarray = [];
@@ -353,7 +353,7 @@ export var options = {
     display: false
     },
   animation: false,
-  responsive: true,
+  responsive: false,
   scales: {
     borderColor: 'rgba(0,0,0)',
     yAxis: {
@@ -527,7 +527,7 @@ document.getElementById("graphi").addEventListener("change", function (){       
       display: false
       },
     animation: false,
-    responsive: true,
+    responsive: false,
     scales: {
       borderColor: 'rgba(0,0,0)',
       yAxis: {
@@ -618,7 +618,7 @@ function graphIt(allData) {
       display: false
     },
     animation: false,
-    responsive: true,
+    responsive: false,
     scales: {
       
       yAxis: {
