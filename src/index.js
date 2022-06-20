@@ -355,7 +355,7 @@ export var options = {
   animation: false,
   responsive: false,
   scales: {
-    borderColor: 'rgba(0,0,0)',
+    //borderColor: 'rgba(0,0,0)',
     yAxis: {
       max:500,  //500 für Live BLE
       min:0,
@@ -370,7 +370,7 @@ export var options = {
       //display: false,
       grid: {
         display:false,
-        borderColor: 'rgba(0,0,0)'
+        //borderColor: 'rgba(0,0,0)'
       }
     }
   },
@@ -529,7 +529,7 @@ document.getElementById("graphi").addEventListener("change", function (){       
     animation: false,
     responsive: false,
     scales: {
-      borderColor: 'rgba(0,0,0)',
+      //borderColor: 'rgba(0,0,0)',
       yAxis: {
         max:500,
         min:0,
@@ -544,7 +544,7 @@ document.getElementById("graphi").addEventListener("change", function (){       
         //display: false,
         grid: {
           display:false,
-          borderColor: 'rgba(0,0,0)'
+          //borderColor: 'rgba(0,0,0)'
         }
       }
     },
@@ -604,7 +604,7 @@ function graphIt(allData) {
     
   }
   //console.log(max);
-  //console.log(summenarray);
+  console.log(summenarray);
   //console.log(summenarrayZwei);
   //console.log(summenarrayDrei);
   options = {
@@ -635,7 +635,7 @@ function graphIt(allData) {
         //display: false,
         grid: {
           display:false,
-          borderColor: 'rgba(0,0,0)'
+          //borderColor: 'rgba(0,0,0)'
         }
         //ticks: {
           //display: false
@@ -935,7 +935,26 @@ function eightToTen(workArrayy) {  //Hier von 8 zu 10Bit
       sumOf += stateArray[d];
     }
     data.splice(0,1);
-    data.push(Math.round(sumOf/36));
+    if (isNaN(sumOf)) {
+      data.push(data[data.length -1]);
+    }
+    else {
+      data.push(Math.round(sumOf/36));
+    }
+    for(var d=72; d<108; d++) { //Ferse oder Vorderfuß?
+      sumOf += stateArray[d];
+    }
+    dataDrei.splice(0,1);
+    if (isNaN(sumOf)) {
+      dataDrei.push(data[data.length -1]);
+    }
+    else {
+      dataDrei.push(Math.round(sumOf/36));
+    }
+
+    
+
+
     datak = {
       labels,
       datasets: [
@@ -944,7 +963,19 @@ function eightToTen(workArrayy) {  //Hier von 8 zu 10Bit
         }
       ],
     };
-  }
+  
+  datakDrei = {
+    labels,
+    datasets: [
+      {
+        data: dataDrei,
+      }
+    ],
+  };
+}
+
+
+
     root.render(<Grid />);
 
 }
@@ -989,6 +1020,40 @@ document.getElementById("CONNECT").addEventListener('click', function letsGo() {
       byteToMod = 6;
       record = false;
       saveThis = [];
+      options = {
+        borderColor: 'rgba(0,0,0)',
+        backgroundColor: 'rgba(255,255,255)',
+        elements: {
+          point:{
+              radius: 0
+          }
+        },
+        legend:  {
+          display: false
+          },
+        animation: false,
+        responsive: false,
+        scales: {
+          //borderColor: 'rgba(0,0,0)',
+          yAxis: {
+            max:500,  //500 für Live BLE
+            min:0,
+            grid: {
+              borderColor: 'rgba(0,0,0)'
+            }
+          },
+          xAxis: {
+            ticks: {
+              display: false
+            },
+            //display: false,
+            grid: {
+              display:false,
+              //borderColor: 'rgba(0,0,0)'
+            }
+          }
+        },
+      };
         characteristic.addEventListener('characteristicvaluechanged', newBLEData);  //immer wenn neue Daten wird funktion ausgeführt
     })
     .catch(error => {console.error(error); })

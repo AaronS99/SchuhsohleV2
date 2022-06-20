@@ -161,7 +161,7 @@ input[type="checkbox"] {
   width: 50%;
 }
 #grap {
-  background-color: lightgray;
+  background-color: rgb(193, 250, 251);
   text-align: center;
   font-size: 110%;
   border: 0px;
@@ -175,13 +175,13 @@ input[type="checkbox"] {
 }
 #anzeige {
   width: 54%;
-  background-color:rgb(224, 221, 221);
+  background-color:rgb(220, 255, 252);
   border:1px solid;
 }
 #controls {
   /*height: 500px;*/
   width: 15%;
-  background-color: lightgrey;
+  background-color: rgb(193, 250, 251);
   border: 1px solid;
   border-right: 0px;
 }
