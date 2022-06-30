@@ -157,8 +157,8 @@ input[type="range"] {
   font-size: 100%;
 }
 input[type="checkbox"] {
-  height: 50%;
-  width: 50%;
+  height: 55%;
+  width: 55%;
 }
 #grap {
   background-color: rgb(193, 250, 251);
@@ -167,6 +167,16 @@ input[type="checkbox"] {
   border: 0px;
 }
 #graphi {
+  border: 0px;
+}
+#stepL {
+  background-color: rgb(193, 250, 251);
+  text-align: center;
+  font-size: 110%;
+  border: 0px;
+}
+#steps {
+
   border: 0px;
 }
 #progress {
@@ -190,6 +200,7 @@ input[type="checkbox"] {
   /*height: 300px;*/
   border: 1px solid;
   border-left: 0px;
+  background-color: aliceblue;
 }
 .mitte {
   margin: auto;
@@ -222,4 +233,30 @@ input[type="checkbox"] {
 }
 #hilf {
   width: 100%;
+}
+.strich {
+  border-bottom: 1px solid;
+}
+#StepAnzeige {
+  display: inline;
+  font-weight: bold;
+}
+.abgrenz {
+  display: inline;
+  font-weight: bold;
+}
+.abgrenzZwei {
+  display: inline;
+}
+#stepDownload {
+  display: none;
+}
+#FiltL {
+  background-color: rgb(193, 250, 251);
+  text-align: center;
+  font-size: 110%;
+  border: 0px;
+}
+#Filter {
+  border: 0px;
 }

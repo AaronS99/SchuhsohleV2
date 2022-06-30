@@ -44,15 +44,16 @@ var summenarrayZwei = [];
 var summenarrayDrei = [];
 var graphIsOn = true;
 var progressbar = document.getElementById("progress");
+var FilterOn = true;
 
 
-
+/*
 while (login == false) {    //einfache Passwortabfrage
   var passwort = prompt("Passwort")
   if (passwort == "dfki") {
     login = true;
   }
-}
+}*/
 
 //        HIER ERSTELLUNG DES FARBARRAYS - 1024 Stufen Weiß->Blau->Pink->Grün->Rot
 
@@ -443,6 +444,42 @@ document.getElementById('csvFiles').addEventListener('change', function csvInput
     csvVerarbeitung(event.target.result);
   };
 });
+
+let dropArea = document.getElementById('csvFilez');
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+  dropArea.addEventListener(eventName, preventDefaults, false)
+})
+dropArea.addEventListener("drop", runCSV, false);
+function preventDefaults (e) {
+  e.preventDefault();
+  e.stopPropagation();
+
+}
+function runCSV(e) {
+  let dt = e.dataTransfer;
+  let filers = dt.files;
+  document.getElementById('title').innerHTML = "Lädt";
+  oldData = true; //oldData bool für stop button
+  completeFile = [];  
+
+  let reader = new FileReader(); //FileReader von JS
+  reader.readAsText(filers[0]);
+  reader.onload = function (event) { //wird gelesen und wenn fertig, csvVerarbeitung aufgerufen mit gelesener Datei
+    csvVerarbeitung(event.target.result);
+  }
+}
+/*dropArea.addEventListener('drop', function csvInput() { //Wenn File eingefügt läuft das hier
+  document.getElementById('title').innerHTML = "Lädt";
+  oldData = true; //oldData bool für stop button
+  completeFile = [];  
+
+  let reader = new FileReader(); //FileReader von JS
+  reader.readAsText(document.getElementById('csvFiles').files[0]);
+  reader.onload = function (event) { //wird gelesen und wenn fertig, csvVerarbeitung aufgerufen mit gelesener Datei
+    csvVerarbeitung(event.target.result);
+  };
+});*/
+
 var wertVorher = 0;
 var wertNachher = 0;
 var savedCom = [];
@@ -513,8 +550,28 @@ function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in
   
 }
 
+document.getElementById("steps").addEventListener("change", function() {
+  if (step) {
+    step = false;
+
+  }
+  else {
+    step = true;
+    graphIsOn = true;
+    document.getElementById("graphi").checked = true;
+  }
+});
+
 document.getElementById("graphi").addEventListener("change", function (){       //Wenn Graph checkbox geclickt
-  graphIsOn?graphIsOn=false:graphIsOn=true;   
+  //graphIsOn?graphIsOn=false:graphIsOn=true;   
+  if (graphIsOn) {
+    graphIsOn = false;
+    step = false;
+    document.getElementById("steps").checked = false;
+  }
+  else {
+    graphIsOn = true;
+  }
   options = {
     borderColor: 'rgba(0,0,0)',
     backgroundColor: 'rgba(255,255,255)',
@@ -556,7 +613,17 @@ document.getElementById("graphi").addEventListener("change", function (){       
 var einsKopie = []; //Backups für Rücksprünge
 var zweiKopie = [];
 var dreiKopie = [];
+var stepKopie = [];
 var max = 0;
+var stepStartTime = 0;
+var stepEndTime = 0;
+var Ferse = false;
+var maxZeh = false;
+var stepTimes = [];
+var StepString = "";
+var indexArray = [];
+var stelleImArray = 0;
+var laengeOriginal = 0;
 function graphIt(allData) {
   summenarray = [];
   summenarrayZwei = [];
@@ -601,10 +668,15 @@ function graphIt(allData) {
       max = summenarrayDrei[summenarray.length-1];
     }
     zeitarray.push(allData[u]);                   //zeitarray mit allen ZeitDaten, bis jetzt noch keine Verwendung
-    
+
   }
   //console.log(max);
-  console.log(summenarray);
+  var kak=0;
+  for(var runnnn = 0; runnnn<summenarray.length; runnnn++) {
+    kak+=summenarray[runnnn];
+  }
+  console.log(kak/summenarray.length);
+  //console.log(summenarray);
   //console.log(summenarrayZwei);
   //console.log(summenarrayDrei);
   options = {
@@ -653,7 +725,53 @@ function graphIt(allData) {
   einsKopie = Array.from(summenarray);        //Für Rücksprünge
   zweiKopie = Array.from(summenarrayZwei);
   dreiKopie = Array.from(summenarrayDrei);
-  console.log(zeitarray);
+
+
+  //console.log(zeitarray);
+
+  if (step) {
+    stepTimes = [];
+    indexArray = [];
+    stepStartTime = 0;
+    stepEndTime = 0;
+    Ferse = false;
+    maxZeh = false;
+    StepString = "";
+    stelleImArray = 0;
+    laengeOriginal = 0;
+    saveWo = 0;
+    for(var runAll = 0; runAll < summenarray.length; runAll++) {
+      if(Ferse == false && summenarrayDrei[runAll] > 10) {
+        Ferse = true;
+        stepStartTime = Number(zeitarray[runAll]);
+      }
+      if (Ferse && maxZeh == false && summenarray[runAll] > 60) {
+        maxZeh = true;
+      }
+      if (maxZeh && summenarray[runAll] <40) {
+        Ferse = false;
+        maxZeh = false;
+        stepEndTime = Number(zeitarray[runAll]);
+        indexArray.push(runAll);
+        //stepTimes.push(stepEndTime);
+        if(stepEndTime>stepStartTime) {
+          stepTimes.push(stepEndTime-stepStartTime);
+          
+        }
+        else {
+          stepTimes.push(60000 - stepStartTime + stepEndTime);
+        }
+      }
+    }
+  }
+  stelleImArray = 0;
+  laengeOriginal = summenarray.length;
+  StepString = "";
+  indexArray.push(-1);
+  stepKopie = Array.from(stepTimes);
+  document.getElementById("stepDownload").style.display = "inline";
+  //console.log(stepTimes);
+
 }
 
 var prevTime = 0; //Vars für Zeitberechnung
@@ -661,7 +779,7 @@ var timenow = 0;
 var timeout = 1000;
 var counToTen = 0;
 var timerouts;
-
+var saveWo = 0;
 
 function displayAfter() { //Aufgerufen in displayIt & wenn Stop aufgehoben
 if (stopBool == false) {    //Wenn nicht Stop, nach berechneter Zeit nochmal displayIt()
@@ -692,6 +810,20 @@ function displayIt() {
     dataZwei = dataZwei.concat(summenarrayZwei.splice(0,1));
     dataDrei.splice(0,1);
     dataDrei = dataDrei.concat(summenarrayDrei.splice(0,1));
+    if (step) {
+      stelleImArray = laengeOriginal - summenarray.length;
+      //console.log(stelleImArray);
+      if (stelleImArray == indexArray[saveWo]) {
+        if(StepString.length >= 162) {
+          StepString = StepString.slice(0, StepString.lastIndexOf("&#8226"));
+        }
+        StepString = "<br>&#8226 " + stepTimes[saveWo] + "MS" + StepString;
+        document.getElementById("StepAnzeige").innerHTML = StepString;
+        saveWo++;
+        
+      }
+    }
+
       //counToTen = 0;
       datak = {     //Data wird geupdated
         labels,
@@ -737,10 +869,25 @@ function displayIt() {
     progressbar.value=Math.round((1-completeFile.length/laenge)*100); //Verhältnis von wie viel übrig ist/ wie viel am Anfang
     counToTen = 0;
   }
+  if (FilterOn) {
+    fakeGauss();
+  }
 
   root.render(<Grid />);  //Anzeigen
   displayAfter();   //für nächsten Datensatz & timeout
 }
+
+document.getElementById("stepDownload").addEventListener("click", function() {
+  var StepString = "data:text/csv;charset=utf-8," + stepKopie.join(",");
+  var encodedUriStep = encodeURI(StepString);
+  var linkStep = document.createElement("a");
+  linkStep.setAttribute("href", encodedUriStep);
+  linkStep.setAttribute("download", "StepData.csv");
+  //document.body.appendChild(linkStep);
+  linkStep.click();
+});
+
+
 
 progressbar.onchange = function() {   //Wenn User Progressbar irgendwo hinsetzt
   clearTimeout(timerouts);            //Stoppen der Anzeige
@@ -748,13 +895,29 @@ progressbar.onchange = function() {   //Wenn User Progressbar irgendwo hinsetzt
   summenarray = Array.from(einsKopie);
   summenarrayZwei = Array.from(zweiKopie);
   summenarrayDrei = Array.from(dreiKopie);
+  //stepTimes = Array.from(stepKopie);
   summenarray.splice(0, Math.round(summenarray.length*(progressbar.value/100)));  //Backups gekürzt, bis da wo User will
   summenarrayZwei.splice(0, Math.round(summenarray.length*(progressbar.value/100)));
   summenarrayDrei.splice(0, Math.round(summenarray.length*(progressbar.value/100)));
+  data = Array(100).fill(0);
+  dataZwei = Array(100).fill(0);
+  dataDrei = Array(100).fill(0);
   var spliceBy = Math.round(completeFile.length*(progressbar.value/100));
   while(spliceBy%109 != 0) {  //Hier muss durch 109 teilbar sein, da complete File immer DatenSätze von 109 sind
     spliceBy++;
   }
+  if (step) {
+    stelleImArray = laengeOriginal - summenarray.length;
+    for (var varx = 0; varx<indexArray.length; varx++) {
+      saveWo = varx;
+      if(stelleImArray < indexArray[varx]) {
+        StepString = "";
+        break;
+      }
+    }
+
+  }
+
 
   completeFile.splice(0, spliceBy);
   prevTime = 0;
@@ -862,6 +1025,12 @@ function bisHier(datArray, bis) { //byte Array wird gefüllt bis $, danach Funkt
 }
 var workArray = [];
 var sumOf = 0;
+var sumOfZwei = 0;
+var step = true;
+var timeStart = 0;
+var timeEnde = 0;
+var maxVal = false;
+var rolling = false;
 function eightToTen(workArrayy) {  //Hier von 8 zu 10Bit
   workArray = Array.from(workArrayy);
   byteArray = [];
@@ -931,6 +1100,7 @@ function eightToTen(workArrayy) {  //Hier von 8 zu 10Bit
   }
   if (graphIsOn) {
     sumOf = 0;
+    sumOfZwei = 0;
     for(/*var d=72; d<108; d++*/var d=0; d<36; d++) { //Ferse oder Vorderfuß?
       sumOf += stateArray[d];
     }
@@ -942,14 +1112,14 @@ function eightToTen(workArrayy) {  //Hier von 8 zu 10Bit
       data.push(Math.round(sumOf/36));
     }
     for(var d=72; d<108; d++) { //Ferse oder Vorderfuß?
-      sumOf += stateArray[d];
+      sumOfZwei += stateArray[d];
     }
     dataDrei.splice(0,1);
-    if (isNaN(sumOf)) {
+    if (isNaN(sumOfZwei)) {
       dataDrei.push(data[data.length -1]);
     }
     else {
-      dataDrei.push(Math.round(sumOf/36));
+      dataDrei.push(Math.round(sumOfZwei/36));
     }
 
     
@@ -972,9 +1142,37 @@ function eightToTen(workArrayy) {  //Hier von 8 zu 10Bit
       }
     ],
   };
+
+
+  if (step) {
+      if(rolling == false && sumOfZwei/36 > 10) {
+        timeStart = Date.now();
+        rolling = true;
+        console.log("ROLLING");
+      }
+      if(rolling && maxVal == false && sumOf/36 > 70) {
+        maxVal = true;
+        console.log("MAX");
+      }
+    if (maxVal && sumOf/36 < 50) {
+        rolling = false;
+        maxVal = false;
+        timeEnde = Date.now()-timeStart;
+        if(StepString.length >= 162) {
+          StepString = StepString.slice(0, StepString.lastIndexOf("&#8226"));
+        }
+        StepString = "<br>&#8226 " + timeEnde + "MS" + StepString;
+        document.getElementById("StepAnzeige").innerHTML = StepString;
+        stepKopie.push(timeEnde);
+        console.log(timeEnde);
+        
+    }
+  }
 }
 
-
+    if (FilterOn) {
+      fakeGauss();
+    }
 
     root.render(<Grid />);
 
@@ -1020,6 +1218,9 @@ document.getElementById("CONNECT").addEventListener('click', function letsGo() {
       byteToMod = 6;
       record = false;
       saveThis = [];
+      stepKopie = [];
+      StepString = "";
+      document.getElementById("stepDownload").style.display = "inline";
       options = {
         borderColor: 'rgba(0,0,0)',
         backgroundColor: 'rgba(255,255,255)',
@@ -1218,6 +1419,74 @@ document.getElementById("help").addEventListener('click', function helper() {
 */
 });
 
+document.getElementById("Filter").addEventListener("change", function() {
+  FilterOn?FilterOn=false:FilterOn=true;
+});
+
+
+var addedValues = 0;
+var geteiltDurch = 0;
+function fakeGauss() {
+  if (stateArray.length < 108) {
+    return;
+  }
+  for(var posVar = 0; posVar<108; posVar++) {
+    addedValues = 2*Number(stateArray[posVar]);
+    geteiltDurch = 2;
+    if(posVar >=6 && posVar<=101) {
+      addedValues += Number(stateArray[posVar+6]) + Number(stateArray[posVar-6]);
+      geteiltDurch += 2;
+      if (posVar%6 == 0) {
+        addedValues += Number(stateArray[posVar+1]) + Number(stateArray[posVar-5]) + Number(stateArray[posVar+7]);
+        geteiltDurch += 3;
+      }
+      else if (posVar+1%6 == 0) {
+        addedValues += Number(stateArray[posVar-1]) + Number(stateArray[posVar-7]) + Number(stateArray[posVar+5]);
+        geteiltDurch += 3;
+      }
+      else {
+        addedValues += Number(stateArray[posVar+1]) + Number(stateArray[posVar-1]) + Number(stateArray[posVar-5])+ Number(stateArray[posVar-7])+ Number(stateArray[posVar+5])+ Number(stateArray[posVar+7]);
+        geteiltDurch += 6;
+      }
+    }
+    else if (posVar <6) {
+      addedValues += Number(stateArray[posVar+6]);
+      geteiltDurch += 1;
+      if (posVar == 0) {
+        addedValues += Number(stateArray[1]) + Number(stateArray[7]);
+        geteiltDurch += 2;
+      }
+      else if (posVar == 5) {
+        addedValues += Number(stateArray[4]) + Number(stateArray[10]);
+        geteiltDurch += 2;
+      }
+      else {
+        addedValues += Number(stateArray[posVar+1]) + Number(stateArray[posVar-1]) + Number(stateArray[posVar+5]) + Number(stateArray[posVar+7]);
+        geteiltDurch += 4;
+      }
+    }
+    else if (posVar > 101) {
+      addedValues += Number(stateArray[posVar-6]);
+      geteiltDurch += 1;
+      if (posVar == 102) {
+        addedValues += Number(stateArray[103]) + Number(stateArray[97]);
+        geteiltDurch += 2;
+      }
+      else if (posVar == 107) {
+        addedValues += Number(stateArray[106]) + Number(stateArray[100]);
+        geteiltDurch += 2;
+      }
+      else {
+        addedValues += Number(stateArray[posVar+1]) + Number(stateArray[posVar-1]) + Number(stateArray[posVar-5]) + Number(stateArray[posVar-7]);
+        geteiltDurch += 4;
+      }
+    }
+
+    stateArray[posVar] = Math.round(addedValues/geteiltDurch);
+  }
+  //console.log(stateArray);
+}
+
 
 // AB HIER NUR FÜR TEST
 
@@ -1272,3 +1541,4 @@ function timerStart() { // hier werden Reihen aufgeteilt und gesendet
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
+
