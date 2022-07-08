@@ -120,14 +120,34 @@
     </div>
     <div class="Block" id="ki">
       <p class="strich"><b>Schrittdauer (Aufsetzen Ferse bis Abheben Vorderfuß)</b></p>
-      <div class="abgrenz">
-        <p><br>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10&nbsp;</p>
+      <!--<div class="abgrenz">
 
-      </div>
+
+      </div>-->
       <div class="abgrenzZwei">
         <p id="StepAnzeige"></p>
       </div>
-      <button id="stepDownload">SchrittDatei herunterladen</button>
+      <div id="formAndDownload">
+        <br>
+        <button id="stepDownload">Schritt Zeiten herunterladen</button>
+        <br>
+        <div id="Form">
+          <input type="radio" name="formRadio" id="oneStep" value="one" checked>
+          <label for="oneStep" class="forms">Einzelner Schritt</label>
+          <br>
+          <input type="radio" name="formRadio" id="multipleSteps"value="multiple">
+          <label for="multipleSteps" class="forms">Mehrere Schritte</label>
+          <br>
+          <label for="firstStep" class="forms" id="LabelOne">Schrittnummer:</label>
+          <input type ="number" id="firstStep">
+          <br>
+          <div id="hideIfOne">
+            <label for="lastStep" class="forms">Bis Schritt:</label>
+            <input type="number" id="lastStep">
+          </div>
+          <button id="formDone">Download</button>
+        </div>
+      </div>
     </div>
 
     <br>

@@ -244,9 +244,18 @@ input[type="checkbox"] {
 .abgrenz {
   display: inline;
   font-weight: bold;
+
 }
 .abgrenzZwei {
   display: inline;
+  width: 30%;
+  border: 0px solid;
+  height: 100%
+}
+#stepDownloada {
+  display: none;
+  width:60%;
+  margin-left: 5%;
 }
 #stepDownload {
   display: none;
@@ -259,4 +268,33 @@ input[type="checkbox"] {
 }
 #Filter {
   border: 0px;
+}
+
+.forms {
+  background-color: aliceblue;
+  border: 0px;
+}
+input[type="number"]{
+  width: 40px;
+}
+
+#Forma{
+  border: 1px solid;
+  width:60%;
+  display:none;
+  margin-left: 5%;
+}
+#Form{
+  /*border: 1px solid;*/
+  display:none;
+  width: 100%;
+}
+#hideIfOne{
+  display:none;
+}
+
+#formAndDownload{
+  border: 0px solid;
+  width:60%;
+  margin-left: 5%;
 }

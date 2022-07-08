@@ -546,6 +546,7 @@ function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in
   savedCom = Array.from(completeFile);                        //Backup des Array für die Rücksprünge
   laenge = savedCom.length;                                 //Länge des Arrays
   progressbar.style.display = "inline";   //Anzeigen der Progressbar
+  console.log(Date.now());
   displayIt();  //Alles verarbeitet und in 1 riesen Array, jetzt Anzeigen lassen
   
 }
@@ -624,6 +625,8 @@ var StepString = "";
 var indexArray = [];
 var stelleImArray = 0;
 var laengeOriginal = 0;
+var rollingIndex = [];
+
 function graphIt(allData) {
   summenarray = [];
   summenarrayZwei = [];
@@ -671,11 +674,11 @@ function graphIt(allData) {
 
   }
   //console.log(max);
-  var kak=0;
+  var schnitt=0;
   for(var runnnn = 0; runnnn<summenarray.length; runnnn++) {
-    kak+=summenarray[runnnn];
+    schnitt+=summenarray[runnnn];
   }
-  console.log(kak/summenarray.length);
+  console.log(schnitt/summenarray.length);
   //console.log(summenarray);
   //console.log(summenarrayZwei);
   //console.log(summenarrayDrei);
@@ -732,6 +735,7 @@ function graphIt(allData) {
   if (step) {
     stepTimes = [];
     indexArray = [];
+    rollingIndex = [];
     stepStartTime = 0;
     stepEndTime = 0;
     Ferse = false;
@@ -742,6 +746,7 @@ function graphIt(allData) {
     saveWo = 0;
     for(var runAll = 0; runAll < summenarray.length; runAll++) {
       if(Ferse == false && summenarrayDrei[runAll] > 10) {
+        rollingIndex.push(runAll);
         Ferse = true;
         stepStartTime = Number(zeitarray[runAll]);
       }
@@ -769,10 +774,200 @@ function graphIt(allData) {
   StepString = "";
   indexArray.push(-1);
   stepKopie = Array.from(stepTimes);
+  document.getElementById("Form").style.display = "inline";
   document.getElementById("stepDownload").style.display = "inline";
+  document.getElementById("Form").style.display = "inline";
   //console.log(stepTimes);
 
 }
+var oneStep=true;
+
+document.getElementById("oneStep").addEventListener("change", FormDisplay);
+document.getElementById("multipleSteps").addEventListener("change", FormDisplay);
+
+function FormDisplay() {
+  if(document.getElementById("oneStep").checked) {
+    oneStep = true;
+    document.getElementById("hideIfOne").style.display = "none";
+    document.getElementById("LabelOne").innerHTML="Schrittnummer:"
+  }
+  else {
+    oneStep = false;
+    document.getElementById("hideIfOne").style.display = "inline";
+    document.getElementById("LabelOne").innerHTML="Von Schritt:"
+  }
+}
+var stepRequest = [];
+var vonIn = 0;
+var bisIn = 0;
+var dataC = 0;
+var stringSteps = "";
+var dataToSix = 0;
+document.getElementById("formDone").addEventListener("click", function () {
+  stepRequest = [];
+  dataC = 0;
+  stringSteps = "";
+  dataToSix = 0;
+  var stepNumber = document.getElementById("firstStep").value;
+  if (stepNumber > stepTimes.length-2) {
+    stepNumber = stepTimes.length-2;
+  }
+
+  if(oneStep==false) {
+    var stepEndNo = document.getElementById("lastStep").value;
+
+    if(stepEndNo==stepNumber) {
+      if(stepNumber>0) {
+        vonIn = rollingIndex[stepNumber];
+        bisIn = indexArray[stepNumber];
+        for(var between=vonIn*109; between<bisIn*109; between++) {
+          if(between%109==0) {
+            stringSteps += dataC + " MS:" + savedCom[between] + " M:  H: \n";
+            dataC++;
+            dataToSix = 0;
+          }
+          else {
+            dataToSix++;
+            if(dataToSix >= 6) {
+              stringSteps += savedCom[between] + "\n";
+              dataToSix=0;
+            }
+            else {
+              stringSteps += savedCom[between] + ",";
+            }
+          }
+        }
+      }
+      else {
+        stepNumber = 0;
+        vonIn = rollingIndex[0];
+        bisIn = indexArray[0];
+        for(var between=vonIn*109; between<bisIn*109; between++) {
+          if(between%109==0) {
+            stringSteps += dataC + " MS:" + savedCom[between] + " M:  H: \n";
+            dataC++;
+            dataToSix = 0;
+          }
+          else {
+            dataToSix++;
+            if(dataToSix >= 6) {
+              stringSteps += savedCom[between] + "\n";
+              dataToSix=0;
+            }
+            else {
+              stringSteps += savedCom[between] + ",";
+            }
+          }
+        }
+      }
+    }
+    
+    else {
+
+      if(stepEndNo < stepNumber) {
+        var temptemp = stepEndNo;
+        if(stepNumber>0) {
+          stepEndNo = stepNumber;
+        }
+        else {
+          stepEndNo = 0;
+        }
+        stepNumber = temptemp;
+      }
+      else {
+        if (stepNumber>0) {
+
+        }
+        else {
+          stepNumber = 0;
+        }
+      }
+      vonIn = rollingIndex[stepNumber];
+      bisIn = indexArray[stepEndNo];
+      for(var between=vonIn*109; between<bisIn*109; between++) {
+        if(between%109==0) {
+          stringSteps += dataC + " MS:" + savedCom[between] + " M:  H: \n";
+          dataC++;
+          dataToSix = 0;
+        }
+        else {
+          dataToSix++;
+          if(dataToSix >= 6) {
+            stringSteps += savedCom[between] + "\n";
+            dataToSix=0;
+          }
+          else {
+            stringSteps += savedCom[between] + ",";
+          }
+        }
+      }
+
+    }
+  }
+  if(oneStep) {
+    if(stepNumber>0) {
+      vonIn = rollingIndex[stepNumber];
+      bisIn = indexArray[stepNumber];
+      for(var between=vonIn*109; between<bisIn*109; between++) {
+        if(between%109==0) {
+          stringSteps += dataC + " MS:" + savedCom[between] + " M:  H: \n";
+          dataC++;
+          dataToSix = 0;
+        }
+        else {
+          dataToSix++;
+          if(dataToSix >= 6) {
+            stringSteps += savedCom[between] + "\n";
+            dataToSix=0;
+          }
+          else {
+            stringSteps += savedCom[between] + ",";
+          }
+        }
+      }
+    }
+    else {
+      stepNumber = 0;
+      vonIn = rollingIndex[0];
+      bisIn = indexArray[0];
+      for(var between=vonIn*109; between<bisIn*109; between++) {
+        if(between%109==0) {
+          stringSteps += dataC + " MS:" + savedCom[between] + " M:  H: \n";
+          dataC++;
+          dataToSix = 0;
+        }
+        else {
+          dataToSix++;
+          if(dataToSix >= 6) {
+            stringSteps += savedCom[between] + "\n";
+            dataToSix=0;
+          }
+          else {
+            stringSteps += savedCom[between] + ",";
+          }
+        }
+      }
+    }
+  }
+  //console.log(stepRequest);
+  //console.log(stringSteps);
+  var reqsteps = "data:text/csv;charset=utf-8," + stringSteps;
+  var encodedUriReq = encodeURI(reqsteps);
+  var linkReq = document.createElement("a");
+  linkReq.setAttribute("href", encodedUriReq);
+  if(oneStep) {
+    linkReq.setAttribute("download", "Step"+ stepNumber +".csv");
+  }
+  else {
+    linkReq.setAttribute("download", stepNumber + "bis" + stepEndNo + ".csv");
+  }
+  document.body.appendChild(linkReq);
+  linkReq.click();
+
+
+});
+
+
 
 var prevTime = 0; //Vars für Zeitberechnung
 var timenow = 0;
@@ -782,19 +977,22 @@ var timerouts;
 var saveWo = 0;
 
 function displayAfter() { //Aufgerufen in displayIt & wenn Stop aufgehoben
-if (stopBool == false) {    //Wenn nicht Stop, nach berechneter Zeit nochmal displayIt()
-  timerouts = setTimeout(displayIt, timeout/malTime);
-}
+  if (stopBool == false) {    //Wenn nicht Stop, nach berechneter Zeit nochmal displayIt()
+    timerouts = setTimeout(displayIt, timeout/malTime);
+  }
 
 }
 
 function displayIt() {
   prevTime = Number(completeFile.splice(0,1)); //letzte Zeit = 1. Eintrag aus Array (MS: Zeit)
   //stateArrayTwo = completeFile.splice(0, 108);
-  stateArray = completeFile.splice(0, 108); //stateArray (zum rendern) = 1. 108 Einträge v completeFile (bei splice werden Einträge gleichzeitig gelöscht aus altem Array)
-  if (completeFile.length < 108) {          //Wenn weniger als 108 Zeilen verbleiben aufhören 
+  
+  if (completeFile.length < 108) {          //Wenn weniger als 108 Zeilen verbleiben aufhören
+    console.log(Date.now()); 
     return;
   }
+  stateArray = completeFile.splice(0, 108); //stateArray (zum rendern) = 1. 108 Einträge v completeFile (bei splice werden Einträge gleichzeitig gelöscht aus altem Array)
+  
   timenow = Number(completeFile[0]);  //Zeit von nächstem Datensatz
   //Berechnung für nächstes Timeout
   if(timenow>prevTime) {   //Wenn nicht neue Minute angebrochen wurde
@@ -814,10 +1012,10 @@ function displayIt() {
       stelleImArray = laengeOriginal - summenarray.length;
       //console.log(stelleImArray);
       if (stelleImArray == indexArray[saveWo]) {
-        if(StepString.length >= 162) {
+        if(StepString.length >= 240) {
           StepString = StepString.slice(0, StepString.lastIndexOf("&#8226"));
         }
-        StepString = "<br>&#8226 " + stepTimes[saveWo] + "MS" + StepString;
+        StepString = "<br>&#8226 " + saveWo + ":&#9;" + stepTimes[saveWo] + "MS" + StepString;
         document.getElementById("StepAnzeige").innerHTML = StepString;
         saveWo++;
         
@@ -883,7 +1081,7 @@ document.getElementById("stepDownload").addEventListener("click", function() {
   var linkStep = document.createElement("a");
   linkStep.setAttribute("href", encodedUriStep);
   linkStep.setAttribute("download", "StepData.csv");
-  //document.body.appendChild(linkStep);
+  document.body.appendChild(linkStep);
   linkStep.click();
 });
 
@@ -1031,6 +1229,7 @@ var timeStart = 0;
 var timeEnde = 0;
 var maxVal = false;
 var rolling = false;
+var stepNo = 0;
 function eightToTen(workArrayy) {  //Hier von 8 zu 10Bit
   workArray = Array.from(workArrayy);
   byteArray = [];
@@ -1158,10 +1357,12 @@ function eightToTen(workArrayy) {  //Hier von 8 zu 10Bit
         rolling = false;
         maxVal = false;
         timeEnde = Date.now()-timeStart;
-        if(StepString.length >= 162) {
+        if(StepString.length >= 240) {
           StepString = StepString.slice(0, StepString.lastIndexOf("&#8226"));
         }
-        StepString = "<br>&#8226 " + timeEnde + "MS" + StepString;
+
+        StepString = "<br>&#8226 " + stepNo + ":&#9;" + timeEnde + "MS" + StepString;
+        stepNo++;
         document.getElementById("StepAnzeige").innerHTML = StepString;
         stepKopie.push(timeEnde);
         console.log(timeEnde);
@@ -1220,6 +1421,8 @@ document.getElementById("CONNECT").addEventListener('click', function letsGo() {
       saveThis = [];
       stepKopie = [];
       StepString = "";
+      stepNo = 0;
+      //document.getElementById("Form").style.display = "inline";
       document.getElementById("stepDownload").style.display = "inline";
       options = {
         borderColor: 'rgba(0,0,0)',
