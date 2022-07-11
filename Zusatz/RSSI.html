@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<head>
+    <title>Verbindungstest</title>
+</head>
+<body>
+    <button id="RSSI">RSSI</button>
+    <script>
+        document.getElementById("RSSI").addEventListener('click', function () {
+    navigator.bluetooth.requestDevice({
+        filters: [{
+            name: 'BT05'
+        }],
+        optionalServices: [0xffe0, 0xffe1,'37066c16-1598-4995-75b5-6606645d8e88' ]
+    })
+    .then(device => {
+        console.log(device.name);
+        device.watchAdvertisements();
+        device.addEventListener('advertisementreceived', (event)=>{
+          console.log(event.rssi);
+        });
+}).catch(error => {console.error(error); })
+});
+    </script>
+</body>

@@ -20,31 +20,31 @@ var infoArray = []; //Speicherung d. Zeitdaten
 var valueArray = [];  //temp Array für Datensatz  
 var dataNumArray = [];
 var dataPosInStr = 0;   
-var dataCountM = 0;
-var completeInput = [];
-var r = 255;
+var dataCountM = 0;       //von alter live funktion
+var completeInput = [];   //auch
+var r = 255;              //für Erstellung Farbarray
 var g = 255;
 var b = 255;
-var startNewSet = false;
-var stopBool = false;
-var data = Array(100).fill(0);
-var dataZwei = Array(100).fill(0);
-var dataDrei = Array(100).fill(0);
-var newData = false;
-var oldData = false;
-var widthArray = ["120px", "180px", "240px", "300px", "360px", "420px", "480px"];
-var heightArray = ["360px", "540px", "720px", "900px", "1080px", "1260px", "1440px"];
-var squareSizeArray = ["20px", "30px", "40px", "50px", "60px", "70px", "80px"]
-var sizePos = 1;
-var login = false;
-var zwischensumme = 0;
-var summenarray = [];
-var zeitarray = [];
-var summenarrayZwei = [];
-var summenarrayDrei = [];
-var graphIsOn = true;
-var progressbar = document.getElementById("progress");
-var FilterOn = true;
+var startNewSet = false;  //auch alte live funktion
+var stopBool = false;     //Stop Button Bool
+var data = Array(100).fill(0);        //Daten Graph 1 (Vorderfuß)
+var dataZwei = Array(100).fill(0);    //Daten Graph 2 (mittlefuß)
+var dataDrei = Array(100).fill(0);    //Daten Graph 3 (Ferse)
+var newData = false;  //für TestSendung
+var oldData = false;  //für TestSendung
+var widthArray = ["120px", "180px", "240px", "300px", "360px", "420px", "480px"]; //Array mit möglichen Größen von komplettemSchuhgrid
+var heightArray = ["360px", "540px", "720px", "900px", "1080px", "1260px", "1440px"]; //Heights davon
+var squareSizeArray = ["20px", "30px", "40px", "50px", "60px", "70px", "80px"];  //wie groß die einzelnen Squares dann sind
+var sizePos = 1;  //Stelle wie groß zu beginn
+var login = false;  //Für Login
+var zwischensumme = 0;  //Für Graphpunkte berechnung
+var summenarray = [];   //nicht bei Live BLE; komplette Summen pro Frame in array
+var zeitarray = [];     //alle Zeiten bei Abspielen
+var summenarrayZwei = [];   //Daten für 2. Graph
+var summenarrayDrei = []; 	
+var graphIsOn = true;     //bool ob Graphen berechnet & laufen sollen
+var progressbar = document.getElementById("progress");  //Blaue Leiste, die Zeitleiste anzeigt, interagierbar
+var FilterOn = true;    //bool ob Filterberechnungen
 
 
 /*
@@ -57,21 +57,21 @@ while (login == false) {    //einfache Passwortabfrage
 
 //        HIER ERSTELLUNG DES FARBARRAYS - 1024 Stufen Weiß->Blau->Pink->Grün->Rot
 
-for(var i=255; i>0; i--) {
+for(var i=255; i>0; i--) {        //Weiß -> blau
     Farbarray.push("rgb("+r+","+g+","+b+")");
     r--;
     g--;                
 }
-for(var i=0; i<255; i++) {
+for(var i=0; i<255; i++) {  //blau -> r,b
     r++;
     Farbarray.push("rgb("+r+","+g+","+b+")");              
 }
-for(var i=0; i<255; i++) {
+for(var i=0; i<255; i++) {  //r,b -> r,g
     g++;
     b--;
     Farbarray.push("rgb("+r+","+g+","+b+")");              
 }
-for(var i=0; i<255; i++) {
+for(var i=0; i<255; i++) {  //r,g -> rot
     g--;
     Farbarray.push("rgb("+r+","+g+","+b+")");              
 }
@@ -99,12 +99,12 @@ document.getElementById('stopButton').addEventListener('click', function stopCli
   
 });
 
-document.getElementById('groesser').addEventListener('click', function enlarge() { 
+document.getElementById('groesser').addEventListener('click', function enlarge() {  //Grid größer machen (+ Button)
   if(sizePos < widthArray.length-1) { //Wenn nicht schon größte Stufe erreicht
-    sizePos++;
-    document.getElementsByClassName("gridall")[0].style.width = widthArray[sizePos];
+    sizePos++;  //nächste Stufe
+    document.getElementsByClassName("gridall")[0].style.width = widthArray[sizePos];  //größe aus Array laden
     document.getElementsByClassName("gridall")[0].style.height = heightArray[sizePos];
-    var squArray = document.getElementsByClassName("square");
+    var squArray = document.getElementsByClassName("square"); //auch für Squares, für jedes einzeln
     for (var i=0; i<squArray.length; i++) {
       squArray[i].style.width = squareSizeArray[sizePos];
       squArray[i].style.height = squareSizeArray[sizePos];
@@ -112,7 +112,7 @@ document.getElementById('groesser').addEventListener('click', function enlarge()
   }
 });
 
-document.getElementById('kleiner').addEventListener('click', function smaller() {
+document.getElementById('kleiner').addEventListener('click', function smaller() {     //gleiches wie größer nur andersrum
   if(sizePos > 0) {
     sizePos--;
     document.getElementsByClassName("gridall")[0].style.width = widthArray[sizePos];
@@ -157,6 +157,7 @@ function newRow(inString) {     //Funktion die je 1 Reihe Daten auwertet
   }
 }
  
+
 class Grid extends React.Component { //Hauptklasse
   constructor(props) {
     super(props);
@@ -312,7 +313,7 @@ class Grid extends React.Component { //Hauptklasse
           {this.renderSquare(107)}
           
         </div>
-        <div id="chartOn">
+        <div id="chartOn">  
         <App />
         <AppZwei />
         <AppDrei />
@@ -320,7 +321,7 @@ class Grid extends React.Component { //Hauptklasse
         </div>
         
     );
-  }
+  }//unten div für Graphen, App - AppDrei sind die 3 Graphen
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -332,7 +333,7 @@ root.render(<Grid />);    //1. rendern damit Grid Platz angezeigt wird auf Site
 
 
 
-ChartJS.register(
+ChartJS.register(       //Graph init
   CategoryScale,
   LinearScale,
   PointElement,
@@ -342,12 +343,12 @@ ChartJS.register(
 //  Legend
 );
 
-export var options = {
-  borderColor: 'rgba(0,0,0)',
-  backgroundColor: 'rgba(255,255,255)',
+export var options = {    //options definition, muss nochmal wenn was geändert wird
+  borderColor: 'rgba(0,0,0)', //LineColor = black
+  backgroundColor: 'rgba(255,255,255)', //Hintergrund = weiß
   elements: {
     point:{
-        radius: 0
+        radius: 0     //sonst Punkte auf jedem Datenpunkt
     }
   },
   legend:  {
@@ -358,15 +359,15 @@ export var options = {
   scales: {
     //borderColor: 'rgba(0,0,0)',
     yAxis: {
-      max:500,  //500 für Live BLE
-      min:0,
+      max:500,  //500 für Live BLE Y-Achse
+      min:0,    
       grid: {
         borderColor: 'rgba(0,0,0)'
       }
     },
     xAxis: {
       ticks: {
-        display: false
+        display: false  //damit keine Linien im Graph
       },
       //display: false,
       grid: {
@@ -378,7 +379,7 @@ export var options = {
 };
 const labels = data;
 
-export var datak = {
+export var datak = {  //Werte zuweisung für alle 3 Graphen
   labels,
   datasets: [
     {
@@ -405,12 +406,9 @@ export var datakDrei = {
   ],
 };
 
-export function App() {
+export function App() {     //3 Graphen, gleiche options, unterschiedliche Data
   return <Line options={options} data={datak} />;
 }
-
-
-
 
 export function AppZwei() {
   return <Line options={options} data={datakZwei} />;
@@ -445,22 +443,22 @@ document.getElementById('csvFiles').addEventListener('change', function csvInput
   };
 });
 
-let dropArea = document.getElementById('csvFilez');
-['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-  dropArea.addEventListener(eventName, preventDefaults, false)
+let dropArea = document.getElementById('csvFilez');                 //Damit man Dateien einfach reinziehen kann
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => { //wenn datei über element
+  dropArea.addEventListener(eventName, preventDefaults, false)  //Default wäre, dass Datei im Browser geöffnet wird
 })
-dropArea.addEventListener("drop", runCSV, false);
+dropArea.addEventListener("drop", runCSV, false); //bei drop runCSV aufrufen
 function preventDefaults (e) {
   e.preventDefault();
   e.stopPropagation();
 
 }
 function runCSV(e) {
-  let dt = e.dataTransfer;
-  let filers = dt.files;
+  let dt = e.dataTransfer;  //dt = Data die gedropt
+  let filers = dt.files;    //jetzt csvFile
   document.getElementById('title').innerHTML = "Lädt";
   oldData = true; //oldData bool für stop button
-  completeFile = [];  
+  completeFile = [];  //rücksetzen falls vorher was ausgewertet wurde
 
   let reader = new FileReader(); //FileReader von JS
   reader.readAsText(filers[0]);
@@ -551,15 +549,15 @@ function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in
   
 }
 
-document.getElementById("steps").addEventListener("change", function() {
+document.getElementById("steps").addEventListener("change", function() { //Checkbox Steps, wenn geändert wird
   if (step) {
-    step = false;
+    step = false;     //wenn vorher true, jetzt false
 
   }
   else {
-    step = true;
-    graphIsOn = true;
-    document.getElementById("graphi").checked = true;
+    step = true;        //wenn vorher false jetzt true
+    graphIsOn = true;   //auch graph true, steps nur dann möglich
+    document.getElementById("graphi").checked = true; //auch anzeige muss true sein
   }
 });
 
@@ -567,13 +565,13 @@ document.getElementById("graphi").addEventListener("change", function (){       
   //graphIsOn?graphIsOn=false:graphIsOn=true;   
   if (graphIsOn) {
     graphIsOn = false;
-    step = false;
-    document.getElementById("steps").checked = false;
+    step = false;   //step kann nicht ohne Graph an sein
+    document.getElementById("steps").checked = false; //auch anzeige
   }
   else {
     graphIsOn = true;
   }
-  options = {
+  options = {   //options wie vorher
     borderColor: 'rgba(0,0,0)',
     backgroundColor: 'rgba(255,255,255)',
     elements: {
@@ -611,29 +609,29 @@ document.getElementById("graphi").addEventListener("change", function (){       
 
 
 
-var einsKopie = []; //Backups für Rücksprünge
+var einsKopie = []; //Backups für Rücksprünge von summenarrays
 var zweiKopie = [];
 var dreiKopie = [];
 var stepKopie = [];
-var max = 0;
-var stepStartTime = 0;
+var max = 0;          //max wert von summe, für Max Wert auf Achse
+var stepStartTime = 0;  //Für berechnung schrittdauer
 var stepEndTime = 0;
-var Ferse = false;
-var maxZeh = false;
-var stepTimes = [];
-var StepString = "";
-var indexArray = [];
-var stelleImArray = 0;
-var laengeOriginal = 0;
-var rollingIndex = [];
+var Ferse = false;    //Bool, schrittbegtinn
+var maxZeh = false;   //Bool Schrittende eingeleitet
+var stepTimes = [];   //Array mit allen Schrittzeiten
+var StepString = "";   //String der angezeigt wird
+var indexArray = [];    //Speichert Index, wo Schritt geendet ist im Summenarray
+var stelleImArray = 0;  //da splice braucht eigenen counter
+var laengeOriginal = 0; //Original Länge für berechnung von stelleimArary
+var rollingIndex = [];  //wie IndexArray, nur für Start der Schritte
 
-function graphIt(allData) {
-  summenarray = [];
+function graphIt(allData) {   //Graph checkbox aktiviert -> bei Abspielen
+  summenarray = [];       //reset wenn vorher schon benutzt wurden
   summenarrayZwei = [];
   summenarrayDrei = [];
-  zeitarray = [];
+  zeitarray = [];   
   //console.log(allData);
-  for(var u=0; u<allData.length; u = u+109) {
+  for(var u=0; u<allData.length; u = u+109) {       //Berechnung Summen
     zwischensumme = 0;
     
     for (var v=1; v<37; v++) {
@@ -670,19 +668,19 @@ function graphIt(allData) {
     if(summenarrayDrei[summenarray.length-1]>max) {
       max = summenarrayDrei[summenarray.length-1];
     }
-    zeitarray.push(allData[u]);                   //zeitarray mit allen ZeitDaten, bis jetzt noch keine Verwendung
+    zeitarray.push(allData[u]);                   //zeitarray mit allen ZeitDaten
 
   }
   //console.log(max);
-  var schnitt=0;
-  for(var runnnn = 0; runnnn<summenarray.length; runnnn++) {
+  var schnitt=0;          //Schnittwert berechnet für evtl. Schrittschwellen
+  for(var runnnn = 0; runnnn<summenarray.length; runnnn++) { 
     schnitt+=summenarray[runnnn];
   }
-  console.log(schnitt/summenarray.length);
+  console.log(schnitt/summenarray.length);  //nur berechnung, bis jetzt noch keine Verwendung außer Anzeige in Konsole
   //console.log(summenarray);
   //console.log(summenarrayZwei);
   //console.log(summenarrayDrei);
-  options = {
+  options = {         //alle Options nochmal, damit max wert update bekommt
     borderColor: 'rgba(0,0,0)',
     elements: {
       point:{
@@ -732,8 +730,8 @@ function graphIt(allData) {
 
   //console.log(zeitarray);
 
-  if (step) {
-    stepTimes = [];
+  if (step) {               //wenn Schrittanalyse
+    stepTimes = [];         //resets falls vorher schon benutzt
     indexArray = [];
     rollingIndex = [];
     stepStartTime = 0;
@@ -744,27 +742,27 @@ function graphIt(allData) {
     stelleImArray = 0;
     laengeOriginal = 0;
     saveWo = 0;
-    for(var runAll = 0; runAll < summenarray.length; runAll++) {
-      if(Ferse == false && summenarrayDrei[runAll] > 10) {
-        rollingIndex.push(runAll);
+    for(var runAll = 0; runAll < summenarray.length; runAll++) {        //einmal alle Frames durchgehen
+      if(Ferse == false && summenarrayDrei[runAll] > 10 /*&& summenarrayDrei[runAll] < 35*/) {      //wenn Fersenwert über 10, neuer Schritt
+        rollingIndex.push(runAll);    //abgespeichert, an welcher Stelle neuer Schritt begonnen- für Rüücksprung
         Ferse = true;
-        stepStartTime = Number(zeitarray[runAll]);
+        stepStartTime = Number(zeitarray[runAll]);  //Wann Schritt begonnen
       }
-      if (Ferse && maxZeh == false && summenarray[runAll] > 60) {
+      if (Ferse && maxZeh == false && summenarray[runAll] > 60) { //Wenn Ferse true und Wert über 60 bereit für Schrittende
         maxZeh = true;
       }
-      if (maxZeh && summenarray[runAll] <40) {
+      if (maxZeh && summenarray[runAll] <40) {  //Wenn wieder unter 40 kommt Schrittende, Wert vielleicht noch zu verändern
         Ferse = false;
         maxZeh = false;
-        stepEndTime = Number(zeitarray[runAll]);
-        indexArray.push(runAll);
+        stepEndTime = Number(zeitarray[runAll]);    //Wann Schritt geendet
+        indexArray.push(runAll);            //an welcher stelle schritt geendet, für wann Anzeige updaten
         //stepTimes.push(stepEndTime);
-        if(stepEndTime>stepStartTime) {
-          stepTimes.push(stepEndTime-stepStartTime);
+        if(stepEndTime>stepStartTime) {      //falls MS Wert größer ist einfach Differenz
+          stepTimes.push(stepEndTime-stepStartTime);  //in Array
           
         }
         else {
-          stepTimes.push(60000 - stepStartTime + stepEndTime);
+          stepTimes.push(60000 - stepStartTime + stepEndTime);  //sonst hat 60000 überschritten
         }
       }
     }
@@ -772,21 +770,21 @@ function graphIt(allData) {
   stelleImArray = 0;
   laengeOriginal = summenarray.length;
   StepString = "";
-  indexArray.push(-1);
+  indexArray.push(-1);  //Sonst wird versucht auf nicht existierendes Element zuzugreifen
   stepKopie = Array.from(stepTimes);
-  document.getElementById("Form").style.display = "inline";
+  document.getElementById("Form").style.display = "inline";           //Anzeige visible machen
   document.getElementById("stepDownload").style.display = "inline";
   document.getElementById("Form").style.display = "inline";
   //console.log(stepTimes);
 
 }
-var oneStep=true;
+var oneStep=true;     //Für Form, ob 1 step oder mehrere download
 
 document.getElementById("oneStep").addEventListener("change", FormDisplay);
-document.getElementById("multipleSteps").addEventListener("change", FormDisplay);
+document.getElementById("multipleSteps").addEventListener("change", FormDisplay); //bei Veränderung funktionsaufruf
 
 function FormDisplay() {
-  if(document.getElementById("oneStep").checked) {
+  if(document.getElementById("oneStep").checked) {      //wenn 1 schritt
     oneStep = true;
     document.getElementById("hideIfOne").style.display = "none";
     document.getElementById("LabelOne").innerHTML="Schrittnummer:"
@@ -797,52 +795,52 @@ function FormDisplay() {
     document.getElementById("LabelOne").innerHTML="Von Schritt:"
   }
 }
-var stepRequest = [];
+var stepRequest = [];   
 var vonIn = 0;
 var bisIn = 0;
 var dataC = 0;
 var stringSteps = "";
 var dataToSix = 0;
-document.getElementById("formDone").addEventListener("click", function () {
+document.getElementById("formDone").addEventListener("click", function () {     //Für den Schritte download
   stepRequest = [];
   dataC = 0;
   stringSteps = "";
   dataToSix = 0;
-  var stepNumber = document.getElementById("firstStep").value;
-  if (stepNumber > stepTimes.length-2) {
-    stepNumber = stepTimes.length-2;
+  var stepNumber = document.getElementById("firstStep").value;  //welcher Schritt soll download?
+  if (stepNumber > stepTimes.length-2) {  //wenn höher als Schrittnummer (-2 weil letztes Element kkünstliches -1)
+    stepNumber = stepTimes.length-2;      //dann einfach letzten Schritt wählen
   }
 
-  if(oneStep==false) {
-    var stepEndNo = document.getElementById("lastStep").value;
+  if(oneStep==false) {  //bei mehreren Schritten
+    var stepEndNo = document.getElementById("lastStep").value;  //was im 2. Kästchen steht
 
-    if(stepEndNo==stepNumber) {
-      if(stepNumber>0) {
+    if(stepEndNo==stepNumber) {   //Wenn gleich, dann wie als wäre nur 1 Schritt
+      if(stepNumber>0) {  //Wenn über 0
         vonIn = rollingIndex[stepNumber];
         bisIn = indexArray[stepNumber];
-        for(var between=vonIn*109; between<bisIn*109; between++) {
-          if(between%109==0) {
-            stringSteps += dataC + " MS:" + savedCom[between] + " M:  H: \n";
+        for(var between=vonIn*109; between<bisIn*109; between++) {  //im kompletten Array * 109, da ja 109 * mehr Werte hat als Summenarray
+          if(between%109==0) {  //alle 109 Werte keine Werte sondern MS: und so
+            stringSteps += dataC + " MS:" + savedCom[between] + " M:  H: \n";   //dataC ist eigener Counter, dann MS Zeit
             dataC++;
-            dataToSix = 0;
+            dataToSix = 0;  //Counter bis 6, weil im csv doc 6 pro Zeile sein sollen
           }
-          else {
+          else {  //wenn normaler Wert
             dataToSix++;
-            if(dataToSix >= 6) {
-              stringSteps += savedCom[between] + "\n";
+            if(dataToSix >= 6) {  //größer gleich nur falls glitch oder so
+              stringSteps += savedCom[between] + "\n";  //Wert und dann Zeilenumbruch
               dataToSix=0;
             }
             else {
-              stringSteps += savedCom[between] + ",";
+              stringSteps += savedCom[between] + ","; //sonst Wert und dann Komma
             }
           }
         }
       }
-      else {
-        stepNumber = 0;
+      else {     //wenn Zahl kleiner als 1 eingegeben
+        stepNumber = 0;   //dann 0. Schritt
         vonIn = rollingIndex[0];
         bisIn = indexArray[0];
-        for(var between=vonIn*109; between<bisIn*109; between++) {
+        for(var between=vonIn*109; between<bisIn*109; between++) {  //gleich wie sonst, für 0. Schritt
           if(between%109==0) {
             stringSteps += dataC + " MS:" + savedCom[between] + " M:  H: \n";
             dataC++;
@@ -862,30 +860,34 @@ document.getElementById("formDone").addEventListener("click", function () {
       }
     }
     
-    else {
+    else {    //wenn 2 unterschiedliche Zahlen eingegeben wurden
 
-      if(stepEndNo < stepNumber) {
-        var temptemp = stepEndNo;
-        if(stepNumber>0) {
+      if(stepEndNo < stepNumber) {    //wenn von größer als bis 
+        var temptemp = stepEndNo;     //für tausch tempVariable
+        if(stepNumber>0) {            //muss größer als 0 sein, sonst = 0
           stepEndNo = stepNumber;
         }
         else {
           stepEndNo = 0;
         }
-        stepNumber = temptemp;
+        stepNumber = temptemp;    //Tausch komplett
       }
-      else {
-        if (stepNumber>0) {
+      else {                          //wenn richtig eingegeben
+        if (stepNumber>0) {     //dann nix
 
         }
-        else {
+        else {                  //sonst = 0
           stepNumber = 0;
         }
       }
-      vonIn = rollingIndex[stepNumber];
+      if (stepEndNo > stepTimes.length-2) {  //wenn höher als Schrittnummer (-2 weil letztes Element kkünstliches -1) wie vorher
+        stepEndNo = stepTimes.length-2;      //dann einfach letzten Schritt wählen
+      }
+
+      vonIn = rollingIndex[stepNumber];     //vonIndex nummer bisIndex nummer
       bisIn = indexArray[stepEndNo];
-      for(var between=vonIn*109; between<bisIn*109; between++) {
-        if(between%109==0) {
+      for(var between=vonIn*109; between<bisIn*109; between++) {      //für alle Werte in Intervall
+        if(between%109==0) {      //eigentlich gleich wie vorher
           stringSteps += dataC + " MS:" + savedCom[between] + " M:  H: \n";
           dataC++;
           dataToSix = 0;
@@ -904,7 +906,7 @@ document.getElementById("formDone").addEventListener("click", function () {
 
     }
   }
-  if(oneStep) {
+  if(oneStep) {             //gleich wie vorher nur direkt für 1
     if(stepNumber>0) {
       vonIn = rollingIndex[stepNumber];
       bisIn = indexArray[stepNumber];
@@ -951,18 +953,18 @@ document.getElementById("formDone").addEventListener("click", function () {
   }
   //console.log(stepRequest);
   //console.log(stringSteps);
-  var reqsteps = "data:text/csv;charset=utf-8," + stringSteps;
-  var encodedUriReq = encodeURI(reqsteps);
-  var linkReq = document.createElement("a");
-  linkReq.setAttribute("href", encodedUriReq);
+  var reqsteps = "data:text/csv;charset=utf-8," + stringSteps;        //requested Steps: header für csv + String der erstellt wurde
+  var encodedUriReq = encodeURI(reqsteps);                            //richtiges format
+  var linkReq = document.createElement("a");                          //a element dafür
+  linkReq.setAttribute("href", encodedUriReq);                        //link zu file
   if(oneStep) {
-    linkReq.setAttribute("download", "Step"+ stepNumber +".csv");
+    linkReq.setAttribute("download", "Step"+ stepNumber +".csv");      //wenn 1 step angefordert dann heißt datei StepX.csv
   }
   else {
-    linkReq.setAttribute("download", stepNumber + "bis" + stepEndNo + ".csv");
+    linkReq.setAttribute("download", stepNumber + "bis" + stepEndNo + ".csv");    //sonst XbisX.csv
   }
-  document.body.appendChild(linkReq);
-  linkReq.click();
+  document.body.appendChild(linkReq);     //a element anhängen
+  linkReq.click();                        //und clicken lassen
 
 
 });
@@ -1009,14 +1011,14 @@ function displayIt() {
     dataDrei.splice(0,1);
     dataDrei = dataDrei.concat(summenarrayDrei.splice(0,1));
     if (step) {
-      stelleImArray = laengeOriginal - summenarray.length;
+      stelleImArray = laengeOriginal - summenarray.length;      //stelleImArray updaten
       //console.log(stelleImArray);
-      if (stelleImArray == indexArray[saveWo]) {
-        if(StepString.length >= 240) {
-          StepString = StepString.slice(0, StepString.lastIndexOf("&#8226"));
+      if (stelleImArray == indexArray[saveWo]) {                //wenn Schrittende erreicht wird
+        if(StepString.length >= 240) {                          //wenn String schon max Länge hat
+          StepString = StepString.slice(0, StepString.lastIndexOf("&#8226"));   //Slice den letzten Wert
         }
-        StepString = "<br>&#8226 " + saveWo + ":&#9;" + stepTimes[saveWo] + "MS" + StepString;
-        document.getElementById("StepAnzeige").innerHTML = StepString;
+        StepString = "<br>&#8226 " + saveWo + ":&#9;" + stepTimes[saveWo] + "MS" + StepString;  //String mit neuem Wert und Counter und Punkt davor
+        document.getElementById("StepAnzeige").innerHTML = StepString;  //Anzeige updaten
         saveWo++;
         
       }
@@ -1067,15 +1069,15 @@ function displayIt() {
     progressbar.value=Math.round((1-completeFile.length/laenge)*100); //Verhältnis von wie viel übrig ist/ wie viel am Anfang
     counToTen = 0;
   }
-  if (FilterOn) {
-    fakeGauss();
+  if (FilterOn) {     //Wenn Filter bool an
+    fakeGauss();      //dann Filterberechnungen
   }
 
   root.render(<Grid />);  //Anzeigen
   displayAfter();   //für nächsten Datensatz & timeout
 }
 
-document.getElementById("stepDownload").addEventListener("click", function() {
+document.getElementById("stepDownload").addEventListener("click", function() {      //nochmal download erstellen wie schon öfters
   var StepString = "data:text/csv;charset=utf-8," + stepKopie.join(",");
   var encodedUriStep = encodeURI(StepString);
   var linkStep = document.createElement("a");
@@ -1104,11 +1106,11 @@ progressbar.onchange = function() {   //Wenn User Progressbar irgendwo hinsetzt
   while(spliceBy%109 != 0) {  //Hier muss durch 109 teilbar sein, da complete File immer DatenSätze von 109 sind
     spliceBy++;
   }
-  if (step) {
+  if (step) {       //stelleImArray herausfinden
     stelleImArray = laengeOriginal - summenarray.length;
-    for (var varx = 0; varx<indexArray.length; varx++) {
+    for (var varx = 0; varx<indexArray.length; varx++) {  //nächsten Step finden und dahin saveWo setzen
       saveWo = varx;
-      if(stelleImArray < indexArray[varx]) {
+      if(stelleImArray < indexArray[varx]) {    //sobald stelleimarray noch nicht war for schleife break
         StepString = "";
         break;
       }
@@ -1126,7 +1128,6 @@ progressbar.onchange = function() {   //Wenn User Progressbar irgendwo hinsetzt
 
 
 var useArray = [];
-var Dollar = false;
 var pushValues = false;
 var prevArray = [];
 var byteArray = [];
@@ -1297,14 +1298,14 @@ function eightToTen(workArrayy) {  //Hier von 8 zu 10Bit
       }
     }
   }
-  if (graphIsOn) {
+  if (graphIsOn) {    //Graph für Live BLE
     sumOf = 0;
     sumOfZwei = 0;
     for(/*var d=72; d<108; d++*/var d=0; d<36; d++) { //Ferse oder Vorderfuß?
       sumOf += stateArray[d];
     }
-    data.splice(0,1);
-    if (isNaN(sumOf)) {
+    data.splice(0,1);   
+    if (isNaN(sumOf)) {     //wenn notANumber dann vorherigen Weret nochmal
       data.push(data[data.length -1]);
     }
     else {
@@ -1343,9 +1344,9 @@ function eightToTen(workArrayy) {  //Hier von 8 zu 10Bit
   };
 
 
-  if (step) {
-      if(rolling == false && sumOfZwei/36 > 10) {
-        timeStart = Date.now();
+  if (step) {           //so ähnlich wie bei Auswertung von alten CSVs
+      if(rolling == false && sumOfZwei/36 > 10 /*&& sumOfZwei/36 < 20*/) {
+        timeStart = Date.now(); //Date() funktion gibt MS Wert seit irgend Datum 19XX an
         rolling = true;
         console.log("ROLLING");
       }
@@ -1371,13 +1372,14 @@ function eightToTen(workArrayy) {  //Hier von 8 zu 10Bit
   }
 }
 
-    if (FilterOn) {
+    if (FilterOn) { //auch Filterberechnungen wenn gewollt
       fakeGauss();
     }
 
     root.render(<Grid />);
 
 }
+
 
 //BLE VERBINDUNG /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 
@@ -1397,6 +1399,10 @@ document.getElementById("CONNECT").addEventListener('click', function letsGo() {
         console.log(device.name);
         //console.log(characteristic.readValue());
         bluetoothDevice = device;
+        /*device.watchAdvertisements();         //FUNKTIONIERT NUR WENN SONST NICHTS VERLANGT
+        device.addEventListener('advertisementreceived', (event)=>{
+          console.log(event.rssi);
+        });*/
         bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
         return device.gatt.connect();
     })
@@ -1410,7 +1416,6 @@ document.getElementById("CONNECT").addEventListener('click', function letsGo() {
     .then (characteristic => characteristic.startNotifications()) //wo values gesendet werden
     .then(characteristic => {
       useArray = [];
-      Dollar = false;
       pushValues = false;
       prevArray = [];
       byteArray = [];
@@ -1462,8 +1467,9 @@ document.getElementById("CONNECT").addEventListener('click', function letsGo() {
     })
     .catch(error => {console.error(error); })
 });
-var intArray;
-var fullArray = [];
+
+
+
 
 document.getElementById("disc").addEventListener('click', function disconnectIt() {
     bluetoothDevice.gatt.disconnect();  //Disconnect BLE Device
@@ -1479,10 +1485,10 @@ var isText = false;
 var stringInMiddle = '';
 var cleanedCSV = [];
 var toSix = 0;
-var inRows = [];
+//var inRows = [];
 var asString = '';
 
-document.getElementById('rawData').addEventListener('change', function lala() {
+document.getElementById('rawData').addEventListener('change', function lala() { //Wenn man Aufnahmen verarbeiten will
   asString = "data:text/csv;charset=utf-8,";
   let read = new FileReader();
   read.readAsText(document.getElementById('rawData').files[0]);
@@ -1622,53 +1628,53 @@ document.getElementById("help").addEventListener('click', function helper() {
 */
 });
 
-document.getElementById("Filter").addEventListener("change", function() {
+document.getElementById("Filter").addEventListener("change", function() {   //Filter bool ändern
   FilterOn?FilterOn=false:FilterOn=true;
 });
 
 
 var addedValues = 0;
 var geteiltDurch = 0;
-function fakeGauss() {
-  if (stateArray.length < 108) {
+function fakeGauss() {              //Filter berechnungen
+  if (stateArray.length < 108) {      //wenn zu wenige Werte
     return;
   }
-  for(var posVar = 0; posVar<108; posVar++) {
-    addedValues = 2*Number(stateArray[posVar]);
-    geteiltDurch = 2;
-    if(posVar >=6 && posVar<=101) {
-      addedValues += Number(stateArray[posVar+6]) + Number(stateArray[posVar-6]);
-      geteiltDurch += 2;
-      if (posVar%6 == 0) {
+  for(var posVar = 0; posVar<108; posVar++) {   //sonst
+    addedValues = 2*Number(stateArray[posVar]);   //mittleres mal 2
+    geteiltDurch = 2;           //wie viele Summanten?
+    if(posVar >=6 && posVar<=101) {     //wenn nicht 1. o. letzte Reihe
+      addedValues += Number(stateArray[posVar+6]) + Number(stateArray[posVar-6]); //Plus Wert ober und unterhalb
+      geteiltDurch += 2;  //2 werte add
+      if (posVar%6 == 0) {  //wenn links am Rand dann nur oben rechts, rechts und unten rechts
         addedValues += Number(stateArray[posVar+1]) + Number(stateArray[posVar-5]) + Number(stateArray[posVar+7]);
-        geteiltDurch += 3;
+        geteiltDurch += 3;  //3 werte add
       }
-      else if (posVar+1%6 == 0) {
+      else if (posVar+1%6 == 0) { //wenn rechts am Rand dann links, oben links und unten links
         addedValues += Number(stateArray[posVar-1]) + Number(stateArray[posVar-7]) + Number(stateArray[posVar+5]);
-        geteiltDurch += 3;
+        geteiltDurch += 3;  //3 werte add
       }
-      else {
+      else {  //wenn nicht am rand dann alle Werte drumherum (oben unten wurde schon vorher)
         addedValues += Number(stateArray[posVar+1]) + Number(stateArray[posVar-1]) + Number(stateArray[posVar-5])+ Number(stateArray[posVar-7])+ Number(stateArray[posVar+5])+ Number(stateArray[posVar+7]);
-        geteiltDurch += 6;
+        geteiltDurch += 6;  //6 werte add
       }
     }
-    else if (posVar <6) {
-      addedValues += Number(stateArray[posVar+6]);
+    else if (posVar <6) { //wenn erste Reihe
+      addedValues += Number(stateArray[posVar+6]); //drunter add
       geteiltDurch += 1;
-      if (posVar == 0) {
+      if (posVar == 0) {  //wenn oben links dann plus rechts und unten rechts
         addedValues += Number(stateArray[1]) + Number(stateArray[7]);
-        geteiltDurch += 2;
+        geteiltDurch += 2; //2 werte add
       }
-      else if (posVar == 5) {
+      else if (posVar == 5) { //wenn oben rechts dann plus links und unten links
         addedValues += Number(stateArray[4]) + Number(stateArray[10]);
-        geteiltDurch += 2;
+        geteiltDurch += 2; //2 werte add
       }
-      else {
+      else {  //sonst plus rechts, links, unten rechts und unten links
         addedValues += Number(stateArray[posVar+1]) + Number(stateArray[posVar-1]) + Number(stateArray[posVar+5]) + Number(stateArray[posVar+7]);
-        geteiltDurch += 4;
+        geteiltDurch += 4;  //4 werte add
       }
     }
-    else if (posVar > 101) {
+    else if (posVar > 101) {  //so ähnlich für letzte Reihe, halt nach oben
       addedValues += Number(stateArray[posVar-6]);
       geteiltDurch += 1;
       if (posVar == 102) {
@@ -1685,7 +1691,7 @@ function fakeGauss() {
       }
     }
 
-    stateArray[posVar] = Math.round(addedValues/geteiltDurch);
+    stateArray[posVar] = Math.round(addedValues/geteiltDurch);    //Neuer Wert für Quadrat ist alles Zusammen/Summantenzahl gerundet auf ganze Zahl
   }
   //console.log(stateArray);
 }
