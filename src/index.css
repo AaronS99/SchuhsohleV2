@@ -77,6 +77,9 @@ p {
 }
 #ausklapp {
   display: none;
+  width: 100%;
+  background-color: rgb(132, 198, 255);
+  font-size: 110%;
 }
 #chartOn {
   display: inline;
@@ -232,6 +235,7 @@ input[type="checkbox"] {
   height: 70px;
 }
 #hilf {
+  display: inline-block;
   width: 100%;
 }
 .strich {
