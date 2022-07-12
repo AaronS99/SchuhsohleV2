@@ -802,17 +802,20 @@ var dataC = 0;
 var stringSteps = "";
 var dataToSix = 0;
 document.getElementById("formDone").addEventListener("click", function () {     //Für den Schritte download
+  //console.log(oneStep);
   stepRequest = [];
   dataC = 0;
   stringSteps = "";
   dataToSix = 0;
-  var stepNumber = document.getElementById("firstStep").value;  //welcher Schritt soll download?
+  var stepNumber = Number(document.getElementById("firstStep").value);  //welcher Schritt soll download?
   if (stepNumber > stepTimes.length-2) {  //wenn höher als Schrittnummer (-2 weil letztes Element kkünstliches -1)
     stepNumber = stepTimes.length-2;      //dann einfach letzten Schritt wählen
   }
 
   if(oneStep==false) {  //bei mehreren Schritten
-    var stepEndNo = document.getElementById("lastStep").value;  //was im 2. Kästchen steht
+    
+    var stepEndNo = Number(document.getElementById("lastStep").value);  //was im 2. Kästchen steht
+    //console.log(stepEndNo + "und" + stepNumber);
 
     if(stepEndNo==stepNumber) {   //Wenn gleich, dann wie als wäre nur 1 Schritt
       if(stepNumber>0) {  //Wenn über 0
@@ -861,8 +864,11 @@ document.getElementById("formDone").addEventListener("click", function () {     
     }
     
     else {    //wenn 2 unterschiedliche Zahlen eingegeben wurden
-
+      //console.log(stepEndNo + "und StepNo="+stepNumber);
+      //console.log(stepEndNo<stepNumber);
       if(stepEndNo < stepNumber) {    //wenn von größer als bis 
+        //console.log("wieso");
+        //console.log("stepEndNo:"+stepEndNo + " StepNumber:"+stepNumber);
         var temptemp = stepEndNo;     //für tausch tempVariable
         if(stepNumber>0) {            //muss größer als 0 sein, sonst = 0
           stepEndNo = stepNumber;
@@ -874,6 +880,7 @@ document.getElementById("formDone").addEventListener("click", function () {     
       }
       else {                          //wenn richtig eingegeben
         if (stepNumber>0) {     //dann nix
+          //console.log("ok bis hier");
 
         }
         else {                  //sonst = 0
@@ -882,10 +889,12 @@ document.getElementById("formDone").addEventListener("click", function () {     
       }
       if (stepEndNo > stepTimes.length-2) {  //wenn höher als Schrittnummer (-2 weil letztes Element kkünstliches -1) wie vorher
         stepEndNo = stepTimes.length-2;      //dann einfach letzten Schritt wählen
+        //console.log("broken");
       }
 
       vonIn = rollingIndex[stepNumber];     //vonIndex nummer bisIndex nummer
       bisIn = indexArray[stepEndNo];
+      //console.log(vonIn + "bis" + bisIn);
       for(var between=vonIn*109; between<bisIn*109; between++) {      //für alle Werte in Intervall
         if(between%109==0) {      //eigentlich gleich wie vorher
           stringSteps += dataC + " MS:" + savedCom[between] + " M:  H: \n";
@@ -991,6 +1000,7 @@ function displayIt() {
   
   if (completeFile.length < 108) {          //Wenn weniger als 108 Zeilen verbleiben aufhören
     console.log(Date.now()); 
+    loop();
     return;
   }
   stateArray = completeFile.splice(0, 108); //stateArray (zum rendern) = 1. 108 Einträge v completeFile (bei splice werden Einträge gleichzeitig gelöscht aus altem Array)
@@ -1125,6 +1135,36 @@ progressbar.onchange = function() {   //Wenn User Progressbar irgendwo hinsetzt
   timeout = 100;
   displayAfter(); //zurückkehren zur Anzeige ab neuem Startpunkt
 }
+
+
+
+function loop() {
+  clearTimeout(timerouts);            //Stoppen der Anzeige
+  completeFile = Array.from(savedCom);  //Backups werden geladen
+  summenarray = Array.from(einsKopie);
+  summenarrayZwei = Array.from(zweiKopie);
+  summenarrayDrei = Array.from(dreiKopie);
+  //stepTimes = Array.from(stepKopie);
+  data = Array(100).fill(0);
+  dataZwei = Array(100).fill(0);
+  dataDrei = Array(100).fill(0);
+
+  if (step) {       //stelleImArray herausfinden
+    stelleImArray = laengeOriginal - summenarray.length;
+    StepString = "";
+    saveWo = 0;
+  }
+
+  prevTime = 0;
+  timenow = 0;
+  timeout = 100;
+  displayAfter(); //zurückkehren zur Anzeige ab neuem Startpunkt
+}
+
+
+
+
+
 
 
 var useArray = [];
