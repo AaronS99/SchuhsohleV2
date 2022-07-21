@@ -45,6 +45,18 @@ var summenarrayDrei = [];
 var graphIsOn = true;     //bool ob Graphen berechnet & laufen sollen
 var progressbar = document.getElementById("progress");  //Blaue Leiste, die Zeitleiste anzeigt, interagierbar
 var FilterOn = true;    //bool ob Filterberechnungen
+var settingsVisible = false;
+
+document.getElementById("settingCollapse").addEventListener("click", function () {
+  if (settingsVisible) {
+    settingsVisible = false;
+    document.getElementById("ZEins").style.display = "none";
+  }
+  else {
+    settingsVisible = true;
+    document.getElementById("ZEins").style.display = "block";
+  }
+});
 
 
 /*
@@ -433,7 +445,7 @@ slider.oninput = function() {
 }
 
 document.getElementById('csvFiles').addEventListener('change', function csvInput() { //Wenn File eingefügt läuft das hier
-  document.getElementById('title').innerHTML = "Lädt";
+  //document.getElementById('title').innerHTML = "Lädt";
   oldData = true; //oldData bool für stop button
   completeFile = [];  
   let reader = new FileReader(); //FileReader von JS
@@ -540,7 +552,7 @@ function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in
   else {
     document.getElementById("chartOn").style.display = "none";  //sonst Graphen nicht anzeigen
   }
-  document.getElementById('title').innerHTML = "Schuhsohle";    //Fertig geladen
+  //document.getElementById('title').innerHTML = "Schuhsohle";    //Fertig geladen
   savedCom = Array.from(completeFile);                        //Backup des Array für die Rücksprünge
   laenge = savedCom.length;                                 //Länge des Arrays
   progressbar.style.display = "inline";   //Anzeigen der Progressbar
@@ -672,11 +684,7 @@ function graphIt(allData) {   //Graph checkbox aktiviert -> bei Abspielen
 
   }
   //console.log(max);
-  var schnitt=0;          //Schnittwert berechnet für evtl. Schrittschwellen
-  for(var runnnn = 0; runnnn<summenarray.length; runnnn++) { 
-    schnitt+=summenarray[runnnn];
-  }
-  console.log(schnitt/summenarray.length);  //nur berechnung, bis jetzt noch keine Verwendung außer Anzeige in Konsole
+
   //console.log(summenarray);
   //console.log(summenarrayZwei);
   //console.log(summenarrayDrei);
@@ -742,6 +750,14 @@ function graphIt(allData) {   //Graph checkbox aktiviert -> bei Abspielen
     stelleImArray = 0;
     laengeOriginal = 0;
     saveWo = 0;
+
+    var schnitt=0;          //Schnittwert berechnet für evtl. Schrittschwellen
+    for(var runnnn = 0; runnnn<summenarray.length; runnnn++) { 
+      schnitt+=summenarray[runnnn];
+    }
+    console.log(schnitt/summenarray.length);  //nur berechnung, bis jetzt noch keine Verwendung außer Anzeige in Konsole
+  
+
     for(var runAll = 0; runAll < summenarray.length; runAll++) {        //einmal alle Frames durchgehen
       if(Ferse == false && summenarrayDrei[runAll] > 10 /*&& summenarrayDrei[runAll] < 35*/) {      //wenn Fersenwert über 10, neuer Schritt
         rollingIndex.push(runAll);    //abgespeichert, an welcher Stelle neuer Schritt begonnen- für Rüücksprung
@@ -775,6 +791,7 @@ function graphIt(allData) {   //Graph checkbox aktiviert -> bei Abspielen
   document.getElementById("Form").style.display = "inline";           //Anzeige visible machen
   document.getElementById("stepDownload").style.display = "inline";
   document.getElementById("Form").style.display = "inline";
+  document.getElementById("StepZahl").innerHTML = indexArray.length-1 + "Schritte";
   //console.log(stepTimes);
 
 }
@@ -991,7 +1008,7 @@ function displayAfter() { //Aufgerufen in displayIt & wenn Stop aufgehoben
   if (stopBool == false) {    //Wenn nicht Stop, nach berechneter Zeit nochmal displayIt()
     timerouts = setTimeout(displayIt, timeout/malTime);
   }
-
+  
 }
 
 function displayIt() {
@@ -1007,7 +1024,7 @@ function displayIt() {
   
   timenow = Number(completeFile[0]);  //Zeit von nächstem Datensatz
   //Berechnung für nächstes Timeout
-  if(timenow>prevTime) {   //Wenn nicht neue Minute angebrochen wurde
+  if(timenow>=prevTime) {   //Wenn nicht neue Minute angebrochen wurde
     timeout = timenow - prevTime;  //timeout ist differenz v Zeiten -2 für Delay durch Programm
   }
   else {    //sonst -> wenn neue Min angebrochen
@@ -1180,14 +1197,15 @@ var saveThis = [];
 document.getElementById("aufnahme").addEventListener('click', function() {  //Wenn aufnahmebeginn gedrückt
   if (record) {
     record = false; //wenn vorher true jetzt false
-    document.getElementById("aufnahme").innerHTML="Aufnahmebeginn"  //Buttonanzeige verändern
+    lalax(saveThis);
+    /*document.getElementById("aufnahme").innerHTML="Aufnahmebeginn"  //Buttonanzeige verändern
     let csvInhalt = "data:text/csv;charset=utf-8," + saveThis.join(",");  //gespeichertes Array als String, zwischen Einträgen Kommas
     var encodedUri = encodeURI(csvInhalt);  //String -> Uniform Resource Identifier URI
     var link = document.createElement("a"); //unsichtbarer link erstellt
     link.setAttribute("href", encodedUri);  //bekommt Datei zugewiesen
     link.setAttribute("download", "recordedData.csv");  //Name wenn gedownloaded
     document.body.appendChild(link);  //an doc angehangen
-    link.click();     //Link clicken lassen -> wird gedownloaded
+    link.click();     //Link clicken lassen -> wird gedownloaded*/
     //window.open(encodedUri);
 
   }
@@ -1425,7 +1443,15 @@ function eightToTen(workArrayy) {  //Hier von 8 zu 10Bit
 
 var bluetoothDevice;
 var gattconnect;
+var connectBool = false;
 document.getElementById("CONNECT").addEventListener('click', function letsGo() {  //benötigt aktiv click, geht nicht automatisch
+  if (connectBool) {
+    connectBool = false;
+    document.getElementById("CONNECT").innerHTML = "Connect";
+    bluetoothDevice.gatt.disconnect();  //Disconnect BLE Device
+    return;
+  }
+
   stateArray = [];
     navigator.bluetooth.requestDevice({
         filters: [{
@@ -1504,6 +1530,8 @@ document.getElementById("CONNECT").addEventListener('click', function letsGo() {
         },
       };
         characteristic.addEventListener('characteristicvaluechanged', newBLEData);  //immer wenn neue Daten wird funktion ausgeführt
+        connectBool = true;
+        document.getElementById("CONNECT").innerHTML = "Disconnect";
     })
     .catch(error => {console.error(error); })
 });
@@ -1511,9 +1539,9 @@ document.getElementById("CONNECT").addEventListener('click', function letsGo() {
 
 
 
-document.getElementById("disc").addEventListener('click', function disconnectIt() {
+/*document.getElementById("disc").addEventListener('click', function disconnectIt() {
     bluetoothDevice.gatt.disconnect();  //Disconnect BLE Device
-});
+});*/
 
 function onDisconnected(event) {
   alert("Disconnected");  //Anzeige falls disconnected, gewollt oder accidental
@@ -1528,7 +1556,9 @@ var toSix = 0;
 //var inRows = [];
 var asString = '';
 
-document.getElementById('rawData').addEventListener('change', function lala() { //Wenn man Aufnahmen verarbeiten will
+
+//AUFNAHMEN DIREKT VERARBEITET, NUR FALLS MAN NOCH ALTE DATEIEN HAT
+/*document.getElementById('rawData').addEventListener('change', function lala() { //Wenn man Aufnahmen verarbeiten will
   asString = "data:text/csv;charset=utf-8,";
   let read = new FileReader();
   read.readAsText(document.getElementById('rawData').files[0]);
@@ -1582,7 +1612,63 @@ document.getElementById('rawData').addEventListener('change', function lala() { 
     document.body.appendChild(linkclean);
     linkclean.click();
   }
-});
+});*/
+
+
+function lalax(rawcsvZ) { //Wenn man Aufnahmen verarbeiten will
+  asString = "data:text/csv;charset=utf-8,";
+    for (var y = 0; y<rawcsvZ.length; y++) {
+      if (rawcsvZ[y] == 36 && (rawcsvZ[y+1] >= 48 && rawcsvZ[y+1] <= 57)) {  //Wie bei BLE Live Daten die Abspeicherung
+        isText = true;
+        stringInMiddle = '';
+      }
+      if (isText) {
+        if (rawcsvZ[y] != 36) {
+          stringInMiddle = stringInMiddle + (String.fromCharCode(rawcsvZ[y]));
+        }
+
+      }
+      else {
+        cleanedCSV.push(rawcsvZ[y]);
+        toSix++;
+        if (toSix == 8) {
+          rowCorrect();
+          cleanedCSV.push('\n');
+          toSix = 0;
+        }
+        else {
+          cleanedCSV.push(",");
+        }
+        
+
+      }
+      if (rawcsvZ[y] == 36 && (rawcsvZ[y-1] >= 48 && rawcsvZ[y-1] <= 57)) {
+        isText = false;
+        if (cleanedCSV[cleanedCSV.length -1] != "\n") {
+          cleanedCSV.push("\n");
+        }
+        cleanedCSV.push(stringInMiddle);
+        cleanedCSV.push("\n");
+        toSix = 0;
+      }
+    }
+    //inRows = cleanedCSV.split("\n");
+    for (var i=0; i<cleanedCSV.length; i++) {
+      asString = asString + cleanedCSV[i];
+    }
+    //console.log(asString);
+    let csvInhaltclean = "data:text/csv;charset=utf-8," + cleanedCSV.join(',');
+    var encodedUriclean = encodeURI(asString);
+    var linkclean = document.createElement("a");
+    linkclean.setAttribute("href", encodedUriclean);
+    linkclean.setAttribute("download", "CleanData.csv");
+    document.body.appendChild(linkclean);
+    linkclean.click();
+}
+
+
+
+
 
 
 function rowCorrect() {
@@ -1676,57 +1762,61 @@ document.getElementById("Filter").addEventListener("change", function() {   //Fi
 var addedValues = 0;
 var geteiltDurch = 0;
 function fakeGauss() {              //Filter berechnungen
-  if (stateArray.length < 108) {      //wenn zu wenige Werte
+  addedValues = 0;
+  var stateGauss = Array.from(stateArray);
+  if (stateGauss.length < 108) {      //wenn zu wenige Werte
     return;
   }
+
   for(var posVar = 0; posVar<108; posVar++) {   //sonst
-    addedValues = 2*Number(stateArray[posVar]);   //mittleres mal 2
+
+    addedValues = 2 * Number(stateGauss[posVar]);   //mittleres mal 2
     geteiltDurch = 2;           //wie viele Summanten?
     if(posVar >=6 && posVar<=101) {     //wenn nicht 1. o. letzte Reihe
-      addedValues += Number(stateArray[posVar+6]) + Number(stateArray[posVar-6]); //Plus Wert ober und unterhalb
+      addedValues += Number(stateGauss[posVar+6]) + Number(stateGauss[posVar-6]); //Plus Wert ober und unterhalb
       geteiltDurch += 2;  //2 werte add
       if (posVar%6 == 0) {  //wenn links am Rand dann nur oben rechts, rechts und unten rechts
-        addedValues += Number(stateArray[posVar+1]) + Number(stateArray[posVar-5]) + Number(stateArray[posVar+7]);
+        addedValues += Number(stateGauss[posVar+1]) + Number(stateGauss[posVar-5]) + Number(stateGauss[posVar+7]);
         geteiltDurch += 3;  //3 werte add
       }
-      else if (posVar+1%6 == 0) { //wenn rechts am Rand dann links, oben links und unten links
-        addedValues += Number(stateArray[posVar-1]) + Number(stateArray[posVar-7]) + Number(stateArray[posVar+5]);
+      else if ((posVar+1)%6 == 0) { //wenn rechts am Rand dann links, oben links und unten links
+        addedValues += Number(stateGauss[posVar-1]) + Number(stateGauss[posVar-7]) + Number(stateGauss[posVar+5]);
         geteiltDurch += 3;  //3 werte add
       }
       else {  //wenn nicht am rand dann alle Werte drumherum (oben unten wurde schon vorher)
-        addedValues += Number(stateArray[posVar+1]) + Number(stateArray[posVar-1]) + Number(stateArray[posVar-5])+ Number(stateArray[posVar-7])+ Number(stateArray[posVar+5])+ Number(stateArray[posVar+7]);
+        addedValues += Number(stateGauss[posVar+1]) + Number(stateGauss[posVar-1]) + Number(stateGauss[posVar-5])+ Number(stateGauss[posVar-7])+ Number(stateGauss[posVar+5])+ Number(stateGauss[posVar+7]);
         geteiltDurch += 6;  //6 werte add
       }
     }
     else if (posVar <6) { //wenn erste Reihe
-      addedValues += Number(stateArray[posVar+6]); //drunter add
+      addedValues += Number(stateGauss[posVar+6]); //drunter add
       geteiltDurch += 1;
       if (posVar == 0) {  //wenn oben links dann plus rechts und unten rechts
-        addedValues += Number(stateArray[1]) + Number(stateArray[7]);
+        addedValues += Number(stateGauss[1]) + Number(stateGauss[7]);
         geteiltDurch += 2; //2 werte add
       }
       else if (posVar == 5) { //wenn oben rechts dann plus links und unten links
-        addedValues += Number(stateArray[4]) + Number(stateArray[10]);
+        addedValues += Number(stateGauss[4]) + Number(stateGauss[10]);
         geteiltDurch += 2; //2 werte add
       }
       else {  //sonst plus rechts, links, unten rechts und unten links
-        addedValues += Number(stateArray[posVar+1]) + Number(stateArray[posVar-1]) + Number(stateArray[posVar+5]) + Number(stateArray[posVar+7]);
+        addedValues += Number(stateGauss[posVar+1]) + Number(stateGauss[posVar-1]) + Number(stateGauss[posVar+5]) + Number(stateGauss[posVar+7]);
         geteiltDurch += 4;  //4 werte add
       }
     }
     else if (posVar > 101) {  //so ähnlich für letzte Reihe, halt nach oben
-      addedValues += Number(stateArray[posVar-6]);
+      addedValues += Number(stateGauss[posVar-6]);
       geteiltDurch += 1;
       if (posVar == 102) {
-        addedValues += Number(stateArray[103]) + Number(stateArray[97]);
+        addedValues += Number(stateGauss[103]) + Number(stateGauss[97]);
         geteiltDurch += 2;
       }
       else if (posVar == 107) {
-        addedValues += Number(stateArray[106]) + Number(stateArray[100]);
+        addedValues += Number(stateGauss[106]) + Number(stateGauss[100]);
         geteiltDurch += 2;
       }
       else {
-        addedValues += Number(stateArray[posVar+1]) + Number(stateArray[posVar-1]) + Number(stateArray[posVar-5]) + Number(stateArray[posVar-7]);
+        addedValues += Number(stateGauss[posVar+1]) + Number(stateGauss[posVar-1]) + Number(stateGauss[posVar-5]) + Number(stateGauss[posVar-7]);
         geteiltDurch += 4;
       }
     }

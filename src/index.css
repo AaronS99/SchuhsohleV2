@@ -1,5 +1,5 @@
 html {
-  height: 150%;
+  height: 250%;
 }
 
 body {
@@ -11,21 +11,93 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /*background-image: linear-gradient(rgb(123, 123, 246), rgb(149, 206, 250));*/
-  background-image: radial-gradient(rgb(181, 230, 254), rgba(154,175,219,242));
+  /*background-image: radial-gradient(rgb(0, 17, 209), rgb(7, 163, 247));*/
+  background-image: linear-gradient(rgb(0, 106, 255), rgb(0, 106, 255), rgb(0, 59, 223));
+}
+img{
+  border:2px solid black;
+  border-radius: 25px;
+
+}
+#flexHead {
+  box-sizing: border-box;
+  position: fixed;
+  /*z-index: 1;*/
+  width: 100%;
+  display: flex;
+  padding-left: 1%;
+  padding-right: 1%;
+  justify-content: space-between;
+  align-items: flex-end;
+  background-image: radial-gradient(rgb(0, 106, 255, 0.5), rgb(0, 110, 255));
+  padding-bottom: 1%;
+  border-bottom: 1px solid white;
+  border-left: 1px solid white;
+  border-right: 1px solid white;
+}
+#csvFiles {
+  display: none;
+}
+#FlexInHead {
+  width: 50%;
+  display: flex;
+  justify-content: space-around;
 }
 
-a {
-  display: inline;
-  margin-bottom: 0;
+Button {
+  font-size: 125%;
+  color: white;
+  border: 1px solid;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: center;
+  border: none;
+  background: none;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
-code {
-  font-family: Monaco;/*source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;*/
+Button:hover {
+  text-decoration: underline;
 }
-.gridrow {
-  display: inline;
+.button {
+  cursor: copy;
+  color: white;
+  font-size:125%;
+  font-weight: bold;
+  text-align: center;
 }
-
+.button:hover {
+  text-decoration: underline;
+}
+#ZEins {
+  display: none;
+  padding: 1%;
+  border-radius: 10%;
+  /*height: 10%;*/
+  position: fixed;
+  z-index: 1;
+  left: 67%;
+  top: 12%;
+  /*background-color: rgba(0, 247, 255, 0.1); */
+  border: 1px solid white;
+  
+  /*width: 10%;  100% width */
+  
+  /*margin-top: 15px;*/
+}
+.SettingsContent {
+  font-size: 150%;
+  cursor: pointer;
+  color: white;
+}
+.SettingsCheckbox {
+  transform: scale(1.75);
+  /*aspect-ratio: 1;*/
+  /*ilter: invert(100%) hue-rotate(18deg) brightness(1.7);*/
+  accent-color: rgb(2, 196, 255);
+}
+input[type="checkbox"] {
+  cursor: pointer;
+}
 .square {
   /*font-size: 24px;*/
   /*font-weight: bold;*/
@@ -33,6 +105,7 @@ code {
   flex-basis: 16.66666666%;
   width: 30px;
   height: 30px;
+  border: 0px;
 
 }
 .gridall {
@@ -45,283 +118,47 @@ code {
   flex-wrap: wrap;
   border: 1px solid rgb(0, 0, 0);
 }
-input {
-  display: inline;
-}
-
 .wrapper {
   float: left;
-}
-div {
-  float: left;
-}
-
-h1 {
-  text-align: center;
-  font-size: 300%;
-  color: white;
-  text-shadow: 2px 2px 2px black;
-/*  display: inline-block;
-  position: relative;
-  left: 25%*/
-  margin-top: 0;
-}
-#pic {
-  border: 1px solid black;
-  margin-bottom: 0;
-}
-.Block {
-  display: block;
-  border: 0px solid;
-}
-p {
-  margin: 2px;
-}
-#ausklapp {
-  display: none;
+  padding: 1%;
   width: 100%;
-  background-color: rgb(132, 198, 255);
-  font-size: 110%;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.2), rgba(177, 220, 255, 0.2));
+  border-radius: 10px;
+  display: flex;
 }
-#chartOn {
-  display: inline;
-  width:50%;
-  /*border: 1px solid;*/
-}
-#help {
-  background-color: rgb(254, 218, 179);
-}
-#help:hover {
-  background-color: rgb(231, 181, 96);
-}
-label {
-  background-color: lightblue;
-  border: 1px solid;
-}
-Button {
-  font-size: 95%;
-  border: 1px solid;
-  font-weight: bold;
-  cursor: pointer;
-  width: 100%;
-  height: 50px;
-  text-align: center;
-  background-color: white;
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-}
-Button:hover {
-  background-color: rgb(240, 254, 255);
-}
-input{
-  cursor: pointer;
-}
-input[type="file"] {
-  position: absolute;
-  z-index: -1;
-  opacity: 0;
-  top: 10px;
-  left: 8px;
-  /*font-size: 17px;*/
-  color: #b8b8b8;
-}
-.button {
-  width: 99%;
-  height: 50px;
-  margin-left:0;
-  display: inline-block;
-  cursor: copy;
-  border: 1px solid;
-  background-color: white;
-  font-size:95%;
-  font-weight: bold;
-  color: black;
-  text-align: center;
-  line-height: 50px;
-}
-.button:hover {
-  background-color: aliceblue;
-}
-label {
-  cursor: pointer;
-}
-input[type="range"] {
-  cursor:grab;
-}
-#groesser {
-  cursor: zoom-in;
-  border-radius: 5px;
+.resize {
+  border: 1px solid white;
   width:4%;
   height:4%;
   aspect-ratio: 1;
-  font-size: 100%;
-  margin-left: 4px;
-  margin-right: 0px;
-  background-color: white;
-  border:2px solid;
+  background-color: none;
+  padding:0;
+}
+.resize:hover {
+  text-decoration: none;
+  border: 2px solid black;
+}
+#groesser {
+  cursor: zoom-in;
 }
 #kleiner {
   cursor: zoom-out;
-  border-radius: 5px;
-  width: 4%;
-  height: 4%;
-  aspect-ratio: 1;
-  font-size: 100%;
-  margin-left: 0px;
-  background-color: white;
-  border: 2px solid;
 }
-input[type="checkbox"] {
-  height: 50%;
-  width: 55%;
+#fromTop {
+  margin-top: 7.5%;
+  width: 100%;
+  display: flex;
 }
-#grap {
-  background-color: white;
-  text-align: center;
-  font-size: 110%;
-  border: 0px;
-}
-#graphi {
-  border: 0px;
-}
-#stepL {
-  background-color: white;
-  text-align: center;
-  font-size: 110%;
-  border: 0px;
-}
-#steps {
-
-  border: 0px;
-}
-#progress {
-  width: 40%;
-  display: none;
+#top {
+  color: rgb(0, 0, 0, 0);
 }
 #anzeige {
-  width: 54%;
-  background-color:white;
-  border:1px solid;
+  /*width: 100%;*/
 }
-#controls {
-  /*height: 500px;*/
-  width: 15%;
-  background-color: white;
-  border: 1px solid;
-  border-right: 0px;
-}
-#ki {
-  width: 30%;
-  /*height: 300px;*/
-  border: 1px solid;
-  border-left: 0px;
-  background-color: white;
-}
-.mitte {
-  margin: auto;
-  width: 100%;
-}
-.boxen {
-  display: flex;
-  justify-content: center;
-  border:1px solid;
-  width: 100%;
-  height: 65px;
-}
-#slideOutput {
-  margin:auto;
-  text-align: center;
-  width: 100%;
-}
-#slider {
-  margin:auto;
-  width: 100%;
-}
-.mittig {
-  text-align: center;
-  font-size: 100%;
-}
-.boxenZ {
-  border:1px solid;
-  width: 100%;
-  height: 70px;
-}
-#hilf {
-  display: inline-block;
-  width: 100%;
-}
-.strich {
-  border-bottom: 1px solid;
-}
-#StepAnzeige {
+#chartOn {
   display: inline;
-  font-weight: bold;
+  width: 50%;
 }
-.abgrenz {
-  display: inline;
-  font-weight: bold;
-
-}
-.abgrenzZwei {
-  display: inline;
-  width: 30%;
-  border: 0px solid;
-  height: 100%
-}
-#stepDownloada {
-  display: none;
-  width:60%;
-  margin-left: 5%;
-}
-#stepDownload {
-  display: none;
-}
-#FiltL {
-  background-color: white;
-  text-align: center;
-  font-size: 110%;
-  border: 0px;
-}
-#Filter {
-  border: 0px;
-}
-
-.forms {
-  background-color: white;
-  border: 0px;
-}
-input[type="number"]{
-  width: 40px;
-}
-
-#Forma{
-  border: 1px solid;
-  width:60%;
-  display:none;
-  margin-left: 5%;
-}
-#Form{
-  /*border: 1px solid;*/
-  display:none;
-  width: 100%;
-}
-#hideIfOne{
-  display:none;
-}
-
-#formAndDownload{
-  border: 0px solid;
-  width:60%;
-  margin-left: 5%;
-}
-#CONNECT {
-  background-color: rgb(203, 255, 203);
-}
-#disc {
-  background-color: rgb(255, 177, 177);
-}
-#CONNECT:hover {
-  background-color: rgb(195, 255, 195);
-}
-#disc:hover {
-  background-color: rgb(255, 169, 169);
+#rest {
+  padding: 1.5%;
 }
