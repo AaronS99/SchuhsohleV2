@@ -31,12 +31,12 @@
     <div id="flexHead">
       <a href="https://www.dfki.de" class="inline"><img src="%PUBLIC_URL%/DFKI_Logo.png"  id="pic"></a>
       <div id="FlexInHead">
-        <button id="CONNECT" title="Um Verbindung zur Schuhsohle (BT05) herzustellen">Connect</button>
+        <button id="CONNECT" class="headButtons" title="Um Verbindung zur Schuhsohle (BT05) herzustellen">Verbinden</button>
         <label for="csvFiles" id="csvFilez"class="button" title="Hier kann man aufgenommene CSV Dateien Abspielen lassen">Abspielen</label>
         <input type="file" id="csvFiles" class="inputfile" name="FertigeFiles">
-        <button id="settingCollapse" title="Einstellungen wie Filter etc.">Settings</button>
+        <button id="settingCollapse" class="headButtons" title="Einstellungen wie Filter etc.">Einstellungen</button>
       </div>
-      <button id="help">Hilfe</button>
+      <button id="help" class="headButtons">Hilfe</button>
     </div>    
     <div id="ZEins">
       <input type = "checkbox" name = "Checker" id="graphi" class="SettingsCheckbox" checked>
@@ -53,158 +53,66 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="fromTop">
       <div class="Block" id="anzeige">
-        <div class="mitte">
-          <button id="groesser" class="resize" title="Abbildung vergrößern">+</button>
-          <button id="kleiner" class="resize" title="Abbildung verkleinern">-</button>
-          <input type="range" min="0" max="100" value="0" id="progress">
-          <br>
+
+        <div class="vertFlex">
+
+          <div id="Block1">
+            <button id="groesser" class="resize" title="Abbildung vergrößern">+</button>
+            <button id="kleiner" class="resize" title="Abbildung verkleinern">-</button>
+            <input type="range" min="0" max="100" value="0" id="progress">
+          </div>
           <div id="root"></div>
         </div>
-      </div>
-      <div id="rest">
-        <div class="Block" id="controls">
 
-          <!--<label for="testInput">Für Tests</label>  
-          <input type="file" id="fileInput" name="testInput">
-          <br>-->
-    
-          <!--<label for="rawData" class="button">Verarbeiten</label>  FALLS MAN NOCH ALTE DATEIEN HAT
-          <input type="file" id="rawData" class="inputfile" name="rD">-->
-          <button id="stopButton">Stop</button>
+        <div class="vertFlex" id="ki">
+          <br><br><br><br>
+          <button id="stopButton" class="restButtons">Stop</button>
+          <br>
+          <p class="mittig" id="sliderOutput">Geschwindigkeit</p> 
+          <input type="range" min="10" max="200" value="100" id="slider"> 
+
+          <p id="slideOutput"></p>    
+
+          <button id="aufnahme" class="restButtons">Aufnahmebeginn</button>
+          <br>
+          <button id="stepDownload" class="restButtons">Schritt Zeiten herunterladen</button>
+          <p id="StepZahl"></p>
+
+      </div>
+      <div class="vertFlex">
+        <br><br><br><br>
+        <p class="strich" id="stepHeader"><b>Schrittdauer</b></p>
+        <div class="abgrenzZwei">
           
-          <button id="aufnahme">Aufnahmebeginn</button>
-    
-          <div class="boxen">
-            <div class="mittel">
-    
-            </div>
-          </div>
-          <br>
-          <div class="boxen">
-            <div class="mittel">
-    
-            </div>
-          </div>
-          <br>
-          <div class="boxenZ">
-            <p class="mittig">Geschwindigkeit</p>
-            <input type="range" min="10" max="200" value="100" id="slider"> 
-            <br>
-            <div id="slideOutput"></div>
-          </div>
-          <br>
-          <div class="boxen">
-            <div class="mittel">
-    
-            </div>
-          </div>
-    
-          <!--<section id="hilf">
-            <p id="ausklapp">Für die BLE Verbindung ist Google Chrome erforderlich. <br>
-              Außerdem muss eventuell unter <b>about://flags</b> <i>Experimental Web Platform features</i> auf <b>Enabled</b> gesetzt werden. <br>
-              <br>
-              Bei Fehlern hilft es eventuell die Seite neu zu laden.<br>
-              <br>
-              Um die Live Übertragung zu starten, auf <i>CONNECT</i> klicken und dann <b>BT05</b> auswählen. <br>
-              <br>
-              Während der Live Übertragung können die Daten auch aufgezeichnet werden. Um die Aufzeichnung <br>
-              zu starten, auf <i>Aufnahmebeginn</i> klicken, um sie zu stoppen nochmals drauf klicken. Anschließend <br>
-              wird eine Datei mit den rohen Daten heruntergeladen. Mit einem Hochladen dieser bei <i>rohe Daten Verarbeiten</i> <br>
-              werden die Daten in eine übersichtlichere CSV Datei gewandelt. <br>
-              <br>
-              Um die Verbindung zu stoppen, auf <i>DISCONNECT</i> klicken. <br>
-              <br>
-              Um alte Aufzeichnungen nochmals abspielen zu lassen, die CSV Datei bei <i>Zum Abspielen</i> hochladen. <br>
-              Diese wird dort in der originalen Geschwindigkeit abgespielt. <br>
-              <br>
-              Über <i>Stop</i> kann man die Wiedergabe anhalten und anschließend auch fortsetzen. <br>
-              
-              Über den Slider unter <i>Geschwindigkeit</i> kann man die Wiedergabegeschwindigkeit einstellen.<br>
-              Beim Anzeigen des Graphens kann es, falls man nicht Chrome verwendet, zu Performance-Problemen kommen. 
-              <br>
-              Der Slider über der Anzeige zeigt die zeitliche Stelle an, an der sich die Wiedergabe befindet.<br>
-              Wenn man ihn verschiebt, kann man zu anderen Punkten springen.
-      
-            </p>
-          </section>-->
+          <p id="StepAnzeige"></p>
         </div>
-    
-        <div class="Block" id="ki">
-          <p class="strich"><b>Schrittdauer (Aufsetzen Ferse bis Abheben Vorderfuß)</b></p>
-          <!--<div class="abgrenz">
-    
-    
-          </div>-->
-          <div class="abgrenzZwei">
-            <p id="StepZahl"></p>
-            <p id="StepAnzeige"></p>
-          </div>
-          <div id="formAndDownload">
-            <br>
-            <button id="stepDownload">Schritt Zeiten herunterladen</button>
-            <br>
-            <div id="Form">
-              <input type="radio" name="formRadio" id="oneStep" value="one" checked>
-              <label for="oneStep" class="forms">Einzelner Schritt</label>
-              <br>
-              <input type="radio" name="formRadio" id="multipleSteps"value="multiple">
-              <label for="multipleSteps" class="forms">Mehrere Schritte</label>
-              <br>
-              <label for="firstStep" class="forms" id="LabelOne">Schrittnummer:</label>
-              <input type ="number" id="firstStep">
-              <br>
-              <div id="hideIfOne">
-                <label for="lastStep" class="forms">Bis Schritt:</label>
-                <input type="number" id="lastStep">
-              </div>
-              <button id="formDone">Download</button>
-            </div>
-          </div>
-        </div>
-        <section id="hilf">
-          <p id="ausklapp">Für die BLE Verbindung ist Google Chrome erforderlich. <br>
-            Außerdem muss eventuell unter <b>about://flags</b> <i>Experimental Web Platform features</i> auf <b>Enabled</b> gesetzt werden. <br>
-            <br>
-            Bei Fehlern hilft es eventuell die Seite neu zu laden.<br>
-            <br>
-            Um die Live Übertragung zu starten, auf <i>CONNECT</i> klicken und dann <b>BT05</b> auswählen. <br>
-            <br>
-            Während der Live Übertragung können die Daten auch aufgezeichnet werden. Um die Aufzeichnung <br>
-            zu starten, auf <i>Aufnahmebeginn</i> klicken, um sie zu stoppen nochmals drauf klicken. Anschließend <br>
-            wird eine Datei mit den rohen Daten heruntergeladen. Mit einem Hochladen dieser bei <i>Verarbeiten</i> <br>
-            werden die Daten in eine übersichtlichere CSV Datei gewandelt. <br>
-            <br>
-            Um die Verbindung zu stoppen, auf <i>DISCONNECT</i> klicken. <br>
-            <br>
-            Um alte Aufzeichnungen nochmals abspielen zu lassen, die CSV Datei bei <i>Abspielen</i> hochladen. <br>
-            Diese wird dort in der originalen Geschwindigkeit abgespielt. <br>
-            <br>
-            Über <i>Stop</i> kann man die Wiedergabe anhalten und anschließend auch fortsetzen. <br>
-            <br>
-            Über den Slider unter <i>Geschwindigkeit</i> kann man die Wiedergabegeschwindigkeit einstellen.<br>
-            Beim Anzeigen des Graphens kann es, falls man nicht Chrome verwendet, zu Performance-Problemen kommen. 
-            <br><br>
-            Der Slider über der Anzeige zeigt die zeitliche Stelle an, an der sich die Wiedergabe befindet.<br>
-            Wenn man ihn verschiebt, kann man zu anderen Punkten springen.
-            <br><br>
-            Es werden drei Graphen angezeigt, jeweils einer für Vorderfuß, Mittelfuß und Ferse. <br>
-            Diese Zeigen die Aufsummierten Werte, also den Druck an, der auf den Schuh gegeben wird. <br>
-            Über das <i>Graph</i> Häkchen kann man die Darstellung an- und ausschalten.
-            <br><br>
-            Steps steht für die Erkennung der Schrittdauer.
-            <br><br>
-            Über das Filter Häkchen kann man den Filter ein- und ausschalten. Hier werden nebeneinanderliegende <br>
-            Kästchen gemittelt, was zu einer besseren Darstellung führen kann.
-            <br><br>
-            Wenn Dateien abgespielt werden, können einzelne Schritte, sowie auch alle Schrittzeiten heruntergeladen werden.
-            <br><br>
-          </p>
-        </section>
-    
-        <br>
-    
-
       </div>
+      <div class="vertFlex" id="rechtsRand">
+        <div id="formAndDownload">
+          <br><br><br><br>
+          <div id="Forma">
+
+            <input type="radio" name="formRadio" id="oneStep" value="one" checked>
+            <label for="oneStep" class="forms">Einzelner Schritt</label>
+            <br>
+            <input type="radio" name="formRadio" id="multipleSteps"value="multiple">
+            <label for="multipleSteps" class="forms">Mehrere Schritte</label>
+            <br>
+            <label for="firstStep" class="forms" id="LabelOne">Schrittzahl:</label>
+            <input type ="number" id="firstStep" class="NumIn">
+            <br>
+            <div id="hideIfOne">
+              <label for="lastStep" class="forms">Bis Schritt:</label>
+              <input type="number" id="lastStep" class="NumIn">
+            </div>
+            <br>
+            <br>
+            <button id="formDone" class="restButtons">Download</button>
+          </div>
+        </div>
+      </div>
+      </div>
+      
     
     <!--
       This HTML file is a template.
@@ -217,5 +125,44 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
   </div>
+  <section id="hilf">
+    <p id="ausklapp">Für die BLE Verbindung ist Google Chrome erforderlich. <br>
+      Außerdem muss eventuell unter <b>about://flags</b> <i>Experimental Web Platform features</i> auf <b>Enabled</b> gesetzt werden. <br>
+      <br>
+      Bei Fehlern hilft es eventuell die Seite neu zu laden.<br>
+      <br>
+      Um die Live Übertragung zu starten, auf <i>CONNECT</i> klicken und dann <b>BT05</b> auswählen. <br>
+      <br>
+      Während der Live Übertragung können die Daten auch aufgezeichnet werden. Um die Aufzeichnung <br>
+      zu starten, auf <i>Aufnahmebeginn</i> klicken, um sie zu stoppen nochmals drauf klicken. Anschließend <br>
+      wird eine Datei mit den rohen Daten heruntergeladen. Mit einem Hochladen dieser bei <i>Verarbeiten</i> <br>
+      werden die Daten in eine übersichtlichere CSV Datei gewandelt. <br>
+      <br>
+      Um die Verbindung zu stoppen, auf <i>DISCONNECT</i> klicken. <br>
+      <br>
+      Um alte Aufzeichnungen nochmals abspielen zu lassen, die CSV Datei bei <i>Abspielen</i> hochladen. <br>
+      Diese wird dort in der originalen Geschwindigkeit abgespielt. <br>
+      <br>
+      Über <i>Stop</i> kann man die Wiedergabe anhalten und anschließend auch fortsetzen. <br>
+      <br>
+      Über den Slider unter <i>Geschwindigkeit</i> kann man die Wiedergabegeschwindigkeit einstellen.<br>
+      Beim Anzeigen des Graphens kann es, falls man nicht Chrome verwendet, zu Performance-Problemen kommen. 
+      <br><br>
+      Der Slider über der Anzeige zeigt die zeitliche Stelle an, an der sich die Wiedergabe befindet.<br>
+      Wenn man ihn verschiebt, kann man zu anderen Punkten springen.
+      <br><br>
+      Es werden drei Graphen angezeigt, jeweils einer für Vorderfuß, Mittelfuß und Ferse. <br>
+      Diese Zeigen die Aufsummierten Werte, also den Druck an, der auf den Schuh gegeben wird. <br>
+      Über das <i>Graph</i> Häkchen kann man die Darstellung an- und ausschalten.
+      <br><br>
+      Steps steht für die Erkennung der Schrittdauer.
+      <br><br>
+      Über das Filter Häkchen kann man den Filter ein- und ausschalten. Hier werden nebeneinanderliegende <br>
+      Kästchen gemittelt, was zu einer besseren Darstellung führen kann.
+      <br><br>
+      Wenn Dateien abgespielt werden, können einzelne Schritte, sowie auch alle Schrittzeiten heruntergeladen werden.
+      <br><br>
+    </p>
+  </section>
   </body>
 </html>

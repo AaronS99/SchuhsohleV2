@@ -446,6 +446,15 @@ slider.oninput = function() {
 
 document.getElementById('csvFiles').addEventListener('change', function csvInput() { //Wenn File eingefügt läuft das hier
   //document.getElementById('title').innerHTML = "Lädt";
+  document.getElementById("stopButton").style.display = "block";
+  document.getElementById("slider").style.display = "block";
+  document.getElementById("sliderOutput").style.display = "block";
+  document.getElementById("slideOutput").style.display = "block";
+  document.getElementById("stepDownload").style.display = "block";
+  document.getElementById("stepHeader").style.display = "block";
+  document.getElementById("formAndDownload").style.display = "block";
+  document.getElementById("aufnahme").style.display = "none";
+  document.getElementById("StepZahl").style.display = "block";
   oldData = true; //oldData bool für stop button
   completeFile = [];  
   let reader = new FileReader(); //FileReader von JS
@@ -788,10 +797,9 @@ function graphIt(allData) {   //Graph checkbox aktiviert -> bei Abspielen
   StepString = "";
   indexArray.push(-1);  //Sonst wird versucht auf nicht existierendes Element zuzugreifen
   stepKopie = Array.from(stepTimes);
-  document.getElementById("Form").style.display = "inline";           //Anzeige visible machen
+  document.getElementById("Forma").style.display = "block";           //Anzeige visible machen
   document.getElementById("stepDownload").style.display = "inline";
-  document.getElementById("Form").style.display = "inline";
-  document.getElementById("StepZahl").innerHTML = indexArray.length-1 + "Schritte";
+  document.getElementById("StepZahl").innerHTML = indexArray.length-1 + " Schritte insgesamt";
   //console.log(stepTimes);
 
 }
@@ -804,7 +812,7 @@ function FormDisplay() {
   if(document.getElementById("oneStep").checked) {      //wenn 1 schritt
     oneStep = true;
     document.getElementById("hideIfOne").style.display = "none";
-    document.getElementById("LabelOne").innerHTML="Schrittnummer:"
+    document.getElementById("LabelOne").innerHTML="Schrittzahl:"
   }
   else {
     oneStep = false;
@@ -1447,7 +1455,7 @@ var connectBool = false;
 document.getElementById("CONNECT").addEventListener('click', function letsGo() {  //benötigt aktiv click, geht nicht automatisch
   if (connectBool) {
     connectBool = false;
-    document.getElementById("CONNECT").innerHTML = "Connect";
+    document.getElementById("CONNECT").innerHTML = "Verbinden";
     bluetoothDevice.gatt.disconnect();  //Disconnect BLE Device
     return;
   }
@@ -1493,7 +1501,7 @@ document.getElementById("CONNECT").addEventListener('click', function letsGo() {
       stepKopie = [];
       StepString = "";
       stepNo = 0;
-      //document.getElementById("Form").style.display = "inline";
+      //document.getElementById("Forma").style.display = "block";
       document.getElementById("stepDownload").style.display = "inline";
       options = {
         borderColor: 'rgba(0,0,0)',
@@ -1531,7 +1539,7 @@ document.getElementById("CONNECT").addEventListener('click', function letsGo() {
       };
         characteristic.addEventListener('characteristicvaluechanged', newBLEData);  //immer wenn neue Daten wird funktion ausgeführt
         connectBool = true;
-        document.getElementById("CONNECT").innerHTML = "Disconnect";
+        document.getElementById("CONNECT").innerHTML = "Trennen";
     })
     .catch(error => {console.error(error); })
 });
@@ -1544,7 +1552,7 @@ document.getElementById("CONNECT").addEventListener('click', function letsGo() {
 });*/
 
 function onDisconnected(event) {
-  alert("Disconnected");  //Anzeige falls disconnected, gewollt oder accidental
+  alert("Verbindung getrennt");  //Anzeige falls disconnected, gewollt oder accidental
 }
 
 // PROCESS RECORDED DATA
