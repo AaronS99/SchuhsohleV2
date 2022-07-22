@@ -70,7 +70,7 @@ Button:hover {
   /*height: 10%;*/
   position: fixed;
   z-index: 1;
-  left: 66%;
+  left: 65%;
   top: 12%;
   /*background-color: rgba(0, 247, 255, 0.1); */
   background-color: rgba(0, 0, 0, 0.301);
@@ -134,6 +134,7 @@ input[type="checkbox"] {
   aspect-ratio: 1;
   background-color: rgba(236, 245, 255, 0.5);
   padding:0;
+  margin-bottom: 1%;
 }
 .resize:hover {
   text-decoration: none;
@@ -267,4 +268,7 @@ input[type="checkbox"] {
 }
 #StepAnzeige {
   margin-top: 0;
+}
+#progress {
+  display:none;
 }

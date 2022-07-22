@@ -1540,6 +1540,16 @@ document.getElementById("CONNECT").addEventListener('click', function letsGo() {
         characteristic.addEventListener('characteristicvaluechanged', newBLEData);  //immer wenn neue Daten wird funktion ausgeführt
         connectBool = true;
         document.getElementById("CONNECT").innerHTML = "Trennen";
+        document.getElementById("stopButton").style.display = "none";
+        document.getElementById("slider").style.display = "none";
+        document.getElementById("sliderOutput").style.display = "none";
+        document.getElementById("slideOutput").style.display = "none";
+        document.getElementById("stepDownload").style.display = "block";
+        document.getElementById("stepHeader").style.display = "block";
+        document.getElementById("formAndDownload").style.display = "none";
+        document.getElementById("aufnahme").style.display = "block";
+        document.getElementById("StepZahl").style.display = "none";
+        progressbar.style.display = "none";
     })
     .catch(error => {console.error(error); })
 });
