@@ -14,13 +14,20 @@ body {
   -moz-osx-font-smoothing: grayscale;
   /*background-image: linear-gradient(rgb(123, 123, 246), rgb(149, 206, 250));*/
   /*background-image: radial-gradient(rgb(0, 17, 209), rgb(7, 163, 247));*/
-  background-image: linear-gradient(rgb(0, 47, 255), rgb(0, 83, 199), rgb(0, 59, 223));
+  background-image: linear-gradient(rgb(48, 85, 250), rgb(39, 123, 240), rgb(0, 59, 223));
   color: white;
 }
+a{
+  margin-top: 1.2%;
+  width: 10%;
+}
 img{
-  border:2px solid black;
-  border-radius: 25px;
-
+  margin-bottom: 0;
+  border:0px solid black;
+  filter: invert(1);
+  width: 100%;
+  image-rendering:optimizeQuality;
+  box-shadow: 0px 0px 20px white;
 }
 #flexHead {
   box-sizing: border-box;
@@ -40,6 +47,9 @@ img{
 }
 #csvFiles {
   display: none;
+}
+#csvFilez{
+  text-shadow: 1px 1px black;
 }
 #FlexInHead {
   width: 50%;
@@ -120,7 +130,10 @@ input[type="checkbox"] {
   width: 100%;
   background-image: radial-gradient(rgba(255, 255, 255, 0.2), rgba(177, 220, 255, 0.637));
   border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.274);
+  box-shadow: 0px 0px 10px rgb(255, 255, 255);
   display: flex;
+  padding: 2%;
 }
 .resize {
   text-shadow: 0px 0px 0px rgb(0, 0, 0);
@@ -133,12 +146,12 @@ input[type="checkbox"] {
   height:25px;
   aspect-ratio: 1;
   background-color: rgba(236, 245, 255, 0.5);
-  padding:0;
+  padding: 0;
   margin-bottom: 1%;
 }
 .resize:hover {
   text-decoration: none;
-  border: 2px solid black;
+  border: 1px solid black;
 }
 #groesser {
   cursor: zoom-in;
@@ -196,6 +209,7 @@ input[type="checkbox"] {
   border: none;
   background: none;
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  text-shadow: 1px 1px black;
 }
 .headButtons:hover {
   text-decoration: underline;
@@ -216,9 +230,10 @@ input[type="checkbox"] {
   padding: 10px;
   font-family: Tahoma;
   font-weight: bold;
+  box-shadow: 0px 0px 2px rgb(0, 0, 0);
 }
 .restButtons:hover {
-  box-shadow: 2px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 0px 10px rgb(1, 131, 253);
   color: rgb(0, 174, 255);
 }
 #stopButton{
@@ -254,21 +269,51 @@ input[type="checkbox"] {
 #formAndDownload {
   display: none;
 }
+#formDone{
+  width: 91%
+}
 #Forma {
   width: 110%;
   border-radius: 10px;
 
 }
 #ausklapp {
+  padding: 3%;
+  border-radius: 40px;
+  margin-left: auto;
+  margin-right: auto;
+  width: fit-content;
+  background-color: rgba(0, 0, 0, 0.377);
   display: none;
+  color: white;
+  text-shadow: 1px 1px black;
+  font-size: 110%;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 170%;
+  box-shadow: 0px 0px 100px rgb(21, 1, 68);
+}
+i{
+  text-shadow: 2px 2px black;
+  font-weight: bold;
 }
 #StepZahl {
   display: none;
   text-align: center;
+  margin-top: 0;
+  margin-bottom: 10%;
 }
 #StepAnzeige {
   margin-top: 0;
 }
 #progress {
   display:none;
+}
+#Dauer {
+  margin-top: 10%;
+  margin-bottom: 2%;
+}
+.info {
+  color: rgb(255, 255, 255);
+  text-shadow: 1px 1px black;
+  font-weight: bold;
 }

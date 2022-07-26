@@ -503,9 +503,18 @@ var wertVorher = 0;
 var wertNachher = 0;
 var savedCom = [];
 var laenge = 0;
+var dauerCSV = 0;
 function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in Blöcke getrennt durch MS: Zeilen
   let csvAlsArray = inputFile.slice(inputFile.indexOf("MS:")).split("MS:");
-  //console.log(csvAlsArray);
+  var Millisekunden = Number(csvAlsArray[csvAlsArray.length-1].slice(0, csvAlsArray[csvAlsArray.length-1].indexOf("M:")-1)) - Number(csvAlsArray[1].slice(0, csvAlsArray[1].indexOf("M:")-1));
+  var Minuten = Number(csvAlsArray[csvAlsArray.length-1].slice(csvAlsArray[csvAlsArray.length-1].indexOf("M:") + 2, csvAlsArray[csvAlsArray.length-1].indexOf("H:")-1)) - Number(csvAlsArray[1].slice(csvAlsArray[1].indexOf("M:") + 2, csvAlsArray[1].indexOf("H:")-1));
+  if(Millisekunden<0) {
+    Millisekunden = 60000 + Millisekunden;
+    Minuten--;
+  }
+  Millisekunden /= 1000;
+  dauerCSV = Minuten + " Minuten und " + Millisekunden + " Sekunden";
+  document.getElementById("Dauer").innerHTML=(dauerCSV);
   var tempArray = [];
   var tempZwei = [];
   var rn = false;
@@ -799,7 +808,7 @@ function graphIt(allData) {   //Graph checkbox aktiviert -> bei Abspielen
   stepKopie = Array.from(stepTimes);
   document.getElementById("Forma").style.display = "block";           //Anzeige visible machen
   document.getElementById("stepDownload").style.display = "inline";
-  document.getElementById("StepZahl").innerHTML = indexArray.length-1 + " Schritte insgesamt";
+  document.getElementById("StepZahl").innerHTML = indexArray.length-1 + " Schritte";
   //console.log(stepTimes);
 
 }
@@ -826,7 +835,12 @@ var bisIn = 0;
 var dataC = 0;
 var stringSteps = "";
 var dataToSix = 0;
+var minuteCount = 0;
+var millisave = 0;
+var SchrittNo = 0;
 document.getElementById("formDone").addEventListener("click", function () {     //Für den Schritte download
+  minuteCount = 0;
+  millisave = 0;
   //console.log(oneStep);
   stepRequest = [];
   dataC = 0;
@@ -848,7 +862,11 @@ document.getElementById("formDone").addEventListener("click", function () {     
         bisIn = indexArray[stepNumber];
         for(var between=vonIn*109; between<bisIn*109; between++) {  //im kompletten Array * 109, da ja 109 * mehr Werte hat als Summenarray
           if(between%109==0) {  //alle 109 Werte keine Werte sondern MS: und so
-            stringSteps += dataC + " MS:" + savedCom[between] + " M:  H: \n";   //dataC ist eigener Counter, dann MS Zeit
+            if (Number(savedCom[between]) < Number(millisave)) {
+              minuteCount++;
+            }
+            millisave = savedCom[between];
+            stringSteps += dataC + " MS:" + savedCom[between] + " M:" + minuteCount + " H: \n";   //dataC ist eigener Counter, dann MS Zeit
             dataC++;
             dataToSix = 0;  //Counter bis 6, weil im csv doc 6 pro Zeile sein sollen
           }
@@ -870,7 +888,11 @@ document.getElementById("formDone").addEventListener("click", function () {     
         bisIn = indexArray[0];
         for(var between=vonIn*109; between<bisIn*109; between++) {  //gleich wie sonst, für 0. Schritt
           if(between%109==0) {
-            stringSteps += dataC + " MS:" + savedCom[between] + " M:  H: \n";
+            if (Number(savedCom[between]) < Number(millisave)) {
+              minuteCount++;
+            }
+            millisave = savedCom[between];
+            stringSteps += dataC + " MS:" + savedCom[between] + " M:" + minuteCount + " H: \n";
             dataC++;
             dataToSix = 0;
           }
@@ -916,13 +938,25 @@ document.getElementById("formDone").addEventListener("click", function () {     
         stepEndNo = stepTimes.length-2;      //dann einfach letzten Schritt wählen
         //console.log("broken");
       }
-
+      SchrittNo = stepNumber;
+      var tempRolling = rollingIndex[(SchrittNo+1)]*109;
       vonIn = rollingIndex[stepNumber];     //vonIndex nummer bisIndex nummer
       bisIn = indexArray[stepEndNo];
+      console.log("TR" + tempRolling);
+      console.log("vI*109" + vonIn*109);
       //console.log(vonIn + "bis" + bisIn);
       for(var between=vonIn*109; between<bisIn*109; between++) {      //für alle Werte in Intervall
         if(between%109==0) {      //eigentlich gleich wie vorher
-          stringSteps += dataC + " MS:" + savedCom[between] + " M:  H: \n";
+          if(between >= tempRolling) {
+            SchrittNo++;
+            tempRolling = rollingIndex[(SchrittNo+1)]*109;
+          }
+
+          if (Number(savedCom[between]) < Number(millisave)) {
+            minuteCount++;
+          }
+          millisave = savedCom[between];
+          stringSteps += dataC + " MS:" + savedCom[between] + " M:" + minuteCount + " H: S:" + SchrittNo + "\n";
           dataC++;
           dataToSix = 0;
         }
@@ -946,7 +980,11 @@ document.getElementById("formDone").addEventListener("click", function () {     
       bisIn = indexArray[stepNumber];
       for(var between=vonIn*109; between<bisIn*109; between++) {
         if(between%109==0) {
-          stringSteps += dataC + " MS:" + savedCom[between] + " M:  H: \n";
+          if (Number(savedCom[between]) < Number(millisave)) {
+            minuteCount++;
+          }
+          millisave = savedCom[between];
+          stringSteps += dataC + " MS:" + savedCom[between] + " M:" + minuteCount + " H: \n";
           dataC++;
           dataToSix = 0;
         }
@@ -968,7 +1006,11 @@ document.getElementById("formDone").addEventListener("click", function () {     
       bisIn = indexArray[0];
       for(var between=vonIn*109; between<bisIn*109; between++) {
         if(between%109==0) {
-          stringSteps += dataC + " MS:" + savedCom[between] + " M:  H: \n";
+          if (Number(savedCom[between]) < Number(millisave)) {
+            minuteCount++;
+          }
+          millisave = savedCom[between];
+          stringSteps += dataC + " MS:" + savedCom[between] + " M:" + minuteCount + " H: \n";
           dataC++;
           dataToSix = 0;
         }
@@ -1539,6 +1581,7 @@ document.getElementById("CONNECT").addEventListener('click', function letsGo() {
       };
         characteristic.addEventListener('characteristicvaluechanged', newBLEData);  //immer wenn neue Daten wird funktion ausgeführt
         connectBool = true;
+        document.getElementsByClassName("gridall")[0].style.backgroundColor = "white";
         document.getElementById("CONNECT").innerHTML = "Trennen";
         document.getElementById("stopButton").style.display = "none";
         document.getElementById("slider").style.display = "none";

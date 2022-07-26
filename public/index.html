@@ -29,7 +29,7 @@
   </head>
   <body>
     <div id="flexHead">
-      <a href="https://www.dfki.de" class="inline"><img src="%PUBLIC_URL%/DFKI_Logo.png"  id="pic"></a>
+      <a href="https://www.dfki.de" class="inline"><img src="%PUBLIC_URL%/DFKIOutline.png"  id="pic"></a>
       <div id="FlexInHead">
         <button id="CONNECT" class="headButtons" title="Um Verbindung zur Schuhsohle (BT05) herzustellen">Verbinden</button>
         <label for="csvFiles" id="csvFilez"class="button" title="Hier kann man aufgenommene CSV Dateien Abspielen lassen">Abspielen</label>
@@ -65,7 +65,9 @@
         </div>
 
         <div class="vertFlex" id="ki">
-          <br><br><br><br>
+          <br>
+          <p id="Dauer" class="info"></p>
+          <p id="StepZahl" class="info"></p>
           <button id="stopButton" class="restButtons">Stop</button>
           <br>
           <p class="mittig" id="sliderOutput">Geschwindigkeit</p> 
@@ -76,7 +78,7 @@
           <button id="aufnahme" class="restButtons">Aufnahmebeginn</button>
           <br>
           <button id="stepDownload" class="restButtons">Schritt Zeiten herunterladen</button>
-          <p id="StepZahl"></p>
+
 
       </div>
       <div class="vertFlex">
@@ -88,28 +90,31 @@
         </div>
       </div>
       <div class="vertFlex" id="rechtsRand">
-        <div id="formAndDownload">
+        <div id="boxdrum">
           <br><br><br><br>
-          <div id="Forma">
+          <div id="formAndDownload">
+            
+            <div id="Forma">
 
-            <input type="radio" name="formRadio" id="oneStep" value="one" checked>
-            <label for="oneStep" class="forms">Einzelner Schritt</label>
-            <br>
-            <input type="radio" name="formRadio" id="multipleSteps"value="multiple">
-            <label for="multipleSteps" class="forms">Mehrere Schritte</label>
-            <br>
-            <label for="firstStep" class="forms" id="LabelOne">Schrittzahl:</label>
-            <input type ="number" id="firstStep" class="NumIn">
-            <br>
-            <div id="hideIfOne">
-              <label for="lastStep" class="forms">Bis Schritt:</label>
-              <input type="number" id="lastStep" class="NumIn">
+              <input type="radio" name="formRadio" id="oneStep" value="one" checked>
+              <label for="oneStep" class="forms">Einzelner Schritt</label>
+              <br>
+              <input type="radio" name="formRadio" id="multipleSteps"value="multiple">
+              <label for="multipleSteps" class="forms">Mehrere Schritte</label>
+              <br>
+              <label for="firstStep" class="forms" id="LabelOne">Schrittzahl:</label>
+              <input type ="number" id="firstStep" class="NumIn">
+              <br>
+              <div id="hideIfOne">
+                <label for="lastStep" class="forms">Bis Schritt:</label>
+                <input type="number" id="lastStep" class="NumIn">
+              </div>
+              <br>
+              <br>
+              <button id="formDone" class="restButtons">Download</button>
             </div>
-            <br>
-            <br>
-            <button id="formDone" class="restButtons">Download</button>
           </div>
-        </div>
+      </div>
       </div>
       </div>
       
@@ -125,44 +130,43 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
   </div>
-  <section><br><br><br><br><br><br><br><br>--TEXT ÜBER SCHUHSOHLE--<br>Funktion etc. - Daneben oder drunter Hilfe<br>_:_:_:_:</section>
-  <section id="hilf">
+  <!--<section><br><br><br><br><br><br><br><br>--TEXT ÜBER SCHUHSOHLE--<br>Funktion etc. - Daneben oder drunter Hilfe<br>_:_:_:_:</section>
+  -->
+    <section id="hilf">
     <p id="ausklapp">Für die BLE Verbindung ist Google Chrome erforderlich. <br>
-      Außerdem muss eventuell unter <b>about://flags</b> <i>Experimental Web Platform features</i> auf <b>Enabled</b> gesetzt werden. <br>
+      Außerdem muss eventuell unter <b>about://flags</b> <i>Experimental Web Platform features</i> auf <b>Enabled</b> gesetzt werden.
       <br>
-      Bei Fehlern hilft es eventuell die Seite neu zu laden.<br>
+      Bei Fehlern hilft es eventuell die Seite neu zu laden.
       <br>
-      Um die Live Übertragung zu starten, auf <i>CONNECT</i> klicken und dann <b>BT05</b> auswählen. <br>
+      Um die Live Übertragung zu starten, auf <i>Verbinden</i> klicken und dann <b>BT05</b> auswählen.
       <br>
       Während der Live Übertragung können die Daten auch aufgezeichnet werden. Um die Aufzeichnung <br>
-      zu starten, auf <i>Aufnahmebeginn</i> klicken, um sie zu stoppen nochmals drauf klicken. Anschließend <br>
-      wird eine Datei mit den rohen Daten heruntergeladen. Mit einem Hochladen dieser bei <i>Verarbeiten</i> <br>
-      werden die Daten in eine übersichtlichere CSV Datei gewandelt. <br>
+      zu starten, auf <i>Aufnahmebeginn</i> klicken, um sie zu stoppen nochmals drauf klicken
       <br>
-      Um die Verbindung zu stoppen, auf <i>DISCONNECT</i> klicken. <br>
+      Um die Verbindung zu stoppen, auf <i>Trennen</i> klicken.
       <br>
       Um alte Aufzeichnungen nochmals abspielen zu lassen, die CSV Datei bei <i>Abspielen</i> hochladen. <br>
-      Diese wird dort in der originalen Geschwindigkeit abgespielt. <br>
+      Diese wird dort in der originalen Geschwindigkeit abgespielt.
       <br>
-      Über <i>Stop</i> kann man die Wiedergabe anhalten und anschließend auch fortsetzen. <br>
+      Über <i>Stop</i> kann man die Wiedergabe anhalten und anschließend auch fortsetzen.
       <br>
-      Über den Slider unter <i>Geschwindigkeit</i> kann man die Wiedergabegeschwindigkeit einstellen.<br>
-      Beim Anzeigen des Graphens kann es, falls man nicht Chrome verwendet, zu Performance-Problemen kommen. 
-      <br><br>
+      Über den Slider unter <i>Geschwindigkeit</i> kann man die Wiedergabegeschwindigkeit einstellen.
+      <br>
       Der Slider über der Anzeige zeigt die zeitliche Stelle an, an der sich die Wiedergabe befindet.<br>
       Wenn man ihn verschiebt, kann man zu anderen Punkten springen.
-      <br><br>
+      <br>
+      Mit einem Klick auf <i>Einstellungen</i> findet man allgemeine Einstellungen.
       Es werden drei Graphen angezeigt, jeweils einer für Vorderfuß, Mittelfuß und Ferse. <br>
       Diese Zeigen die Aufsummierten Werte, also den Druck an, der auf den Schuh gegeben wird. <br>
       Über das <i>Graph</i> Häkchen kann man die Darstellung an- und ausschalten.
-      <br><br>
+      <br>
       Steps steht für die Erkennung der Schrittdauer.
-      <br><br>
+      <br>
       Über das Filter Häkchen kann man den Filter ein- und ausschalten. Hier werden nebeneinanderliegende <br>
       Kästchen gemittelt, was zu einer besseren Darstellung führen kann.
-      <br><br>
+      <br>
       Wenn Dateien abgespielt werden, können einzelne Schritte, sowie auch alle Schrittzeiten heruntergeladen werden.
-      <br><br>
+      <br>
     </p>
   </section>
   </body>
