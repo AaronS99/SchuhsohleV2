@@ -13,6 +13,8 @@ import {
 //  Legend,
 } from 'chart.js';
 import { Chart, Line } from 'react-chartjs-2';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 var Farbarray = []; //Erstellung Farbarray, geht weiß->blau->pink->orange->rot
 var stateArray = [];  //Wird ValueArray pro Datensatz
@@ -197,6 +199,11 @@ class Grid extends React.Component { //Hauptklasse
   render() { 
     return (    //Hier wird Grid generiert, indem für jedes Quadrat renderSquare Methode aufgerufen wird
       <div className='wrapper'> 
+        <div id="chartOn">  
+          <App />
+          <AppZwei />
+          <AppDrei />
+        </div>  
       <div className='gridall'>
           {this.renderSquare(0)}
           {this.renderSquare(1)}
@@ -325,11 +332,7 @@ class Grid extends React.Component { //Hauptklasse
           {this.renderSquare(107)}
           
         </div>
-        <div id="chartOn">  
-        <App />
-        <AppZwei />
-        <AppDrei />
-        </div>    
+  
         </div>
         
     );
@@ -821,12 +824,12 @@ function FormDisplay() {
   if(document.getElementById("oneStep").checked) {      //wenn 1 schritt
     oneStep = true;
     document.getElementById("hideIfOne").style.display = "none";
-    document.getElementById("LabelOne").innerHTML="Schrittzahl:"
+    document.getElementById("LabelOne").innerHTML="Schrittnummer"
   }
   else {
     oneStep = false;
     document.getElementById("hideIfOne").style.display = "inline";
-    document.getElementById("LabelOne").innerHTML="Von Schritt:"
+    document.getElementById("LabelOne").innerHTML="Erster Schritt"
   }
 }
 var stepRequest = [];   
@@ -838,7 +841,15 @@ var dataToSix = 0;
 var minuteCount = 0;
 var millisave = 0;
 var SchrittNo = 0;
+var asZIP = false;
+var zipp= new JSZip();
+
+document.getElementById("zip").addEventListener("change", function() {
+  asZIP?asZIP=false:asZIP=true;
+})
+
 document.getElementById("formDone").addEventListener("click", function () {     //Für den Schritte download
+  zipp= new JSZip();
   minuteCount = 0;
   millisave = 0;
   //console.log(oneStep);
@@ -942,12 +953,15 @@ document.getElementById("formDone").addEventListener("click", function () {     
       var tempRolling = rollingIndex[(SchrittNo+1)]*109;
       vonIn = rollingIndex[stepNumber];     //vonIndex nummer bisIndex nummer
       bisIn = indexArray[stepEndNo];
-      console.log("TR" + tempRolling);
-      console.log("vI*109" + vonIn*109);
-      //console.log(vonIn + "bis" + bisIn);
       for(var between=vonIn*109; between<bisIn*109; between++) {      //für alle Werte in Intervall
         if(between%109==0) {      //eigentlich gleich wie vorher
           if(between >= tempRolling) {
+            if(asZIP) {
+              
+              zipp.file(SchrittNo + ".csv", stringSteps);
+              stringSteps = "";
+
+            }
             SchrittNo++;
             tempRolling = rollingIndex[(SchrittNo+1)]*109;
           }
@@ -1036,9 +1050,18 @@ document.getElementById("formDone").addEventListener("click", function () {     
   if(oneStep) {
     linkReq.setAttribute("download", "Step"+ stepNumber +".csv");      //wenn 1 step angefordert dann heißt datei StepX.csv
   }
+  if (asZIP) {
+    zipp.generateAsync({type:"blob"})
+    .then(function(content) {
+  saveAs(content, "Schritte.zip");
+  });
+  return;
+  }
   else {
     linkReq.setAttribute("download", stepNumber + "bis" + stepEndNo + ".csv");    //sonst XbisX.csv
+
   }
+  
   document.body.appendChild(linkReq);     //a element anhängen
   linkReq.click();                        //und clicken lassen
 

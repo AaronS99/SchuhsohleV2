@@ -123,6 +123,7 @@ input[type="checkbox"] {
   /*height:auto;*/
   flex-wrap: wrap;
   border: 1px solid rgb(0, 0, 0);
+  margin-left: 10px;
 }
 .wrapper {
   float: left;
@@ -170,8 +171,9 @@ input[type="checkbox"] {
 }
 #chartOn {
   display: inline;
-  width: 50%;
+  /*width: 100%;*/
 }
+
 #rest {
   padding: 1.5%;
 }
@@ -196,7 +198,8 @@ input[type="checkbox"] {
   display: flex;
   flex-direction: row;
   width: 100%;
-  justify-content: space-between;
+  /*justify-content: space-between;*/
+  justify-content: space-around;
   /*border: 1px solid black;*/
 }
 .headButtons {

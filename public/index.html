@@ -54,15 +54,7 @@
     <div id="fromTop">
       <div class="Block" id="anzeige">
 
-        <div class="vertFlex">
 
-          <div id="Block1">
-            <button id="groesser" class="resize" title="Abbildung vergrößern">+</button>
-            <button id="kleiner" class="resize" title="Abbildung verkleinern">-</button>
-            <input type="range" min="0" max="100" value="0" id="progress">
-          </div>
-          <div id="root"></div>
-        </div>
 
         <div class="vertFlex" id="ki">
           <br>
@@ -78,9 +70,18 @@
           <button id="aufnahme" class="restButtons">Aufnahmebeginn</button>
           <br>
           <button id="stepDownload" class="restButtons">Schritt Zeiten herunterladen</button>
-
-
       </div>
+
+      <div class="vertFlex" id="displayOut">
+
+        <div id="Block1">
+          <button id="groesser" class="resize" title="Abbildung vergrößern">+</button>
+          <button id="kleiner" class="resize" title="Abbildung verkleinern">-</button>
+          <input type="range" min="0" max="100" value="0" id="progress">
+        </div>
+        <div id="root"></div>
+      </div>
+
       <div class="vertFlex">
         <br><br><br><br>
         <p class="strich" id="stepHeader"><b>Schrittdauer</b></p>
@@ -102,12 +103,17 @@
               <input type="radio" name="formRadio" id="multipleSteps"value="multiple">
               <label for="multipleSteps" class="forms">Mehrere Schritte</label>
               <br>
-              <label for="firstStep" class="forms" id="LabelOne">Schrittzahl:</label>
+              
               <input type ="number" id="firstStep" class="NumIn">
+              <label for="firstStep" class="forms" id="LabelOne">Schrittnummer</label>
               <br>
               <div id="hideIfOne">
-                <label for="lastStep" class="forms">Bis Schritt:</label>
+                
                 <input type="number" id="lastStep" class="NumIn">
+                <label for="lastStep" class="forms">Letzter Schritt</label>
+                <br>
+                <input type="checkbox" id="zip" class="SettingsCheckbox">
+                <label for="zip">Einzelne Dateien</label>
               </div>
               <br>
               <br>
@@ -117,18 +123,6 @@
       </div>
       </div>
       </div>
-      
-    
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
-
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
   </div>
   <!--<section><br><br><br><br><br><br><br><br>--TEXT ÜBER SCHUHSOHLE--<br>Funktion etc. - Daneben oder drunter Hilfe<br>_:_:_:_:</section>
   -->
