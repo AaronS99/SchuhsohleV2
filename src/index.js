@@ -13,7 +13,7 @@ import {
 //  Legend,
 } from 'chart.js';
 import { Chart, Line } from 'react-chartjs-2';
-import JSZip from 'jszip';
+import JSZip, { filter } from 'jszip';
 import { saveAs } from 'file-saver';
 
 var Farbarray = []; //Erstellung Farbarray, geht weiß->blau->pink->orange->rot
@@ -436,7 +436,14 @@ export function AppDrei() {
 
 
 //AUSWERTUNG VON FERTIGEN DATEIEN
-
+var gewichtung = 2;
+var filterSlide = document.getElementById("FilterSlide");
+var filterOutput = document.getElementById("FilterOutput");
+filterOutput.innerHTML = "x" + filterSlide.value/100;
+filterSlide.oninput = function() {
+  gewichtung = Number(this.value/100);
+  filterOutput.innerHTML = "x" + this.value/100;
+}
 var completeFile = [];
 var slider = document.getElementById("slider");     //Geschwindigkeitsrange
 var output = document.getElementById("slideOutput");  //Anzeige v %
@@ -458,6 +465,7 @@ document.getElementById('csvFiles').addEventListener('change', function csvInput
   document.getElementById("formAndDownload").style.display = "block";
   document.getElementById("aufnahme").style.display = "none";
   document.getElementById("StepZahl").style.display = "block";
+  document.getElementById("FilterSett").style.display = "block";
   oldData = true; //oldData bool für stop button
   completeFile = [];  
   let reader = new FileReader(); //FileReader von JS
@@ -1615,6 +1623,7 @@ document.getElementById("CONNECT").addEventListener('click', function letsGo() {
         document.getElementById("formAndDownload").style.display = "none";
         document.getElementById("aufnahme").style.display = "block";
         document.getElementById("StepZahl").style.display = "none";
+        document.getElementById("FilterSett").style.display = "block";
         progressbar.style.display = "none";
     })
     .catch(error => {console.error(error); })
@@ -1845,6 +1854,7 @@ document.getElementById("Filter").addEventListener("change", function() {   //Fi
 
 var addedValues = 0;
 var geteiltDurch = 0;
+
 function fakeGauss() {              //Filter berechnungen
   addedValues = 0;
   var stateGauss = Array.from(stateArray);
@@ -1854,8 +1864,8 @@ function fakeGauss() {              //Filter berechnungen
 
   for(var posVar = 0; posVar<108; posVar++) {   //sonst
 
-    addedValues = 2 * Number(stateGauss[posVar]);   //mittleres mal 2
-    geteiltDurch = 2;           //wie viele Summanten?
+    addedValues = gewichtung * Number(stateGauss[posVar]);   //mittleres mal 2
+    geteiltDurch = gewichtung;           //wie viele Summanten?
     if(posVar >=6 && posVar<=101) {     //wenn nicht 1. o. letzte Reihe
       addedValues += Number(stateGauss[posVar+6]) + Number(stateGauss[posVar-6]); //Plus Wert ober und unterhalb
       geteiltDurch += 2;  //2 werte add

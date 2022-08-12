@@ -62,14 +62,20 @@
           <p id="StepZahl" class="info"></p>
           <button id="stopButton" class="restButtons">Stop</button>
           <br>
-          <p class="mittig" id="sliderOutput">Geschwindigkeit</p> 
-          <input type="range" min="10" max="200" value="100" id="slider"> 
+          <p class="SlideTitle" id="sliderOutput">Geschwindigkeit</p> 
+          <input type="range" min="10" max="200" value="100" id="slider" class="Slides"> 
 
-          <p id="slideOutput"></p>    
+          <p id="slideOutput" class="slideInfo"></p>    
 
           <button id="aufnahme" class="restButtons">Aufnahmebeginn</button>
           <br>
           <button id="stepDownload" class="restButtons">Schritt Zeiten herunterladen</button>
+          <br>
+          <div id="FilterSett">
+            <p class="SlideTitle">Filtergewichtung</p> 
+            <input type="range" min="0" max="1000" value="200" id="FilterSlide" class="Slides"> 
+            <p id="FilterOutput" class="slideInfo"></p>    
+          </div>
       </div>
 
       <div class="vertFlex" id="displayOut">
@@ -163,5 +169,7 @@
       <br>
     </p>
   </section>
+  <br><br><br><br><br><br><br><br><br>
+  <a href="%PUBLIC_URL%/Person_1.csv">Demo</a>
   </body>
 </html>

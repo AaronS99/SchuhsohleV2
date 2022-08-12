@@ -221,6 +221,15 @@ input[type="checkbox"] {
   accent-color: rgb(212, 99, 99);
   display:none;
 }
+.Slides {
+  width: 100%;
+}
+#FilterSlide {
+  accent-color: rgb(241, 10, 241);
+}
+#FilterSlide:hover {
+  accent-color: rgb(241, 10, 241);
+}
 .restButtons {
   border-radius: 20px;
   border: 0px;
@@ -253,9 +262,17 @@ input[type="checkbox"] {
   display: none;
   margin-bottom: 0;
 }
+.SlideTitle {
+  text-align: center;
+  margin-bottom: 0;
+}
 #slideOutput {
   text-align: center;
   display:none;
+  margin-top: 0;
+}
+.slideInfo {
+  text-align: center;
   margin-top: 0;
 }
 #aufnahme{
@@ -319,4 +336,7 @@ i{
   color: rgb(255, 255, 255);
   text-shadow: 1px 1px black;
   font-weight: bold;
+}
+#FilterSett {
+  display: none;
 }
