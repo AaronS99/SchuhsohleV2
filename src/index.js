@@ -140,6 +140,7 @@ document.getElementById('kleiner').addEventListener('click', function smaller() 
 });
 
 //LIVE AUSWERTUNG  VERALTET EIGENTLICH evtl nochmal nützlich bei anderen BLE Modulen?
+
 function newRow(inString) {     //Funktion die je 1 Reihe Daten auwertet
   completeInput = completeInput.concat(inString);
   if(stopBool==true) {    //Wenn Stop aktiviert, dann return from function
@@ -436,6 +437,23 @@ export function AppDrei() {
 
 
 //AUSWERTUNG VON FERTIGEN DATEIEN
+
+var startSlide = document.getElementById("StepBegin");
+var endSlide = document.getElementById("StepEnd");
+var sSlideOut = document.getElementById("SBOut");
+var eSlideOut = document.getElementById("SEOut");
+var startSchwellwert = startSlide.value;
+var endSchwellwert = endSlide.value;
+sSlideOut.innerHTML = startSlide.value;
+eSlideOut.innerHTML = endSlide.value;
+startSlide.oninput = function() {
+  sSlideOut.innerHTML = this.value;
+  startSchwellwert = this.value;
+}
+endSlide.oninput = function() {
+  eSlideOut.innerHTML = this.value;
+  endSchwellwert = this.value;
+}
 var gewichtung = 2;
 var filterSlide = document.getElementById("FilterSlide");
 var filterOutput = document.getElementById("FilterOutput");
@@ -577,6 +595,7 @@ function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in
     //graphIsOn = true;
     document.getElementById("chartOn").style.display = "inline";  //Graphen visible
     graphIt(completeFile);                                        //Berechnung für Graphen durchführen
+    return;
   }
   else {
     document.getElementById("chartOn").style.display = "none";  //sonst Graphen nicht anzeigen
@@ -767,6 +786,18 @@ function graphIt(allData) {   //Graph checkbox aktiviert -> bei Abspielen
 
   //console.log(zeitarray);
 
+
+
+  stelleImArray = 0;
+  laengeOriginal = summenarray.length;
+  StepString = "";
+  indexArray.push(-1);  //Sonst wird versucht auf nicht existierendes Element zuzugreifen
+  stepKopie = Array.from(stepTimes);
+  document.getElementById("Forma").style.display = "block";           //Anzeige visible machen
+  document.getElementById("stepDownload").style.display = "inline";
+  document.getElementById("StepZahl").innerHTML = indexArray.length-1 + " Schritte";
+  //console.log(stepTimes);
+
   if (step) {               //wenn Schrittanalyse
     stepTimes = [];         //resets falls vorher schon benutzt
     indexArray = [];
@@ -784,9 +815,11 @@ function graphIt(allData) {   //Graph checkbox aktiviert -> bei Abspielen
     for(var runnnn = 0; runnnn<summenarray.length; runnnn++) { 
       schnitt+=summenarray[runnnn];
     }
-    console.log(schnitt/summenarray.length);  //nur berechnung, bis jetzt noch keine Verwendung außer Anzeige in Konsole
-  
-
+    startSchwellwert = schnitt/summenarray.length;
+    startSlide.value = schnitt/summenarray.length;
+    sSlideOut.innerHTML = schnitt/summenarray.length;
+    document.getElementById("ThreshConfirm").style.display="block";
+    return;
     for(var runAll = 0; runAll < summenarray.length; runAll++) {        //einmal alle Frames durchgehen
       if(Ferse == false && summenarrayDrei[runAll] > 10 /*&& summenarrayDrei[runAll] < 35*/) {      //wenn Fersenwert über 10, neuer Schritt
         rollingIndex.push(runAll);    //abgespeichert, an welcher Stelle neuer Schritt begonnen- für Rüücksprung
@@ -812,17 +845,57 @@ function graphIt(allData) {   //Graph checkbox aktiviert -> bei Abspielen
       }
     }
   }
+
+}
+
+var conBut = document.getElementById("ThreshConfirm");
+document.getElementById("ThreshConfirm").addEventListener("click", function() {
+  document.getElementById("ThreshConfirm").style.display="none";
+  continueSteps();
+});
+
+function continueSteps() {
+  for(var runAll = 0; runAll < summenarray.length; runAll++) {        //einmal alle Frames durchgehen
+    if(Ferse == false && summenarrayDrei[runAll] > startSchwellwert /*&& summenarrayDrei[runAll] < 35*/) {      //wenn Fersenwert über 10, neuer Schritt
+      rollingIndex.push(runAll);    //abgespeichert, an welcher Stelle neuer Schritt begonnen- für Rüücksprung
+      Ferse = true;
+      stepStartTime = Number(zeitarray[runAll]);  //Wann Schritt begonnen
+    }
+    if (Ferse && maxZeh == false && summenarray[runAll] > startSchwellwert+10) { //Wenn Ferse true und Wert über 60 bereit für Schrittende
+      maxZeh = true;
+    }
+    if (maxZeh && summenarray[runAll] < endSchwellwert) {  //Wenn wieder unter 40 kommt Schrittende, Wert vielleicht noch zu verändern
+      Ferse = false;
+      maxZeh = false;
+      stepEndTime = Number(zeitarray[runAll]);    //Wann Schritt geendet
+      indexArray.push(runAll);            //an welcher stelle schritt geendet, für wann Anzeige updaten
+      //stepTimes.push(stepEndTime);
+      if(stepEndTime>stepStartTime) {      //falls MS Wert größer ist einfach Differenz
+        stepTimes.push(stepEndTime-stepStartTime);  //in Array
+        
+      }
+      else {
+        stepTimes.push(60000 - stepStartTime + stepEndTime);  //sonst hat 60000 überschritten
+      }
+    }
+  }
   stelleImArray = 0;
   laengeOriginal = summenarray.length;
   StepString = "";
-  indexArray.push(-1);  //Sonst wird versucht auf nicht existierendes Element zuzugreifen
   stepKopie = Array.from(stepTimes);
-  document.getElementById("Forma").style.display = "block";           //Anzeige visible machen
   document.getElementById("stepDownload").style.display = "inline";
   document.getElementById("StepZahl").innerHTML = indexArray.length-1 + " Schritte";
-  //console.log(stepTimes);
 
+
+  savedCom = Array.from(completeFile);                        //Backup des Array für die Rücksprünge
+  laenge = savedCom.length;                                 //Länge des Arrays
+  progressbar.style.display = "inline";   //Anzeigen der Progressbar
+  console.log(Date.now());
+  displayIt();  //Alles verarbeitet und in 1 riesen Array, jetzt Anzeigen lassen
 }
+
+
+
 var oneStep=true;     //Für Form, ob 1 step oder mehrere download
 
 document.getElementById("oneStep").addEventListener("change", FormDisplay);
@@ -1120,7 +1193,6 @@ function displayIt() {
     dataDrei = dataDrei.concat(summenarrayDrei.splice(0,1));
     if (step) {
       stelleImArray = laengeOriginal - summenarray.length;      //stelleImArray updaten
-      //console.log(stelleImArray);
       if (stelleImArray == indexArray[saveWo]) {                //wenn Schrittende erreicht wird
         if(StepString.length >= 240) {                          //wenn String schon max Länge hat
           StepString = StepString.slice(0, StepString.lastIndexOf("&#8226"));   //Slice den letzten Wert
@@ -1484,16 +1556,16 @@ function eightToTen(workArrayy) {  //Hier von 8 zu 10Bit
 
 
   if (step) {           //so ähnlich wie bei Auswertung von alten CSVs
-      if(rolling == false && sumOfZwei/36 > 10 /*&& sumOfZwei/36 < 20*/) {
+      if(rolling == false && sumOfZwei/36 > startSchwellwert /*&& sumOfZwei/36 < 20*/) {
         timeStart = Date.now(); //Date() funktion gibt MS Wert seit irgend Datum 19XX an
         rolling = true;
         console.log("ROLLING");
       }
-      if(rolling && maxVal == false && sumOf/36 > 70) {
+      if(rolling && maxVal == false && sumOf/36 > startSchwellwert+10) {
         maxVal = true;
         console.log("MAX");
       }
-    if (maxVal && sumOf/36 < 50) {
+    if (maxVal && sumOf/36 < endSchwellwert) {
         rolling = false;
         maxVal = false;
         timeEnde = Date.now()-timeStart;

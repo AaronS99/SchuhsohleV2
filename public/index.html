@@ -75,8 +75,21 @@
             <p class="SlideTitle">Filtergewichtung</p> 
             <input type="range" min="0" max="1000" value="200" id="FilterSlide" class="Slides"> 
             <p id="FilterOutput" class="slideInfo"></p>    
+            <br>
+            <div class="rahmen">
+              <p class="SlideTitle">Schrittbeginn</p> 
+              <input type="range" min="0" max="100" value="30" id="StepBegin" class="Slides"> 
+              <p id="SBOut" class="slideInfo"></p>    
+              <p class="SlideTitle">Schrittende</p> 
+              <input type="range" min="0" max="100" value="20" id="StepEnd" class="Slides"> 
+              <p id="SEOut" class="slideInfo"></p>    
+              <button id="ThreshConfirm" class = "restButtons">CONFIRM</button>
+            </div>
           </div>
+
       </div>
+      
+
 
       <div class="vertFlex" id="displayOut">
 
@@ -170,6 +183,5 @@
     </p>
   </section>
   <br><br><br><br><br><br><br><br><br>
-  <a href="%PUBLIC_URL%/Person_1.csv">Demo</a>
   </body>
 </html>

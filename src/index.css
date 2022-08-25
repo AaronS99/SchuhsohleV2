@@ -223,6 +223,7 @@ input[type="checkbox"] {
 }
 .Slides {
   width: 100%;
+  accent-color: rgb(240, 250, 95);
 }
 #FilterSlide {
   accent-color: rgb(241, 10, 241);
@@ -338,5 +339,8 @@ i{
   font-weight: bold;
 }
 #FilterSett {
+  display: none;
+}
+#ThreshConfirm {
   display: none;
 }
