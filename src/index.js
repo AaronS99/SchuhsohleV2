@@ -199,7 +199,7 @@ class Grid extends React.Component { //Hauptklasse
 
   render() { 
     return (    //Hier wird Grid generiert, indem für jedes Quadrat renderSquare Methode aufgerufen wird
-      <div className='wrapper'> 
+      <div className='wrapper' id="wrappper"> 
         <div id="chartOn">  
           <App />
           <AppZwei />
@@ -854,17 +854,49 @@ document.getElementById("ThreshConfirm").addEventListener("click", function() {
   continueSteps();
 });
 
+var hochpunkt = 0;
+var tiefpunkt = 0;
+var minNeu = false;
+
 function continueSteps() {
   for(var runAll = 0; runAll < summenarray.length; runAll++) {        //einmal alle Frames durchgehen
-    if(Ferse == false && summenarrayDrei[runAll] > startSchwellwert /*&& summenarrayDrei[runAll] < 35*/) {      //wenn Fersenwert über 10, neuer Schritt
-      rollingIndex.push(runAll);    //abgespeichert, an welcher Stelle neuer Schritt begonnen- für Rüücksprung
+    if(Ferse == false && summenarrayDrei[runAll] > Number(startSchwellwert) /*&& summenarrayDrei[runAll] < 35*/) {      //wenn Fersenwert über 10, neuer Schritt
+      rollingIndex.push(runAll);    //abgespeichert, an welcher Stelle neuer Schritt begonnen- für Rücksprung
       Ferse = true;
       stepStartTime = Number(zeitarray[runAll]);  //Wann Schritt begonnen
     }
-    if (Ferse && maxZeh == false && summenarray[runAll] > startSchwellwert+10) { //Wenn Ferse true und Wert über 60 bereit für Schrittende
+    if (Ferse==true && maxZeh==false && summenarray[runAll] > Number(startSchwellwert)+10) { //Wenn Ferse true und Wert über 60 bereit für Schrittende
       maxZeh = true;
+      hochpunkt = summenarray[runAll];
+      tiefpunkt = hochpunkt/2;
     }
-    if (maxZeh && summenarray[runAll] < endSchwellwert) {  //Wenn wieder unter 40 kommt Schrittende, Wert vielleicht noch zu verändern
+    if (maxZeh) {
+      if (summenarray[runAll] > hochpunkt) {
+        hochpunkt = summenarray[runAll];
+      }
+      else if(summenarray[runAll] < hochpunkt) {
+        if(summenarray[runAll] < tiefpunkt) {
+          tiefpunkt = summenarray[runAll];
+          minNeu = true;
+        }
+        else if(summenarray[runAll] > tiefpunkt && minNeu) {
+          Ferse = false;
+          maxZeh = false;
+          stepEndTime = Number(zeitarray[runAll]);    //Wann Schritt geendet
+          indexArray.push(runAll);            //an welcher stelle schritt geendet, für wann Anzeige updaten
+          //stepTimes.push(stepEndTime);
+          if(stepEndTime>stepStartTime) {      //falls MS Wert größer ist einfach Differenz
+            stepTimes.push(stepEndTime-stepStartTime);  //in Array
+            
+          }
+          else {
+            stepTimes.push(60000 - stepStartTime + stepEndTime);  //sonst hat 60000 überschritten
+          }
+          minNeu = false;
+        }
+      }
+    }
+    /*if (maxZeh && summenarray[runAll] < endSchwellwert) {  //Wenn wieder unter 40 kommt Schrittende, Wert vielleicht noch zu verändern
       Ferse = false;
       maxZeh = false;
       stepEndTime = Number(zeitarray[runAll]);    //Wann Schritt geendet
@@ -877,7 +909,7 @@ function continueSteps() {
       else {
         stepTimes.push(60000 - stepStartTime + stepEndTime);  //sonst hat 60000 überschritten
       }
-    }
+    }*/
   }
   stelleImArray = 0;
   laengeOriginal = summenarray.length;
@@ -1193,7 +1225,11 @@ function displayIt() {
     dataDrei = dataDrei.concat(summenarrayDrei.splice(0,1));
     if (step) {
       stelleImArray = laengeOriginal - summenarray.length;      //stelleImArray updaten
+      if (stelleImArray == rollingIndex[saveWo]) {
+        document.getElementById("wrappper").style.boxShadow = "0px 0px 30px green";
+      }
       if (stelleImArray == indexArray[saveWo]) {                //wenn Schrittende erreicht wird
+        document.getElementById("wrappper").style.boxShadow = "0px 0px 10px rgb(255, 255, 255)";
         if(StepString.length >= 240) {                          //wenn String schon max Länge hat
           StepString = StepString.slice(0, StepString.lastIndexOf("&#8226"));   //Slice den letzten Wert
         }
