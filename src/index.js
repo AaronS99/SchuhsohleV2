@@ -684,6 +684,8 @@ var indexArray = [];    //Speichert Index, wo Schritt geendet ist im Summenarray
 var stelleImArray = 0;  //da splice braucht eigenen counter
 var laengeOriginal = 0; //Original Länge für berechnung von stelleimArary
 var rollingIndex = [];  //wie IndexArray, nur für Start der Schritte
+var flachIndex = [];
+var zehIndex = [];
 
 function graphIt(allData) {   //Graph checkbox aktiviert -> bei Abspielen
   summenarray = [];       //reset wenn vorher schon benutzt wurden
@@ -802,6 +804,8 @@ function graphIt(allData) {   //Graph checkbox aktiviert -> bei Abspielen
     stepTimes = [];         //resets falls vorher schon benutzt
     indexArray = [];
     rollingIndex = [];
+    flachIndex = [];
+    zehIndex = [];
     stepStartTime = 0;
     stepEndTime = 0;
     Ferse = false;
@@ -815,9 +819,9 @@ function graphIt(allData) {   //Graph checkbox aktiviert -> bei Abspielen
     for(var runnnn = 0; runnnn<summenarray.length; runnnn++) { 
       schnitt+=summenarray[runnnn];
     }
-    startSchwellwert = schnitt/summenarray.length;
-    startSlide.value = schnitt/summenarray.length;
-    sSlideOut.innerHTML = schnitt/summenarray.length;
+    startSchwellwert = schnitt/summenarray.length + 10;
+    startSlide.value = schnitt/summenarray.length + 10;
+    sSlideOut.innerHTML = schnitt/summenarray.length +10;
     document.getElementById("ThreshConfirm").style.display="block";
     return;
     for(var runAll = 0; runAll < summenarray.length; runAll++) {        //einmal alle Frames durchgehen
@@ -857,6 +861,7 @@ document.getElementById("ThreshConfirm").addEventListener("click", function() {
 var hochpunkt = 0;
 var tiefpunkt = 0;
 var minNeu = false;
+var zehPush = false;
 
 function continueSteps() {
   for(var runAll = 0; runAll < summenarray.length; runAll++) {        //einmal alle Frames durchgehen
@@ -869,6 +874,7 @@ function continueSteps() {
       maxZeh = true;
       hochpunkt = summenarray[runAll];
       tiefpunkt = hochpunkt/2;
+      flachIndex.push(runAll);
     }
     if (maxZeh) {
       if (summenarray[runAll] > hochpunkt) {
@@ -878,6 +884,10 @@ function continueSteps() {
         if(summenarray[runAll] < tiefpunkt) {
           tiefpunkt = summenarray[runAll];
           minNeu = true;
+          if(zehPush==false) {
+            zehIndex.push(runAll);
+            zehPush = true;
+          }
         }
         else if(summenarray[runAll] > tiefpunkt && minNeu) {
           Ferse = false;
@@ -893,6 +903,7 @@ function continueSteps() {
             stepTimes.push(60000 - stepStartTime + stepEndTime);  //sonst hat 60000 überschritten
           }
           minNeu = false;
+          zehPush = false;
         }
       }
     }
@@ -1226,10 +1237,26 @@ function displayIt() {
     if (step) {
       stelleImArray = laengeOriginal - summenarray.length;      //stelleImArray updaten
       if (stelleImArray == rollingIndex[saveWo]) {
-        document.getElementById("wrappper").style.boxShadow = "0px 0px 30px green";
+        document.getElementById("FFerse").style.display = "block";
+        document.getElementById("FFlach").style.display = "none";
+        document.getElementById("FZeh").style.display = "none";
+        document.getElementById("FOben").style.display = "none";
+      }
+      if (stelleImArray == flachIndex[saveWo]) {
+        document.getElementById("FFerse").style.display = "none";
+        document.getElementById("FFlach").style.display = "block";
+        document.getElementById("FZeh").style.display = "none";
+      }
+      if (stelleImArray == zehIndex[saveWo]) {
+        document.getElementById("FFerse").style.display = "none";
+        document.getElementById("FFlach").style.display = "none";
+        document.getElementById("FZeh").style.display = "block";
       }
       if (stelleImArray == indexArray[saveWo]) {                //wenn Schrittende erreicht wird
-        document.getElementById("wrappper").style.boxShadow = "0px 0px 10px rgb(255, 255, 255)";
+        document.getElementById("FFerse").style.display = "none";
+        document.getElementById("FFlach").style.display = "none";
+        document.getElementById("FZeh").style.display = "none";
+        document.getElementById("FOben").style.display = "block";
         if(StepString.length >= 240) {                          //wenn String schon max Länge hat
           StepString = StepString.slice(0, StepString.lastIndexOf("&#8226"));   //Slice den letzten Wert
         }
