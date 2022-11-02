@@ -42,6 +42,9 @@ img{
   image-rendering:optimizeQuality;
   box-shadow: none;
   display: none;
+  border: 1px solid rgba(255, 255, 255, 0.445);
+  border-radius: 5px;
+  background-color: rgba(146, 193, 235, 0.521);
 }
 #flexHead {
   box-sizing: border-box;
@@ -126,7 +129,6 @@ input[type="checkbox"] {
   width: 30px;
   height: 30px;
   border: 0px;
-
 }
 .gridall {
   float: left;
@@ -140,6 +142,27 @@ input[type="checkbox"] {
   margin-left: 10px;
 }
 .wrapper {
+  float: left;
+  padding: 1%;
+  width: 100%;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.2), rgba(177, 220, 255, 0.637));
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.274);
+  box-shadow: 0px 0px 10px rgb(255, 255, 255);
+  display: flex;
+  padding: 2%;
+}
+.gridall12 {
+  float: left;
+  display: flex;
+  flex-direction: row;
+  width: 180px;
+  height: 360px;
+  flex-wrap: wrap;
+  border: 1px solid rgb(0, 0, 0);
+  margin-left: 10px;
+}
+.wrapper12 {
   float: left;
   padding: 1%;
   width: 100%;
