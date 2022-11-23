@@ -16,10 +16,12 @@ import { Chart, Line, } from 'react-chartjs-2';
 import JSZip, { filter } from 'jszip';
 import { saveAs } from 'file-saver';
 import { render } from '@testing-library/react';
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////ToDo 6x12: 12Bit statt 10, BLE Übertragung keine 20Byte
 var sixXtwelve = false;
 var lineFarbe = "black";
 var Farbarray = []; //Erstellung Farbarray, geht weiß->blau->pink->orange->rot
+var Farb18 = [];
+var Farb12 = [];
 var stateArray = [];  //Wird ValueArray pro Datensatz
 var infoArray = []; //Speicherung d. Zeitdaten
 var valueArray = [];  //temp Array für Datensatz  
@@ -94,6 +96,40 @@ for (var i = 0; i < 255; i++) {  //r,g -> rot
   Farbarray.push("rgb(" + r + "," + g + "," + b + ")");
 }
 
+
+Farb18 = Array.from(Farbarray);
+
+for (var i = 255; i > 0; i--) {        //Weiß -> blau
+  Farb12.push("rgb(" + r + "," + g + "," + b + ")");
+  Farb12.push("rgb(" + r + "," + g + "," + b + ")");
+  Farb12.push("rgb(" + r + "," + g + "," + b + ")");
+  Farb12.push("rgb(" + r + "," + g + "," + b + ")");
+  r--;
+  g--;
+}
+for (var i = 0; i < 255; i++) {  //blau -> r,b
+  r++;
+  Farb12.push("rgb(" + r + "," + g + "," + b + ")");
+  Farb12.push("rgb(" + r + "," + g + "," + b + ")");
+  Farb12.push("rgb(" + r + "," + g + "," + b + ")");
+  Farb12.push("rgb(" + r + "," + g + "," + b + ")");
+}
+for (var i = 0; i < 255; i++) {  //r,b -> r,g
+  g++;
+  b--;
+  Farb12.push("rgb(" + r + "," + g + "," + b + ")");
+  Farb12.push("rgb(" + r + "," + g + "," + b + ")");
+  Farb12.push("rgb(" + r + "," + g + "," + b + ")");
+  Farb12.push("rgb(" + r + "," + g + "," + b + ")");
+}
+for (var i = 0; i < 255; i++) {  //r,g -> rot
+  g--;
+  Farb12.push("rgb(" + r + "," + g + "," + b + ")");
+  Farb12.push("rgb(" + r + "," + g + "," + b + ")");
+  Farb12.push("rgb(" + r + "," + g + "," + b + ")");
+  Farb12.push("rgb(" + r + "," + g + "," + b + ")");
+}
+
 //        STOP BUTTON
 
 document.getElementById('stopButton').addEventListener('click', function stopClick() { //Löst aus wenn Button geclickt
@@ -124,6 +160,7 @@ for (var i = 0; i < 108; i++) {
 
 document.getElementById("version1o2").addEventListener('change', function switchVersion() {
   if (sixXtwelve) {
+    Farbarray = Array.from(Farb18);
     arraySoll=108;
     sixXtwelve = false;
     renderCount = [];
@@ -135,6 +172,7 @@ document.getElementById("version1o2").addEventListener('change', function switch
     document.getElementsByClassName("gridall")[0].style.height = heightArray[sizePos];
   }
   else {
+    Farbarray = Array.from(Farb12);
     arraySoll=72;  //ob 6x18 oder 6x12 Matrix
     sixXtwelve = true;
     renderCount = [];
@@ -1488,6 +1526,86 @@ document.getElementById("aufnahme").addEventListener('click', function () {  //W
 })
 //BLE DATA
 // ASCII M=77 S=83 :=58 Space=32 H=72 $=36 < Meistens eingeschlossen von $
+function sixOrTwelve(event) {
+  if(sixXtwelve) {
+    newSTData(event);
+  }
+  else {
+    newBLEData(event);
+  }
+}
+
+function newSTData(event) {
+  useArray = Array.from(new Uint8Array(event.target.value.buffer));
+  if(record) {
+    saveThis = saveThis.concat(useArray);
+  }
+  if(useArray.length>=108) {
+    eightToTwelve(useArray);
+  }
+}
+var firstByte = 0;
+var secondByte = 0;
+
+function eightToTwelve(oneFrame) {
+  stateArray = [];
+  for(var i=2; i<oneFrame.length; i+=3) {                //conversion 3 Bytes -> 2 x 12Bit
+    firstByte = oneFrame[i-2].toString(2);               //1. Byte wird in binary form als string gespeichert
+    firstByte += oneFrame[i].toString(2).slice(0,4);      // ersten 4 bit von aufgeteiltem 3. Byte werden angehangen
+    secondByte = oneFrame[i-1].toString(2);         
+    secondByte += oneFrame[i].toString(2).slice(4);
+    firstByte = parseInt(firstByte, 2);                   //String wird in Decimal Zahl gewandelt
+    secondByte = parseInt(secondByte, 2);
+    stateArray.push(firstByte);
+    stateArray.push(secondByte);
+  }
+
+
+  if (graphIsOn) {    //Graph für Live BLE
+    sumOf = 0;
+    sumOfZwei = 0;
+    for (var d = 0; d < 24; d++) { //Ferse oder Vorderfuß?
+      sumOf += stateArray[d];
+    }
+    data.splice(0, 1);
+    data.push(Math.round(sumOf / 24));
+    for (var d = 48; d < 72; d++) { //Ferse oder Vorderfuß?
+      sumOfZwei += stateArray[d];
+    }
+    dataDrei.splice(0, 1);
+    dataDrei.push(Math.round(sumOfZwei / 24));
+
+    datak = {
+      labels,
+      datasets: [
+        {
+          data: data,
+          borderColor: lineFarbe,
+        }
+      ],
+    };
+
+    datakDrei = {
+      labels,
+      datasets: [
+        {
+          data: dataDrei,
+        }
+      ],
+    };
+
+
+    ///////STEP NOCHMAL UMSCHREIBEN
+  }
+
+  if (FilterOn) { //auch Filterberechnungen wenn gewollt
+    fakeGauss();
+  }
+
+  root.render(<Grid />);
+  
+}
+
 function newBLEData(event) {   //aufgerufen wenn neue BLE Daten
   changed = false;
   prevArray = useArray;
@@ -1827,7 +1945,7 @@ document.getElementById("CONNECT").addEventListener('click', function letsGo() {
           }
         },
       };
-      characteristic.addEventListener('characteristicvaluechanged', newBLEData);  //immer wenn neue Daten wird funktion ausgeführt
+      characteristic.addEventListener('characteristicvaluechanged', sixOrTwelve);  //immer wenn neue Daten wird funktion ausgeführt
       connectBool = true;
       document.getElementsByClassName("gridall")[0].style.backgroundColor = "white";
       document.getElementById("CONNECT").innerHTML = "Trennen";
