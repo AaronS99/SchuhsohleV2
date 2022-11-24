@@ -17,7 +17,7 @@ import JSZip, { filter } from 'jszip';
 import { saveAs } from 'file-saver';
 import { render } from '@testing-library/react';
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////ToDo 6x12: 12Bit statt 10, BLE Übertragung keine 20Byte
-var sixXtwelve = false;
+var sixXtwelve = true;
 var lineFarbe = "black";
 var Farbarray = []; //Erstellung Farbarray, geht weiß->blau->pink->orange->rot
 var Farb18 = [];
@@ -99,6 +99,11 @@ for (var i = 0; i < 255; i++) {  //r,g -> rot
 
 Farb18 = Array.from(Farbarray);
 
+r = 255;              //für Erstellung Farbarray
+g = 255;
+b = 255;
+
+
 for (var i = 255; i > 0; i--) {        //Weiß -> blau
   Farb12.push("rgb(" + r + "," + g + "," + b + ")");
   Farb12.push("rgb(" + r + "," + g + "," + b + ")");
@@ -154,10 +159,11 @@ document.getElementById('stopButton').addEventListener('click', function stopCli
 });
 
 var renderCount = [];
-for (var i = 0; i < 108; i++) {
+for (var i = 0; i < 72; i++) {
   renderCount[i] = i;
 }
 
+    
 document.getElementById("version1o2").addEventListener('change', function switchVersion() {
   if (sixXtwelve) {
     Farbarray = Array.from(Farb18);
@@ -192,7 +198,6 @@ document.getElementById("version1o2").addEventListener('change', function switch
     squArray[i].style.height = squareSizeArray[sizePos];
   }
 })
-
 
 
 document.getElementById('groesser').addEventListener('click', function enlarge() {  //Grid größer machen (+ Button)
@@ -313,7 +318,7 @@ class Grid extends React.Component { //Hauptklasse
             <AppZwei />
             <AppDrei />
           </div>
-          <div className='gridall'>
+          <div className='gridall' height="480px">
 
             {renderCount.map((nummer) => {
               const quadrate = (                                                               //für jeden Eintrag von renderCount einmal
@@ -337,7 +342,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<Grid />);    //1. rendern damit Grid Platz angezeigt wird auf Site
 
 
-
+console.log(document.getElementsByClassName("square"));
 
 
 
@@ -1507,7 +1512,19 @@ var saveThis = [];
 document.getElementById("aufnahme").addEventListener('click', function () {  //Wenn aufnahmebeginn gedrückt
   if (record) {
     record = false; //wenn vorher true jetzt false
-    lalax(saveThis);
+    if(sixXtwelve) {
+      let rawsixtwelve = "data:text/csv;charset=utf-8," + saveThis;
+      var downdis = encodeURI(rawsixtwelve);
+      var link612 = document.createElement("a");
+      link612.setAttribute("href", downdis);
+      link612.setAttribute("download", "612RAW.csv");
+      document.body.appendChild(link612);
+      link612.click();
+    }
+    else {
+      lalax(saveThis);
+    }
+
     /*document.getElementById("aufnahme").innerHTML="Aufnahmebeginn"  //Buttonanzeige verändern
     let csvInhalt = "data:text/csv;charset=utf-8," + saveThis.join(",");  //gespeichertes Array als String, zwischen Einträgen Kommas
     var encodedUri = encodeURI(csvInhalt);  //String -> Uniform Resource Identifier URI
@@ -1539,6 +1556,7 @@ function newSTData(event) {
   useArray = Array.from(new Uint8Array(event.target.value.buffer));
   if(record) {
     saveThis = saveThis.concat(useArray);
+    saveThis += "\n";
   }
   if(useArray.length>=108) {
     eightToTwelve(useArray);
@@ -1558,8 +1576,9 @@ function eightToTwelve(oneFrame) {
     secondByte = parseInt(secondByte, 2);
     stateArray.push(firstByte);
     stateArray.push(secondByte);
-  }
 
+  }
+  //console.log(stateArray);
 
   if (graphIsOn) {    //Graph für Live BLE
     sumOf = 0;
@@ -1870,15 +1889,19 @@ document.getElementById("CONNECT").addEventListener('click', function letsGo() {
 
   stateArray = [];
   navigator.bluetooth.requestDevice({
-    filters: [{
+   
+   /* filters: [{
       //services: [0xffe1, 0xffe0]
-      name: 'BT05'  //Nur devices mit Namem BT05 werden angezeigt, anderes theoretisch auch möglich
+      //name: 'ArduinoBLECounter'  //Nur devices mit Namem BT05 werden angezeigt, anderes theoretisch auch möglich //'BT05'
       //services: ['12b4735e-0385-3c45-06f8-cc58aa4b9185']
     }],
-    optionalServices: [0xffe0, 0xffe1, '37066c16-1598-4995-75b5-6606645d8e88']  //char.uuid und service uuid
+    //optionalServices: [0xffe0, 0xffe1, '37066c16-1598-4995-75b5-6606645d8e88', "19b10000-e8f2-537e-4f6c-d104768a1214"]  //char.uuid und service uuid
+    */acceptAllDevices: true,
+    optionalServices: ["19b10000-e8f2-537e-4f6c-d104768a1214"]
   })
     .then(device => {     //über Promises ab hier    mit device Verbinden
       console.log(device.name);
+      console.log(device);
       //console.log(characteristic.readValue());
       bluetoothDevice = device;
       /*device.watchAdvertisements();         //FUNKTIONIERT NUR WENN SONST NICHTS VERLANGT
@@ -1890,10 +1913,10 @@ document.getElementById("CONNECT").addEventListener('click', function letsGo() {
     })
     .then(server => {   //Service auswählen
       gattconnect = server;
-      return server.getPrimaryService(0xffe0);
+      return server.getPrimaryService("19b10000-e8f2-537e-4f6c-d104768a1214"); //alt 0xffe0
     })
     .then(service => {  //Characteristic ausgewählt
-      return service.getCharacteristic('0000ffe1-0000-1000-8000-00805f9b34fb');//0xffe1 geht auch
+      return service.getCharacteristic("0000ffe1-0000-1000-8000-00805f9b34fb");//0xffe1 geht auch //'0000ffe1-0000-1000-8000-00805f9b34fb'
     })
     .then(characteristic => characteristic.startNotifications()) //wo values gesendet werden
     .then(characteristic => {
@@ -1945,6 +1968,7 @@ document.getElementById("CONNECT").addEventListener('click', function letsGo() {
           }
         },
       };
+      console.log(Farbarray);
       characteristic.addEventListener('characteristicvaluechanged', sixOrTwelve);  //immer wenn neue Daten wird funktion ausgeführt
       connectBool = true;
       document.getElementsByClassName("gridall")[0].style.backgroundColor = "white";
@@ -2189,7 +2213,7 @@ document.getElementById("Filter").addEventListener("change", function () {   //F
 
 var addedValues = 0;
 var geteiltDurch = 0;
-var arraySoll = 108;
+var arraySoll = 72;
 
 function fakeGauss() {              //Filter berechnungen
   
@@ -2258,6 +2282,12 @@ function fakeGauss() {              //Filter berechnungen
 }
 
 
+
+
+
+
+
+
 // AB HIER NUR FÜR TEST
 
 var tmr = [];
@@ -2295,10 +2325,13 @@ function timerStart() { // hier werden Reihen aufgeteilt und gesendet
     }, 10);
   }
 }
-
-
-
-
+setTimeout(function() {
+  document.getElementById("groesser").click();
+  document.getElementById("kleiner").click();
+},1);
+/*window.addEventListener('load', function () {
+  this.document.getElementById("groesser").click();
+})*/
 
 
 
