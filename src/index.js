@@ -54,6 +54,7 @@ var graphIsOn = true;     //bool ob Graphen berechnet & laufen sollen
 var progressbar = document.getElementById("progress");  //Blaue Leiste, die Zeitleiste anzeigt, interagierbar
 var FilterOn = true;    //bool ob Filterberechnungen
 var settingsVisible = false;
+var processedRecording = "";
 
 document.getElementById("settingCollapse").addEventListener("click", function () {
   if (settingsVisible) {
@@ -1513,11 +1514,12 @@ document.getElementById("aufnahme").addEventListener('click', function () {  //W
   if (record) {
     record = false; //wenn vorher true jetzt false
     if(sixXtwelve) {
-      let rawsixtwelve = "data:text/csv;charset=utf-8," + saveThis;
+      var DateNow = new Date();
+      let rawsixtwelve = "data:text/csv;charset=utf-8," + processedRecording;
       var downdis = encodeURI(rawsixtwelve);
       var link612 = document.createElement("a");
       link612.setAttribute("href", downdis);
-      link612.setAttribute("download", "612RAW.csv");
+      link612.setAttribute("download", DateNow.getDate() + "-"+ DateNow.getMonth() + "-" + DateNow.getFullYear() +"-"+ DateNow.getHours() +"h"+ DateNow.getMinutes() + ".csv");
       document.body.appendChild(link612);
       link612.click();
     }
@@ -1554,12 +1556,15 @@ function sixOrTwelve(event) {
 
 function newSTData(event) {
   useArray = Array.from(new Uint8Array(event.target.value.buffer));
-  if(record) {
+  /*if(record) {
     saveThis = saveThis.concat(useArray);
     saveThis += "\n";
-  }
+  }*/
   if(useArray.length>=108) {
     eightToTwelve(useArray);
+  }
+  else if(record==true) {
+    processedRecording += String.fromCharCode(useArray) + "\n";
   }
 }
 var firstByte = 0;
@@ -1578,6 +1583,13 @@ function eightToTwelve(oneFrame) {
     stateArray.push(secondByte);
 
   }
+  if(record==true) {
+    let forSave = Array.from(stateArray);
+    for(var i=0; i<stateArray.length-1; i+=6) {
+      processedRecording += forSave[i] + "," + forSave[i+1] + "," + forSave[i+2] + "," + forSave[i+3] + "," + forSave[i+4] + "," + forSave[i+5] + "\n"
+    }
+  }
+
   //console.log(stateArray);
 
   if (graphIsOn) {    //Graph für Live BLE
