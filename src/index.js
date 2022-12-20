@@ -634,6 +634,7 @@ function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in
     }
   }
   else if (sixXtwelve) {
+    //console.log(csvAlsArray);
     for (var i = 0; i < csvAlsArray.length; i++) { //Für jeden Eintrag 1 Mal:
       if (rn) {
 
@@ -645,9 +646,11 @@ function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in
       }
 
       if (tempArray.length == 14) { //Wenn genau 14 Zeilen -> Kein Fehler:
+        //console.log(tempArray);
         tempArray.pop();  //letzter Eintrag wird entfernt (ist Counter vor nächstem "MS:")
         tempZwei = [];
         tempArray[0] = tempArray[0].slice(0, tempArray[0].indexOf("M:") - 1); //erster Eintrag im Array wird gekürzt von MS: XXXXX M: XXXXX H: XXXXX,,,, auf nur XXXXX Zahl von MS
+        //console.log(tempArray);
         for (var j = 0; j < tempArray.length; j++) {  //Für jeden Eintrag (Zeile):
           tempZwei = tempZwei.concat(tempArray[j].split(","));  //Werte in neues Array getrennt durch Kommas
         }
@@ -667,6 +670,7 @@ function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in
       //console.log(i + "/" + csvAlsArray.length);
 
     }
+    //console.log(completeFile);
 
   }
 
@@ -1309,6 +1313,7 @@ function displayAfter() { //Aufgerufen in displayIt & wenn Stop aufgehoben
 
 function displayIt() {
   prevTime = Number(completeFile.splice(0, 1)); //letzte Zeit = 1. Eintrag aus Array (MS: Zeit)
+  //console.log(prevTime);
   //stateArrayTwo = completeFile.splice(0, 108);
 
   if (completeFile.length < arraySoll) {          //Wenn weniger als 108/72 Werte verbleiben aufhören
@@ -1319,9 +1324,11 @@ function displayIt() {
   stateArray = completeFile.splice(0, arraySoll); //stateArray (zum rendern) = 1. 108 Einträge v completeFile (bei splice werden Einträge gleichzeitig gelöscht aus altem Array)
 
   timenow = Number(completeFile[0]);  //Zeit von nächstem Datensatz
+  //console.log(timenow);
   //Berechnung für nächstes Timeout
   if (timenow >= prevTime) {   //Wenn nicht neue Minute angebrochen wurde
     timeout = timenow - prevTime;  //timeout ist differenz v Zeiten -2 für Delay durch Programm
+    console.log(timeout);
   }
   else {    //sonst -> wenn neue Min angebrochen
     timeout = timenow + (60000 - prevTime);  //tiomeout ist nächste Zeit + was zur Min vorher gefehlt hat
@@ -1515,11 +1522,14 @@ document.getElementById("aufnahme").addEventListener('click', function () {  //W
     record = false; //wenn vorher true jetzt false
     if(sixXtwelve) {
       var DateNow = new Date();
-      let rawsixtwelve = "data:text/csv;charset=utf-8," + processedRecording;
+      var rawsixtwelve = "data:text/csv;charset=utf-8," + processedRecording;
+
+      //console.log(rawsixtwelve);
       var downdis = encodeURI(rawsixtwelve);
+      //console.log(downdis);
       var link612 = document.createElement("a");
       link612.setAttribute("href", downdis);
-      link612.setAttribute("download", DateNow.getDate() + "-"+ DateNow.getMonth() + "-" + DateNow.getFullYear() +"-"+ DateNow.getHours() +"h"+ DateNow.getMinutes() + ".csv");
+      link612.setAttribute("download", DateNow.getDate() + "-"+ DateNow.getMonth() + "-" + DateNow.getFullYear() +"-"+ DateNow.getHours() +"h"+ DateNow.getMinutes() + ".txt");
       document.body.appendChild(link612);
       link612.click();
     }
@@ -1564,13 +1574,28 @@ function newSTData(event) {
   if(useArray.length>=108) {
     eightToTwelve(useArray);
   }
-  /*else if(record==true) {
-    for(var i=1; i<useArray.length-1; i++) {
-    processedRecording += String.fromCharCode(useArray[i]);
+  else if(record==true && useArray[0]==0) {
+    let tempString = ""
+    //console.log(String.fromCharCode(useArray[1]));
+    for(var useArrayVar=1; useArrayVar<useArray.length-1; useArrayVar++) {
+      //console.log(String.fromCharCode(useArray[useArrayVar]));
+      if(String.fromCharCode(useArray[useArrayVar])=="#") {
+        tempString += "No"
+      }
+      else if (String.fromCharCode(useArray[useArrayVar])=="M") {
+        tempString += " MS";
+      }
+      else {
+        tempString += String.fromCharCode(Number(useArray[useArrayVar]));
+      }
     }
-    processedRecording += "\n";
+    //console.log(tempString);
+    processedRecording += tempString + " M:0 H:0\n";
+    
+    //console.log(processedRecording);
+    //processedRecording += tempString + "\n";
   
-  }*/
+  }
 }
 var firstByte = 0;
 var secondByte = 0;
