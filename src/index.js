@@ -1540,6 +1540,7 @@ document.getElementById("aufnahme").addEventListener('click', function () {  //W
   }
   else {
     record = true;  //Wenn vorher false, jetzt recorded
+    processedRecording = "";
     document.getElementById("aufnahme").innerHTML = "Aufnahme Ende" //Text im Button ändern
   }
 })
@@ -1563,9 +1564,13 @@ function newSTData(event) {
   if(useArray.length>=108) {
     eightToTwelve(useArray);
   }
-  else if(record==true) {
-    processedRecording += String.fromCharCode(useArray) + "\n";
-  }
+  /*else if(record==true) {
+    for(var i=1; i<useArray.length-1; i++) {
+    processedRecording += String.fromCharCode(useArray[i]);
+    }
+    processedRecording += "\n";
+  
+  }*/
 }
 var firstByte = 0;
 var secondByte = 0;
