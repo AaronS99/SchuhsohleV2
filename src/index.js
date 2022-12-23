@@ -135,6 +135,7 @@ for (var i = 0; i < 255; i++) {  //r,g -> rot
   Farb12.push("rgb(" + r + "," + g + "," + b + ")");
   Farb12.push("rgb(" + r + "," + g + "," + b + ")");
 }
+Farbarray = Array.from(Farb12);
 
 //        STOP BUTTON
 
@@ -697,7 +698,6 @@ function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in
 document.getElementById("steps").addEventListener("change", function () { //Checkbox Steps, wenn geändert wird
   if (step) {
     step = false;     //wenn vorher true, jetzt false
-
   }
   else {
     step = true;        //wenn vorher false jetzt true
@@ -926,6 +926,7 @@ function graphIt(allData) {   //Graph checkbox aktiviert -> bei Abspielen
     startSlide.value = schnitt / summenarray.length + 10;
     sSlideOut.innerHTML = schnitt / summenarray.length + 10;
     document.getElementById("ThreshConfirm").style.display = "block";
+    console.log(step);
     return;
     for (var runAll = 0; runAll < summenarray.length; runAll++) {        //einmal alle Frames durchgehen
       if (Ferse == false && summenarrayDrei[runAll] > 10 /*&& summenarrayDrei[runAll] < 35*/) {      //wenn Fersenwert über 10, neuer Schritt
@@ -951,6 +952,9 @@ function graphIt(allData) {   //Graph checkbox aktiviert -> bei Abspielen
         }
       }
     }
+  }
+  else {
+    displayIt();
   }
 
 }
@@ -1328,7 +1332,7 @@ function displayIt() {
   //Berechnung für nächstes Timeout
   if (timenow >= prevTime) {   //Wenn nicht neue Minute angebrochen wurde
     timeout = timenow - prevTime;  //timeout ist differenz v Zeiten -2 für Delay durch Programm
-    console.log(timeout);
+    //console.log(timeout);
   }
   else {    //sonst -> wenn neue Min angebrochen
     timeout = timenow + (60000 - prevTime);  //tiomeout ist nächste Zeit + was zur Min vorher gefehlt hat
@@ -1453,8 +1457,9 @@ progressbar.onchange = function () {   //Wenn User Progressbar irgendwo hinsetzt
   dataZwei = Array(100).fill(0);
   dataDrei = Array(100).fill(0);
   var spliceBy = Math.round(completeFile.length * (progressbar.value / 100));
-  while ((spliceBy % arraySoll+1) != 0) {  //Hier muss durch 109 teilbar sein, da complete File immer DatenSätze von 109 sind
+  while ((spliceBy % (arraySoll+1)) != 0) {  //Hier muss durch 109 teilbar sein, da complete File immer DatenSätze von 109 sind
     spliceBy++;
+    
   }
   if (step) {       //stelleImArray herausfinden
     stelleImArray = laengeOriginal - summenarray.length;
@@ -1529,7 +1534,7 @@ document.getElementById("aufnahme").addEventListener('click', function () {  //W
       //console.log(downdis);
       var link612 = document.createElement("a");
       link612.setAttribute("href", downdis);
-      link612.setAttribute("download", DateNow.getDate() + "-"+ DateNow.getMonth() + "-" + DateNow.getFullYear() +"-"+ DateNow.getHours() +"h"+ DateNow.getMinutes() + ".txt");
+      link612.setAttribute("download", DateNow.getDate() + "-"+ DateNow.getMonth() + "-" + DateNow.getFullYear() +"-"+ DateNow.getHours() +"h"+ DateNow.getMinutes() + ".csv");
       document.body.appendChild(link612);
       link612.click();
     }
@@ -1565,6 +1570,10 @@ function sixOrTwelve(event) {
   }
 }
 
+var timeOld = 0;
+var timeNew = 0;
+var timeSinceLast = 0;
+var timeTotal = 0;
 function newSTData(event) {
   useArray = Array.from(new Uint8Array(event.target.value.buffer));
   /*if(record) {
@@ -1575,6 +1584,9 @@ function newSTData(event) {
     eightToTwelve(useArray);
   }
   else if(record==true && useArray[0]==0) {
+    timeOld = timeNew;
+    timeNew = Date.now();
+    timeSinceLast = timeNew - timeOld
     let tempString = ""
     //console.log(String.fromCharCode(useArray[1]));
     for(var useArrayVar=1; useArrayVar<useArray.length-1; useArrayVar++) {
@@ -1582,15 +1594,16 @@ function newSTData(event) {
       if(String.fromCharCode(useArray[useArrayVar])=="#") {
         tempString += "No"
       }
-      else if (String.fromCharCode(useArray[useArrayVar])=="M") {
-        tempString += " MS";
-      }
+
       else {
         tempString += String.fromCharCode(Number(useArray[useArrayVar]));
       }
     }
     //console.log(tempString);
-    processedRecording += tempString + " M:0 H:0\n";
+    if(timeSinceLast<10000) {
+      timeTotal+=timeSinceLast;
+    }
+    processedRecording += tempString + "0 M:0 H:0 t:" + timeSinceLast + " tt:" + timeTotal + "\n";
     
     //console.log(processedRecording);
     //processedRecording += tempString + "\n";

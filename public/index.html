@@ -42,7 +42,7 @@
       <input type = "checkbox" name = "Checker" id="graphi" class="SettingsCheckbox" checked>
       <label for = "graphi" id = "grap" class = "SettingsContent">&nbspGraph</label>
       <br>
-      <input type = "checkbox" name = "Stepper" id="steps" class="SettingsCheckbox" checked>
+      <input type = "checkbox" name = "Stepper" id="steps" class="SettingsCheckbox" checked autocomplete="off">
       <label for = "steps" id = "stepL" class = "SettingsContent">&nbspSchritte</label>
       <br>
       <input type = "checkbox" name = "Filt" id="Filter" class="SettingsCheckbox" checked>
@@ -81,7 +81,7 @@
             <br>
             <div class="rahmen">
               <p class="SlideTitle">Schrittbeginn</p> 
-              <input type="range" min="0" max="100" value="30" id="StepBegin" class="Slides"> 
+              <input type="range" min="0" max="1000" value="30" id="StepBegin" class="Slides"> 
               <p id="SBOut" class="slideInfo"></p>    
               <div class = "hidden">
                 <p class="SlideTitle">Schrittende</p> 
