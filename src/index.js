@@ -135,6 +135,7 @@ for (var i = 0; i < 255; i++) {  //r,g -> rot
   Farb12.push("rgb(" + r + "," + g + "," + b + ")");
   Farb12.push("rgb(" + r + "," + g + "," + b + ")");
 }
+Farbarray = Array.from(Farb12);
 
 //        STOP BUTTON
 
@@ -584,6 +585,11 @@ function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in
     Minuten--;
   }
   Millisekunden /= 1000;
+  while (Millisekunden>=60) {
+    Millisekunden -= 60;
+    Minuten ++;
+  }
+  Millisekunden = Math.round(Millisekunden);
   dauerCSV = Minuten + " Minuten und " + Millisekunden + " Sekunden";
   document.getElementById("Dauer").innerHTML = (dauerCSV);
   var tempArray = [];
@@ -634,6 +640,7 @@ function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in
     }
   }
   else if (sixXtwelve) {
+    //console.log(csvAlsArray);
     for (var i = 0; i < csvAlsArray.length; i++) { //Für jeden Eintrag 1 Mal:
       if (rn) {
 
@@ -645,9 +652,11 @@ function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in
       }
 
       if (tempArray.length == 14) { //Wenn genau 14 Zeilen -> Kein Fehler:
+        //console.log(tempArray);
         tempArray.pop();  //letzter Eintrag wird entfernt (ist Counter vor nächstem "MS:")
         tempZwei = [];
         tempArray[0] = tempArray[0].slice(0, tempArray[0].indexOf("M:") - 1); //erster Eintrag im Array wird gekürzt von MS: XXXXX M: XXXXX H: XXXXX,,,, auf nur XXXXX Zahl von MS
+        //console.log(tempArray);
         for (var j = 0; j < tempArray.length; j++) {  //Für jeden Eintrag (Zeile):
           tempZwei = tempZwei.concat(tempArray[j].split(","));  //Werte in neues Array getrennt durch Kommas
         }
@@ -667,6 +676,7 @@ function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in
       //console.log(i + "/" + csvAlsArray.length);
 
     }
+    //console.log(completeFile);
 
   }
 
@@ -693,7 +703,6 @@ function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in
 document.getElementById("steps").addEventListener("change", function () { //Checkbox Steps, wenn geändert wird
   if (step) {
     step = false;     //wenn vorher true, jetzt false
-
   }
   else {
     step = true;        //wenn vorher false jetzt true
@@ -922,6 +931,7 @@ function graphIt(allData) {   //Graph checkbox aktiviert -> bei Abspielen
     startSlide.value = schnitt / summenarray.length + 10;
     sSlideOut.innerHTML = schnitt / summenarray.length + 10;
     document.getElementById("ThreshConfirm").style.display = "block";
+    console.log(step);
     return;
     for (var runAll = 0; runAll < summenarray.length; runAll++) {        //einmal alle Frames durchgehen
       if (Ferse == false && summenarrayDrei[runAll] > 10 /*&& summenarrayDrei[runAll] < 35*/) {      //wenn Fersenwert über 10, neuer Schritt
@@ -947,6 +957,9 @@ function graphIt(allData) {   //Graph checkbox aktiviert -> bei Abspielen
         }
       }
     }
+  }
+  else {
+    displayIt();
   }
 
 }
@@ -1309,6 +1322,7 @@ function displayAfter() { //Aufgerufen in displayIt & wenn Stop aufgehoben
 
 function displayIt() {
   prevTime = Number(completeFile.splice(0, 1)); //letzte Zeit = 1. Eintrag aus Array (MS: Zeit)
+  //console.log(prevTime);
   //stateArrayTwo = completeFile.splice(0, 108);
 
   if (completeFile.length < arraySoll) {          //Wenn weniger als 108/72 Werte verbleiben aufhören
@@ -1319,9 +1333,11 @@ function displayIt() {
   stateArray = completeFile.splice(0, arraySoll); //stateArray (zum rendern) = 1. 108 Einträge v completeFile (bei splice werden Einträge gleichzeitig gelöscht aus altem Array)
 
   timenow = Number(completeFile[0]);  //Zeit von nächstem Datensatz
+  //console.log(timenow);
   //Berechnung für nächstes Timeout
   if (timenow >= prevTime) {   //Wenn nicht neue Minute angebrochen wurde
     timeout = timenow - prevTime;  //timeout ist differenz v Zeiten -2 für Delay durch Programm
+    //console.log(timeout);
   }
   else {    //sonst -> wenn neue Min angebrochen
     timeout = timenow + (60000 - prevTime);  //tiomeout ist nächste Zeit + was zur Min vorher gefehlt hat
@@ -1446,8 +1462,9 @@ progressbar.onchange = function () {   //Wenn User Progressbar irgendwo hinsetzt
   dataZwei = Array(100).fill(0);
   dataDrei = Array(100).fill(0);
   var spliceBy = Math.round(completeFile.length * (progressbar.value / 100));
-  while ((spliceBy % arraySoll+1) != 0) {  //Hier muss durch 109 teilbar sein, da complete File immer DatenSätze von 109 sind
+  while ((spliceBy % (arraySoll+1)) != 0) {  //Hier muss durch 109 teilbar sein, da complete File immer DatenSätze von 109 sind
     spliceBy++;
+    
   }
   if (step) {       //stelleImArray herausfinden
     stelleImArray = laengeOriginal - summenarray.length;
@@ -1515,8 +1532,11 @@ document.getElementById("aufnahme").addEventListener('click', function () {  //W
     record = false; //wenn vorher true jetzt false
     if(sixXtwelve) {
       var DateNow = new Date();
-      let rawsixtwelve = "data:text/csv;charset=utf-8," + processedRecording;
+      var rawsixtwelve = "data:text/csv;charset=utf-8," + processedRecording;
+
+      //console.log(rawsixtwelve);
       var downdis = encodeURI(rawsixtwelve);
+      //console.log(downdis);
       var link612 = document.createElement("a");
       link612.setAttribute("href", downdis);
       link612.setAttribute("download", DateNow.getDate() + "-"+ DateNow.getMonth() + "-" + DateNow.getFullYear() +"-"+ DateNow.getHours() +"h"+ DateNow.getMinutes() + ".csv");
@@ -1555,33 +1575,68 @@ function sixOrTwelve(event) {
   }
 }
 
+var timeOld = 0;
+var timeNew = 0;
+var timeSinceLast = 0;
+var timeTotal = 0;
 function newSTData(event) {
   useArray = Array.from(new Uint8Array(event.target.value.buffer));
+
   /*if(record) {
     saveThis = saveThis.concat(useArray);
     saveThis += "\n";
   }*/
   if(useArray.length>=108) {
+    for(var loop=0; loop<useArray.length; loop++) {
+      useArray[loop]--;
+    }
+    //console.log(useArray);
     eightToTwelve(useArray);
   }
-  /*else if(record==true) {
-    for(var i=1; i<useArray.length-1; i++) {
-    processedRecording += String.fromCharCode(useArray[i]);
+  else if(record==true && useArray[0]==0) {
+    timeOld = timeNew;
+    timeNew = Date.now();
+    timeSinceLast = timeNew - timeOld
+    let tempString = ""
+    //console.log(String.fromCharCode(useArray[1]));
+    for(var useArrayVar=1; useArrayVar<useArray.length-1; useArrayVar++) {
+      //console.log(String.fromCharCode(useArray[useArrayVar]));
+      if(String.fromCharCode(useArray[useArrayVar])=="#") {
+        tempString += "No"
+      }
+
+      else {
+        tempString += String.fromCharCode(Number(useArray[useArrayVar]));
+      }
     }
-    processedRecording += "\n";
+    //console.log(tempString);
+    if(timeSinceLast<10000) {
+      timeTotal+=timeSinceLast;
+    }
+    processedRecording += tempString + "0 M:0 H:0 t:" + timeSinceLast + " tt:" + timeTotal + "\n";
+    
+    //console.log(processedRecording);
+    //processedRecording += tempString + "\n";
   
-  }*/
+  }
 }
 var firstByte = 0;
 var secondByte = 0;
+var tempVar = ""
 
 function eightToTwelve(oneFrame) {
   stateArray = [];
   for(var i=2; i<oneFrame.length; i+=3) {                //conversion 3 Bytes -> 2 x 12Bit
     firstByte = oneFrame[i-2].toString(2);               //1. Byte wird in binary form als string gespeichert
-    firstByte += oneFrame[i].toString(2).slice(0,4);      // ersten 4 bit von aufgeteiltem 3. Byte werden angehangen
+    tempVar = oneFrame[i].toString(2);
+    while (tempVar.length != 8) {
+      tempVar = "0" + tempVar;
+    }
+    firstByte += tempVar.slice(0,4);
+    //firstByte += oneFrame[i].toString(2).slice(0,4);      // ersten 4 bit von aufgeteiltem 3. Byte werden angehangen
     secondByte = oneFrame[i-1].toString(2);         
-    secondByte += oneFrame[i].toString(2).slice(4);
+    secondByte += tempVar.slice(4);
+    //secondByte += oneFrame[i].toString(2).slice(4);
     firstByte = parseInt(firstByte, 2);                   //String wird in Decimal Zahl gewandelt
     secondByte = parseInt(secondByte, 2);
     stateArray.push(firstByte);
@@ -1637,7 +1692,8 @@ function eightToTwelve(oneFrame) {
   if (FilterOn) { //auch Filterberechnungen wenn gewollt
     fakeGauss();
   }
-
+  
+  //console.log(stateArray);
   root.render(<Grid />);
   
 }
@@ -2005,6 +2061,27 @@ document.getElementById("CONNECT").addEventListener('click', function letsGo() {
     .catch(error => { console.error(error); })
 });
 
+function reconnect() {
+  exponentialBackoff(3 /*max Retries*/, 2 /*Delay in Seconds*/,
+  function toTry() {
+    return bluetoothDevice.gatt.connect();
+  },
+  function success() {console.log("Success")},
+  function fail() {console.log("ConnectFail")}
+  );
+}
+
+function exponentialBackoff(max, delay, toTry, success, fail) {
+  toTry().then(result => success(result))
+  .catch(_ => {
+    if (max === 0) {
+      return fail();
+    }
+    setTimeout(function() {
+      exponentialBackoff(--max, delay * 2, toTry, success, fail);
+    }, delay * 1000);
+  });
+}
 
 
 
@@ -2013,7 +2090,8 @@ document.getElementById("CONNECT").addEventListener('click', function letsGo() {
 });*/
 
 function onDisconnected(event) {
-  alert("Verbindung getrennt");  //Anzeige falls disconnected, gewollt oder accidental
+  //alert("Verbindung getrennt");  //Anzeige falls disconnected, gewollt oder accidental
+  reconnect();
 }
 
 // PROCESS RECORDED DATA
