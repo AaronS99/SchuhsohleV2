@@ -585,6 +585,11 @@ function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in
     Minuten--;
   }
   Millisekunden /= 1000;
+  while (Millisekunden>=60) {
+    Millisekunden -= 60;
+    Minuten ++;
+  }
+  Millisekunden = Math.round(Millisekunden);
   dauerCSV = Minuten + " Minuten und " + Millisekunden + " Sekunden";
   document.getElementById("Dauer").innerHTML = (dauerCSV);
   var tempArray = [];
@@ -2043,6 +2048,27 @@ document.getElementById("CONNECT").addEventListener('click', function letsGo() {
     .catch(error => { console.error(error); })
 });
 
+function reconnect() {
+  exponentialBackoff(3 /*max Retries*/, 2 /*Delay in Seconds*/,
+  function toTry() {
+    return bluetoothDevice.gatt.connect();
+  },
+  function success() {console.log("Success")},
+  function fail() {console.log("ConnectFail")}
+  );
+}
+
+function exponentialBackoff(max, delay, toTry, success, fail) {
+  toTry().then(result => success(result))
+  .catch(_ => {
+    if (max === 0) {
+      return fail();
+    }
+    setTimeout(function() {
+      exponentialBackoff(--max, delay * 2, toTry, success, fail);
+    }, delay * 1000);
+  });
+}
 
 
 
@@ -2051,7 +2077,8 @@ document.getElementById("CONNECT").addEventListener('click', function letsGo() {
 });*/
 
 function onDisconnected(event) {
-  alert("Verbindung getrennt");  //Anzeige falls disconnected, gewollt oder accidental
+  //alert("Verbindung getrennt");  //Anzeige falls disconnected, gewollt oder accidental
+  reconnect();
 }
 
 // PROCESS RECORDED DATA
