@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
+import giveData from './exampleData';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -55,7 +56,6 @@ var progressbar = document.getElementById("progress");  //Blaue Leiste, die Zeit
 var FilterOn = true;    //bool ob Filterberechnungen
 var settingsVisible = false;
 var processedRecording = "";
-
 document.getElementById("settingCollapse").addEventListener("click", function () {
   if (settingsVisible) {
     settingsVisible = false;
@@ -570,14 +570,41 @@ function runCSV(e) {
     csvVerarbeitung(event.target.result);
   };
 });*/
+let exampleBool=false;
+document.getElementById("example").addEventListener("click", function() {
+  document.getElementById("stopButton").style.display = "block";
+  document.getElementById("slider").style.display = "block";
+  document.getElementById("sliderOutput").style.display = "block";
+  document.getElementById("slideOutput").style.display = "block";
+  document.getElementById("stepDownload").style.display = "block";
+  document.getElementById("stepHeader").style.display = "block";
+  document.getElementById("formAndDownload").style.display = "block";
+  document.getElementById("aufnahme").style.display = "none";
+  document.getElementById("StepZahl").style.display = "block";
+  document.getElementById("FilterSett").style.display = "block";
+  oldData = true; //oldData bool für stop button
+  completeFile = [];
+  exampleBool = true;
+  csvVerarbeitung(giveData());
+});
+
 
 var wertVorher = 0;
 var wertNachher = 0;
 var savedCom = [];
 var laenge = 0;
 var dauerCSV = 0;
+let csvAlsArray = [];
 function csvVerarbeitung(inputFile) { //input noch als String wird aufgeteilt in Blöcke getrennt durch MS: Zeilen
-  let csvAlsArray = inputFile.slice(inputFile.indexOf("MS:")).split("MS:");
+  console.log(inputFile);
+  if(exampleBool==true){
+    csvAlsArray = inputFile;
+  }
+  else {
+    csvAlsArray = inputFile.slice(inputFile.indexOf("MS:")).split("MS:");
+  }
+  exampleBool = false;
+  console.log(csvAlsArray);
   var Millisekunden = Number(csvAlsArray[csvAlsArray.length - 1].slice(0, csvAlsArray[csvAlsArray.length - 1].indexOf("M:") - 1)) - Number(csvAlsArray[1].slice(0, csvAlsArray[1].indexOf("M:") - 1));
   var Minuten = Number(csvAlsArray[csvAlsArray.length - 1].slice(csvAlsArray[csvAlsArray.length - 1].indexOf("M:") + 2, csvAlsArray[csvAlsArray.length - 1].indexOf("H:") - 1)) - Number(csvAlsArray[1].slice(csvAlsArray[1].indexOf("M:") + 2, csvAlsArray[1].indexOf("H:") - 1));
   if (Millisekunden < 0) {
