@@ -65,7 +65,13 @@ img{
 #csvFiles {
   display: none;
 }
+#stapp {
+  display: none
+}
 #csvFilez{
+  text-shadow: 1px 1px black;
+}
+#stappZ{
   text-shadow: 1px 1px black;
 }
 #FlexInHead {

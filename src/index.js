@@ -160,6 +160,183 @@ document.getElementById('stopButton').addEventListener('click', function stopCli
 
 });
 
+
+document.getElementById('stapp').addEventListener('change', function stappInput() { //Wenn File eingefügt läuft das hier
+  let reader = new FileReader(); //FileReader von JS
+  reader.readAsText(document.getElementById('stapp').files[0]);
+  reader.onload = function (event) { //wird gelesen und wenn fertig, csvVerarbeitung aufgerufen mit gelesener Datei
+    //zuzwoelf(event.target.result);
+    stappShow(event.target.result);
+  };
+});
+
+function stappShow(file) {
+  let stappArray = file.split("\n");
+  var shoeOne = [];
+  var shoeTwo = []; 
+  for (let stappy = 1; stappy<stappArray.length; stappy++) {
+    if (stappArray[stappy].charAt(2)=="1") {
+      shoeOne.push(stappArray[stappy]);
+    }
+    else {
+      shoeTwo.push(stappArray[stappy]);
+    }
+  }
+
+  var average = 0;
+  let heelAverage = 0;          //schritt: ferse setzt auf bis zehen heben ab --- erst ferse min wert überschreiten dann zeh max wert überschreiten und zeh min wert unterschreiten - 1 vor ferse min
+  let toeAverage = 0;           // Werte------- Ferse min: ferse average -50? ---- Zeh Max: toe average + 50? ---- Zeh min: zehMax/3?
+  let toePlusAverage = 0;       //zeitwerte speichern für ident in full array
+  let interim = 0;              // Oberes ist stride - step start heel und ende heel anderer fuß
+  let aFromS = [];
+  let heelArray = [];
+  let toeArray = [];
+  let heelArrayTwo = [];
+  let toeArrayTwo = [];
+  let cloneAverageT = [];
+  let cloneAverageH = [];
+  let miniArrayTemp = [];
+  cloneAverageT = Array.from(stappArray);
+  cloneAverageH = Array.from(stappArray);
+  for(let stappy=1; stappy<cloneAverageT.length; stappy++) {
+    miniArrayTemp = cloneAverageT[stappy].split(";");
+    if(miniArrayTemp[1]=="1") {
+      heelAverage += (Number(miniArrayTemp[10]) + Number(miniArrayTemp[12]) + Number(miniArrayTemp[13]))/3;
+      toeAverage += (Number(miniArrayTemp[3]) + Number(miniArrayTemp[14]))/2;
+      cloneAverageT[stappy] = "1;" + Math.round((Number(miniArrayTemp[3]) + Number(miniArrayTemp[14]))/2);
+      cloneAverageH[stappy] = "1;" + Math.round((Number(miniArrayTemp[10]) + Number(miniArrayTemp[12]) + Number(miniArrayTemp[13]))/3);
+    }
+    else if (miniArrayTemp[1]=="2") {
+      heelAverage += (Number(miniArrayTemp[10]) + Number(miniArrayTemp[12]) + Number(miniArrayTemp[13]))/3;
+      toeAverage += (Number(miniArrayTemp[3]) + Number(miniArrayTemp[14]))/2;
+      cloneAverageT[stappy] = "2;" + Math.round((Number(miniArrayTemp[3]) + Number(miniArrayTemp[14]))/2);
+      cloneAverageH[stappy] = "2;" + Math.round((Number(miniArrayTemp[10]) + Number(miniArrayTemp[12]) + Number(miniArrayTemp[13]))/3);
+    }
+  }
+  heelAverage = Math.round(heelAverage/stappArray.length);
+  toeAverage = Math.round(toeAverage/stappArray.length);
+  /*
+  console.log("toeAverage: "+ toeAverage);
+  console.log("heelAverage: " + heelAverage);*/
+
+  /*
+  toeAverage = 0;
+  heelAverage = 0;
+  for(let stappy=0; stappy<shoeOne.length; stappy++){
+    aFromS = shoeOne[stappy].split(";");
+    interim = 0;
+    for(let stoppy=3; stoppy<aFromS.length-1;stoppy++) {
+      interim += Number(aFromS[stoppy]);
+    }
+    average += (interim/12);
+    heelAverage += (Number(aFromS[10]) + Number(aFromS[12]) + Number(aFromS[13]))/3;
+    heelArray.push((Number(aFromS[10]) + Number(aFromS[12]) + Number(aFromS[13]))/3);
+    toeAverage += (Number(aFromS[3]) + Number(aFromS[14]))/2;
+    toeArray.push((Number(aFromS[3]) + Number(aFromS[14]))/2);
+  }
+  for(let stappy=0; stappy<shoeOne.length; stappy++){
+    aFromS = shoeTwo[stappy].split(";");
+    heelArrayTwo.push((Number(aFromS[10]) + Number(aFromS[12]) + Number(aFromS[13]))/3);
+    toeArrayTwo.push((Number(aFromS[3]) + Number(aFromS[14]))/2);
+  }
+  heelAverage = Math.round(heelAverage/shoeOne.length);
+  toeAverage = Math.round(toeAverage/shoeOne.length);
+  average = average/shoeOne.length;
+  console.log("heelAverage: "+ heelAverage);
+  console.log("toeAverage: "+ toeAverage);
+  console.log(average);*/
+
+  let heelMin = heelAverage;
+  let toeMax = toeAverage +30;
+  let toeMin = toeAverage-30;
+  let overH = false;
+  let overT = false;
+  let stepStartStop = [];
+  let stepCount = 0;
+  let steppi = [];
+  let stappylast = 0;
+  let currentShoe = "1";
+  for (let stappy=1; stappy<cloneAverageH.length; stappy++) {
+      if (cloneAverageT[stappy].charAt(0)==currentShoe) {
+        if(overH==false){
+          if (Number(cloneAverageH[stappy].slice(2))>heelMin){
+            overH = true;
+            stepStartStop.push(stappy);
+            steppi.push(stappy-stappylast);
+            stappylast=stappy;
+            stepCount++;
+          }
+        }
+        else if (overH && overT==false){
+          if(Number(cloneAverageT[stappy].slice(2))>toeMax){
+            overT=true;
+          }
+        }
+        else if (overH && overT){
+          if(Number(cloneAverageT[stappy].slice(2))<toeMin){
+            if(currentShoe=="1") {
+              currentShoe="2";
+            }
+            else {
+              currentShoe = "1";
+            }
+            overH = false;
+            overT=false;
+          }
+        }
+      }
+      stappArray[stappy] = stappArray[stappy].slice(0,-1) + stepCount;
+}
+/*
+console.log(stepStartStop);
+console.log(steppi);
+console.log(stepCount);
+console.log(stappArray);*/
+
+let outputCSV = stappArray.join("\n");
+console.log(outputCSV);
+let downStapp = encodeURI("data:text/csv;charset=utf-8," + outputCSV);
+let elementClick = document.createElement("a");
+elementClick.setAttribute("href", downStapp);
+elementClick.setAttribute("download", stepCount+"Steps.csv");
+document.body.appendChild(elementClick);
+elementClick.click();
+  /* HIER FÜR STRIDES
+  for (let stappy=0; stappy<heelArray.length; stappy++) {
+    if (overH == false) {
+      if (heelArray[stappy]>heelMin) {
+        overH = true;
+        stepStartStop.push(stappy);
+        steppi.push(stappy-stappylast);
+        stappylast = stappy;
+        stepCount++;
+      }
+    }
+    else if(overH && overT == false) {
+      if (toeArray[stappy]>toeMax) {
+        overT = true;
+      }
+    }
+    else if (overH && overT) {
+      if (toeArray[stappy]<toeMin) {
+        stepCount++;
+        overT = false;
+        overH = false;
+        stepStartStop.push(stappy);
+        steppi.push(stappy-stappylast);
+        stappylast = stappy;
+      }
+    }
+  }
+  console.log(stepStartStop);
+  console.log(steppi);
+  console.log(heelArray);
+  console.log(stepCount);
+*/
+}
+
+
+
 var renderCount = [];
 for (var i = 0; i < 72; i++) {
   renderCount[i] = i;
